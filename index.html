@@ -1451,7 +1451,7 @@ function frErr(e){
   if(/rate limit/i.test(m))return 'Trop d’essais, attends un peu.';
   return m;
 }
-function emailOf(p){return slug(p)+'@hcs-tcg.app'}
+function emailOf(p){return 'hcstcg.'+slug(p).replace(/-/g,'.')+'@gmail.com'}
 function auErr(m){$('#auErr').textContent=m||''}
 async function doAuth(sign){
   var p=$('#auPseudo').value.trim(),pw=$('#auPass').value;
