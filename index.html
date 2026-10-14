@@ -334,8 +334,8 @@ button{font:inherit;color:inherit;cursor:pointer}
 .auth-in .cta,.auth-in .btn{width:100%;justify-content:center}
 .auth-err{margin:0;min-height:18px;color:#ff8a7d;font-size:14px}
 .auth-note{margin:0;font-size:13px;color:rgba(245,245,245,.6);font-style:italic}
-#lib,#rank{justify-content:flex-start;gap:12px;overflow-y:auto;touch-action:pan-y;padding-bottom:28px;align-items:stretch}
-#lib>*,#rank>*{flex:none}
+#lib,#rank,#profile{justify-content:flex-start;gap:12px;overflow-y:auto;touch-action:pan-y;padding-bottom:28px;align-items:stretch}
+#lib>*,#rank>*,#profile>*{flex:none}
 .lib-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
 .lib-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .lib-bar select{height:38px;background:rgba(5,7,11,.7);color:var(--bone);border:1px solid rgba(245,245,245,.3);border-radius:4px;padding:0 8px;font:inherit}
@@ -406,6 +406,40 @@ button{font:inherit;color:inherit;cursor:pointer}
 }
 .shop-card>b{flex:1}
 @media (max-width:420px){.nav button{font-size:13px;letter-spacing:.08em}}
+
+#pfBody{display:grid;gap:12px}
+.pf-name{font-family:var(--display);letter-spacing:.14em;font-size:30px;margin:0}
+.pf-chips{display:flex;gap:8px;flex-wrap:wrap}
+.pf-chips span{padding:6px 10px;background:rgba(5,7,11,.62);border:1px solid rgba(245,245,245,.18);border-radius:4px;font-family:var(--display);letter-spacing:.08em;font-size:14px}
+.pf-chips b{color:var(--gold);font-weight:400}
+.shelf{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;padding:16px 10px 20px;border-radius:8px;background:rgba(5,7,11,.55);border:1px solid rgba(245,245,245,.16);min-height:120px}
+.shelf .mini{--mw:92px}
+.slotw{position:relative;display:inline-block;border-radius:8px}
+.slotw.empty{width:92px;height:128px;border:1px dashed rgba(245,245,245,.25);display:grid;place-items:center;color:rgba(245,245,245,.3);font-family:var(--display)}
+.fr-toploader{padding:5px;background:linear-gradient(135deg,rgba(255,255,255,.28),rgba(255,255,255,.06));border:1px solid rgba(255,255,255,.6);box-shadow:inset 0 0 8px rgba(255,255,255,.25),0 2px 6px rgba(0,0,0,.5);border-radius:10px}
+.fr-toploader-or{padding:5px;background:linear-gradient(135deg,rgba(255,236,160,.4),rgba(212,175,55,.12));border:2px solid var(--gold);box-shadow:inset 0 0 8px rgba(255,220,120,.35),0 0 12px rgba(212,175,55,.35);border-radius:10px}
+.fr-slab{padding:24px 6px 6px;background:linear-gradient(#e9edf3,#b9c2d0);border:1px solid #fff;border-radius:6px;box-shadow:0 3px 8px rgba(0,0,0,.55)}
+.fr-slab::before{content:'BoM · 10 GEM MINT';position:absolute;left:4px;right:4px;top:3px;height:17px;display:grid;place-items:center;background:#0e1d3d;color:#fff;font-family:var(--display);letter-spacing:.1em;font-size:10px;border-radius:2px}
+.st-bois{background:linear-gradient(#3a2614,#5a3a1e 70%,#7a4f27);border-color:#9a6a35;box-shadow:inset 0 -10px 0 #2b1a0c}
+.st-verre{background:linear-gradient(160deg,rgba(120,180,255,.28),rgba(20,40,80,.55));border-color:rgba(150,200,255,.7);box-shadow:inset 0 0 22px rgba(150,200,255,.35)}
+.st-podium{background:linear-gradient(#0c1a3a,#0a0f1d);border:2px solid var(--gold);box-shadow:inset 0 -14px 0 var(--hcs)}
+.mini.sel{outline:3px solid var(--gold);outline-offset:1px}
+.mini .ord{position:absolute;left:4px;top:4px;z-index:3;background:var(--gold);color:#000;font-style:normal;font-family:var(--display);font-size:13px;padding:1px 7px;border-radius:10px}
+.rank-row[data-uid]{cursor:pointer}
+
+#feedBar{position:fixed;left:0;right:0;bottom:0;z-index:40;height:26px;display:flex;align-items:center;justify-content:center;padding:0 10px;background:rgba(5,7,11,.88);border-top:1px solid rgba(212,175,55,.5);font-family:var(--display);letter-spacing:.1em;font-size:14px;color:var(--bone);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+#feedBar[hidden]{display:none}
+#feedBar b{color:var(--gold);font-weight:400;margin:0 4px}
+.prog{height:6px;border-radius:3px;background:rgba(245,245,245,.14);overflow:hidden;margin-top:4px}
+.prog i{display:block;height:100%;background:var(--gold)}
+.ach-card{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 12px;background:rgba(5,7,11,.62);border:1px solid rgba(245,245,245,.16);border-radius:6px}
+.shop-card{flex-wrap:wrap}
+.ach-card.done{border-color:rgba(212,175,55,.6)}
+.ach-card>div:first-child{flex:1;min-width:0}
+.ach-card b{font-family:var(--display);font-weight:400;letter-spacing:.08em;font-size:17px}
+.ach-card small{display:block;font-size:12px;color:rgba(245,245,245,.65)}
+.ach-card em{font-style:normal;font-family:var(--display);color:var(--gold);letter-spacing:.06em;font-size:15px;white-space:nowrap}
+.shop-card input.code{flex:1;min-width:0;height:42px;background:rgba(5,7,11,.7);color:var(--bone);border:1px solid rgba(245,245,245,.3);border-radius:4px;padding:0 10px;font:inherit;text-transform:uppercase;user-select:text;-webkit-user-select:text}
 
 #feedBar{position:fixed;left:0;right:0;bottom:0;z-index:40;height:26px;display:flex;align-items:center;justify-content:center;padding:0 10px;background:rgba(5,7,11,.88);border-top:1px solid rgba(212,175,55,.5);font-family:var(--display);letter-spacing:.1em;font-size:14px;color:var(--bone);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
 #feedBar[hidden]{display:none}
@@ -481,6 +515,9 @@ button{font:inherit;color:inherit;cursor:pointer}
     <section id="rank" class="screen" hidden>
       <h2 class="sum-title">TOP</h2>
             <div class="rank-list" id="rankList"></div>
+    </section>
+    <section id="profile" class="screen" hidden>
+      <div id="pfBody"></div>
     </section>
 <section id="admin" class="screen" hidden>
       <div class="ad-head"><button class="btn" id="adBack" type="button">← RETOUR</button><h2 class="ad-title">CARTES</h2><span class="ad-count" id="adCount"></span></div>
@@ -597,7 +634,7 @@ var ICON={
 };
 
 /* ---------- Cartes : données et tirage ---------- */
-var SB=null,USER=null,PTS=0,INV={},LASTDAILY=null,LASTWHEEL=null,LASTCOLLECT=null,PROG=null,STREAK=0,STOCK=0,OPEN=null,CBYID={},CFG={unlocked:[1],prices:{booster:100,display:2200,case:24500},wheel:[],recycle:[3,8,50,200,500],daily:{amount:100,streak_every:7,streak_bonus:400},hourly:{rate:10,cap_hours:10},ach:[],sets:[],fee:.05},DBCARDS=[],SERCNT={},DB=null,USERNS=null,ASSETS=null,IS_ADMIN=false;
+var SB=null,USER=null,PTS=0,INV={},LASTDAILY=null,LASTWHEEL=null,LASTCOLLECT=null,PROG=null,STREAK=0,STOCK=0,OPEN=null,CBYID={},CFG={unlocked:[1],prices:{booster:100,display:2200,case:24500},wheel:[],recycle:[3,8,50,200,500],daily:{amount:100,streak_every:7,streak_bonus:400},hourly:{rate:10,cap_hours:10},ach:[],sets:[],items:[],fee:.05},DBCARDS=[],SERCNT={},DB=null,USERNS=null,ASSETS=null,IS_ADMIN=false;
 var SBURL='https://hlthpoluoyzjzzcjcopg.supabase.co',SBKEY='sb_publishable_LjnCkrmVzB_TGrtga1oGcA_6_2963qM';
 var CATS=[['joueur','Joueur BoM'],['pro','Scène Halo'],['equipe','Équipe'],['arme','Arme'],['vehicule','Véhicule'],['map','Map'],['mode','Mode'],['moment','Moment'],['rang','Rang'],['bom','BoM spécial']];
 var VARS=[['','Normale'],['holo','Holo'],['alt','Alt art'],['sign','Signée']];
@@ -1242,7 +1279,7 @@ $('#snd').addEventListener('click',function(){
 
 /* ---------- Écran de gestion des cartes ---------- */
 var ED=null,BULK=[],edBusy=false,delTimer=0;
-function showOnly(id){['#intro','#deckwrap','#summary','#admin','#lib','#rank','#market','#shop'].forEach(function(s){$(s).hidden=(s!==id)})}
+function showOnly(id){['#intro','#deckwrap','#summary','#admin','#lib','#rank','#market','#shop','#profile'].forEach(function(s){$(s).hidden=(s!==id)})}
 function openAdmin(){
   stage='admin';hideBanner();showOnly('#admin');
   $('#dots').hidden=true;$('#midlbl').hidden=false;
@@ -1547,6 +1584,7 @@ async function loadConfig(){
     else if(x.key==='hourly')CFG.hourly=x.value;
     else if(x.key==='achievements')CFG.ach=x.value;
     else if(x.key==='sets')CFG.sets=x.value;
+    else if(x.key==='items')CFG.items=x.value;
     else if(x.key==='market_fee')CFG.fee=+x.value;
   });
   updMid();
@@ -1616,7 +1654,7 @@ function setNav(t){
   Array.prototype.forEach.call(document.querySelectorAll('#nav [data-tab]'),function(b){b.classList.toggle('on',b.getAttribute('data-tab')===t)});
 }
 function goTab(t){
-  if(['intro','summary','lib','rank','market','shop'].indexOf(stage)<0)return;
+  if(['intro','summary','lib','rank','market','shop','profile'].indexOf(stage)<0)return;
   hideBanner();setNav(t);$('#cardView').hidden=true;checkAch();feedShow();
   if(t==='intro'){showOnly('#intro');stage='intro';tearBusy=false;buildPack();loadAll()}
   else if(t==='lib'){showOnly('#lib');stage='lib';loadAll().then(libRender)}
@@ -1714,9 +1752,9 @@ async function recycleAll(){
 async function rankRender(){
   var l=$('#rankList');l.innerHTML='';
   var bar=document.createElement('div');bar.className='lib-bar';
-  [['top','CLASSEMENT'],['obj','OBJECTIFS']].forEach(function(t){
+  [['top','CLASSEMENT'],['obj','OBJECTIFS'],['me','MON PROFIL']].forEach(function(t){
     var b=document.createElement('button');b.type='button';b.className='btn'+(RK===t[0]?' gold':'');b.textContent=t[1];
-    b.onclick=function(){RK=t[0];rankRender()};bar.appendChild(b);
+    b.onclick=function(){if(t[0]==='me'){showProfile(USER.id,false);return}RK=t[0];rankRender()};bar.appendChild(b);
   });
   l.appendChild(bar);
   if(RK==='obj'){objRender(l);return}
@@ -1724,7 +1762,7 @@ async function rankRender(){
   var r=await SB.from('leaderboard').select('*').order('val',{ascending:false}).order('uniq',{ascending:false}).limit(50);
   if(r.error){n.textContent='Classement indisponible.';return}
   (r.data||[]).forEach(function(p,i){
-    var d=document.createElement('div');d.className='rank-row'+(USER&&p.id===USER.id?' me':'');
+    var d=document.createElement('div');d.className='rank-row'+(USER&&p.id===USER.id?' me':'');d.setAttribute('data-uid',p.id);d.onclick=function(){showProfile(p.id,false)};
     d.innerHTML='<b>'+(i+1)+'</b><span>'+esc(p.pseudo)+'</span><i>'+p.val+' de valeur · '+p.uniq+' cartes · '+p.points+' PTS</i>';
     l.appendChild(d);
   });
@@ -1986,7 +2024,7 @@ function feedStart(){
 }
 function feedShow(){
   var el=$('#feedBar');if(!el)return;
-  var okStage=['intro','summary','lib','rank','market','shop'].indexOf(stage)>=0;
+  var okStage=['intro','summary','lib','rank','market','shop','profile'].indexOf(stage)>=0;
   if(!USER||!FEED.length||!okStage){el.hidden=true;return}
   var f=FEED[feedI%FEED.length],c=CBYID[f.card_id];
   el.innerHTML=(f.god?'GOD PACK · ':'')+esc(f.pseudo)+' a sorti <b>'+esc(c?c.n:f.card_id)+'</b> · '+(RAR[f.rarity]?RAR[f.rarity].n:'');
@@ -2007,9 +2045,8 @@ async function checkAch(){
   if(stage==='shop')shopRender();
 }
 async function objRender(l){
-  l.innerHTML+='<p class="sum-best">Chargement…</p>';
+  var box=document.createElement('p');box.className='sum-best';box.textContent='Chargement…';l.appendChild(box);
   var r=await SB.rpc('my_progress');
-  var box=l.querySelector('p.sum-best');
   if(r.error){box.textContent='Objectifs indisponibles.';return}
   box.remove();
   var st=r.data.stats,cl={};r.data.claimed.forEach(function(x){cl[x]=1});
@@ -2029,6 +2066,94 @@ async function objRender(l){
   CFG.sets.forEach(function(s){
     var p=sp[s.id]||{own:0,need:1};if(!p.need)return;
     card(s.l,p.own+' / '+p.need,p.own,p.need,!!cl['s:'+s.id],rewT(s));
+  });
+}
+
+/* ----- Profils, vitrine, accessoires ----- */
+var PF={uid:null,edit:false,sel:[],d:null};
+async function showProfile(uid,edit){
+  if(['intro','summary','lib','rank','market','shop','profile'].indexOf(stage)<0)return;
+  hideBanner();$('#cardView').hidden=true;showOnly('#profile');stage='profile';setNav('rank');
+  $('#dots').hidden=true;$('#midlbl').hidden=false;feedShow();
+  PF.uid=uid||USER.id;PF.edit=!!edit;
+  $('#pfBody').innerHTML='<p class="sum-best">Chargement…</p>';
+  var r=await SB.rpc('get_profile',{p_uid:PF.uid});
+  if(r.error){toast(r.error.message);goTab('rank');return}
+  PF.d=r.data;PF.sel=(r.data.showcase||[]).slice();pfRender();
+}
+function pfSlot(id,fr,click){
+  var c=CBYID[id];if(!c)return null;
+  var w=document.createElement('div');w.className='slotw'+(fr?' fr-'+fr:'');
+  var m=document.createElement('div');m.className='mini r'+c.r+(c.v==='holo'?' vh':'');
+  m.innerHTML='<div class="face front">'+frontHTML(cardD(c))+'</div>';
+  w.appendChild(m);if(click){w.style.cursor='pointer';w.onclick=click}
+  return w;
+}
+function itemById(id){return (CFG.items||[]).filter(function(x){return x.id===id})[0]}
+function pfRender(){
+  var d=PF.d,me=USER&&d.id===USER.id,eq=d.equipped||{},st=d.stats||{};
+  var el=$('#pfBody');el.innerHTML='';
+  var back=document.createElement('div');back.className='lib-bar';
+  var bb=document.createElement('button');bb.type='button';bb.className='btn';bb.textContent='← TOP';bb.onclick=function(){RK='top';goTab('rank')};back.appendChild(bb);
+  el.appendChild(back);
+  var h=document.createElement('h2');h.className='pf-name';h.textContent=d.pseudo;el.appendChild(h);
+  var ch=document.createElement('div');ch.className='pf-chips';
+  var tot=DBCARDS.filter(function(c){return c.active&&CFG.unlocked.indexOf(c.s)>=0}).length;
+  ch.innerHTML='<span>VALEUR <b>'+d.val+'</b></span><span>CARTES <b>'+st.uniq+'/'+tot+'</b></span><span>BOOSTERS <b>'+st.opened+'</b></span><span>OBJECTIFS <b>'+d.achv+'</b></span>'+(st.gods?'<span>GOD PACKS <b>'+st.gods+'</b></span>':'');
+  el.appendChild(ch);
+  var sh=document.createElement('div');sh.className='shelf'+(eq.stand?' st-'+eq.stand:'');
+  var ids=PF.edit?PF.sel:(d.showcase||[]);
+  ids.forEach(function(id){var w=pfSlot(id,eq.frame);if(w)sh.appendChild(w)});
+  if(PF.edit||me){for(var i=ids.length;i<d.slots;i++){var e=document.createElement('div');e.className='slotw empty';e.textContent='+';sh.appendChild(e)}}
+  if(!ids.length&&!me){sh.innerHTML='<p class="sum-best">Vitrine vide.</p>'}
+  el.appendChild(sh);
+  if(!me)return;
+  var bar=document.createElement('div');bar.className='lib-bar';
+  var eb=document.createElement('button');eb.type='button';eb.className='btn'+(PF.edit?'':' gold');
+  eb.textContent=PF.edit?'ANNULER':'MODIFIER MA VITRINE ('+d.slots+' emplacements)';
+  eb.onclick=function(){PF.edit=!PF.edit;PF.sel=(d.showcase||[]).slice();pfRender()};bar.appendChild(eb);
+  if(PF.edit){
+    var sb=document.createElement('button');sb.type='button';sb.className='btn gold';sb.textContent='ENREGISTRER';
+    sb.onclick=async function(){sb.disabled=true;var r=await SB.rpc('set_showcase',{p_cards:PF.sel});if(r.error){toast(r.error.message);sb.disabled=false;return}toast('Vitrine enregistrée.');showProfile(PF.uid,false)};
+    bar.appendChild(sb);
+  }
+  el.appendChild(bar);
+  if(PF.edit){
+    var g=document.createElement('div');g.className='sum-grid';
+    var own=DBCARDS.filter(function(c){return INV[c.id]}).sort(function(a,b){return (b.r-a.r)||(a.n<b.n?-1:1)});
+    own.forEach(function(c){
+      var m=document.createElement('div'),k=PF.sel.indexOf(c.id);
+      m.className='mini r'+c.r+(c.v==='holo'?' vh':'')+(k>=0?' sel':'');m.style.cursor='pointer';
+      m.innerHTML='<div class="face front">'+frontHTML(cardD(c))+'</div>'+(k>=0?'<i class="ord">'+(k+1)+'</i>':'');
+      m.onclick=function(){
+        var j=PF.sel.indexOf(c.id);
+        if(j>=0)PF.sel.splice(j,1);
+        else{if(PF.sel.length>=d.slots){toast('Vitrine pleine ('+d.slots+' max). Achète un classeur pour plus de place.');return}PF.sel.push(c.id)}
+        pfRender();
+      };
+      g.appendChild(m);
+    });
+    el.appendChild(g);return;
+  }
+  var h3=document.createElement('h3');h3.className='shop-h';h3.textContent='ACCESSOIRES';el.appendChild(h3);
+  var owned={};(d.items||[]).forEach(function(x){owned[x]=1});
+  (CFG.items||[]).forEach(function(it){
+    var c=document.createElement('div');c.className='shop-card';
+    var on=eq[it.kind]===it.id,btnT,dis=false;
+    if(!owned[it.id]){btnT=it.price+' PTS';dis=PTS<it.price}
+    else if(it.kind==='slots'){btnT='ACQUIS';dis=true}
+    else btnT=on?'RETIRER':'ÉQUIPER';
+    c.innerHTML='<div><b>'+esc(it.l)+'</b><span>'+esc(it.d)+'</span></div>';
+    var b=document.createElement('button');b.type='button';b.className='btn gold';b.textContent=btnT;b.disabled=dis;
+    b.onclick=async function(){
+      b.disabled=true;var r;
+      if(!owned[it.id])r=await SB.rpc('buy_item',{p_id:it.id});
+      else r=await SB.rpc('equip_item',{p_kind:it.kind,p_id:on?'':it.id});
+      if(r.error){toast(r.error.message);b.disabled=false;return}
+      if(!owned[it.id]){PTS=r.data;updPts();toast(it.l+' acheté !')}
+      showProfile(PF.uid,false);
+    };
+    c.appendChild(b);el.appendChild(c);
   });
 }
 
