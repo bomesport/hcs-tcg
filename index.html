@@ -406,6 +406,20 @@ button{font:inherit;color:inherit;cursor:pointer}
 }
 .shop-card>b{flex:1}
 @media (max-width:420px){.nav button{font-size:13px;letter-spacing:.08em}}
+
+#feedBar{position:fixed;left:0;right:0;bottom:0;z-index:40;height:26px;display:flex;align-items:center;justify-content:center;padding:0 10px;background:rgba(5,7,11,.88);border-top:1px solid rgba(212,175,55,.5);font-family:var(--display);letter-spacing:.1em;font-size:14px;color:var(--bone);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+#feedBar[hidden]{display:none}
+#feedBar b{color:var(--gold);font-weight:400;margin:0 4px}
+.prog{height:6px;border-radius:3px;background:rgba(245,245,245,.14);overflow:hidden;margin-top:4px}
+.prog i{display:block;height:100%;background:var(--gold)}
+.ach-card{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 12px;background:rgba(5,7,11,.62);border:1px solid rgba(245,245,245,.16);border-radius:6px}
+.shop-card{flex-wrap:wrap}
+.ach-card.done{border-color:rgba(212,175,55,.6)}
+.ach-card>div:first-child{flex:1;min-width:0}
+.ach-card b{font-family:var(--display);font-weight:400;letter-spacing:.08em;font-size:17px}
+.ach-card small{display:block;font-size:12px;color:rgba(245,245,245,.65)}
+.ach-card em{font-style:normal;font-family:var(--display);color:var(--gold);letter-spacing:.06em;font-size:15px;white-space:nowrap}
+.shop-card input.code{flex:1;min-width:0;height:42px;background:rgba(5,7,11,.7);color:var(--bone);border:1px solid rgba(245,245,245,.3);border-radius:4px;padding:0 10px;font:inherit;text-transform:uppercase;user-select:text;-webkit-user-select:text}
 </style>
 
 </head><body>
@@ -465,9 +479,8 @@ button{font:inherit;color:inherit;cursor:pointer}
       <div id="shopBody"></div>
     </section>
     <section id="rank" class="screen" hidden>
-      <h2 class="sum-title">CLASSEMENT</h2>
-      <p class="sum-best">Par nombre de cartes différentes.</p>
-      <div class="rank-list" id="rankList"></div>
+      <h2 class="sum-title">TOP</h2>
+            <div class="rank-list" id="rankList"></div>
     </section>
 <section id="admin" class="screen" hidden>
       <div class="ad-head"><button class="btn" id="adBack" type="button">← RETOUR</button><h2 class="ad-title">CARTES</h2><span class="ad-count" id="adCount"></span></div>
@@ -534,7 +547,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 <div id="flash"></div>
 <div id="cardView" hidden><div class="cv-in"><div id="cvCard"></div><p id="cvInfo"></p><div class="cv-act" id="cvSellRow"><input id="cvPrice" type="number" min="1" inputmode="numeric" aria-label="Prix de vente"><button class="btn gold" id="cvSell" type="button">VENDRE</button><button class="btn" id="cvTrade" type="button">ÉCHANGER</button></div><div class="cv-act"><button class="btn gold" id="cvRec" type="button" hidden></button><button class="btn" id="cvClose" type="button">FERMER</button></div></div></div>
 <div id="wheelView" hidden><div class="cv-in"><div class="wheel"><i class="wptr"></i><div id="wheelDisc"></div></div><p id="wheelMsg"></p><div class="cv-act"><button class="btn gold" id="wheelGo" type="button">TOURNER</button><button class="btn" id="wheelClose" type="button">FERMER</button></div></div></div>
-<div id="toast" hidden></div>
+<div id="toast" hidden></div><div id="feedBar" hidden></div>
 <div id="auth"><form class="auth-in" id="authForm" autocomplete="on">
   <img class="gate-hcs" src="img/hcs.png" alt="HCS">
   <div class="gate-brand">HCS <b>TCG</b></div>
@@ -584,7 +597,7 @@ var ICON={
 };
 
 /* ---------- Cartes : données et tirage ---------- */
-var SB=null,USER=null,PTS=0,INV={},LASTDAILY=null,LASTWHEEL=null,STREAK=0,STOCK=0,OPEN=null,CBYID={},CFG={unlocked:[1],prices:{booster:100,display:2200,case:24500},wheel:[],recycle:[3,8,40,150,400],daily:{amount:150,streak_every:7,streak_bonus:400},fee:.05},DBCARDS=[],SERCNT={},DB=null,USERNS=null,ASSETS=null,IS_ADMIN=false;
+var SB=null,USER=null,PTS=0,INV={},LASTDAILY=null,LASTWHEEL=null,LASTCOLLECT=null,PROG=null,STREAK=0,STOCK=0,OPEN=null,CBYID={},CFG={unlocked:[1],prices:{booster:100,display:2200,case:24500},wheel:[],recycle:[3,8,50,200,500],daily:{amount:100,streak_every:7,streak_bonus:400},hourly:{rate:10,cap_hours:10},ach:[],sets:[],fee:.05},DBCARDS=[],SERCNT={},DB=null,USERNS=null,ASSETS=null,IS_ADMIN=false;
 var SBURL='https://hlthpoluoyzjzzcjcopg.supabase.co',SBKEY='sb_publishable_LjnCkrmVzB_TGrtga1oGcA_6_2963qM';
 var CATS=[['joueur','Joueur BoM'],['pro','Scène Halo'],['equipe','Équipe'],['arme','Arme'],['vehicule','Véhicule'],['map','Map'],['mode','Mode'],['moment','Moment'],['rang','Rang'],['bom','BoM spécial']];
 var VARS=[['','Normale'],['holo','Holo'],['alt','Alt art'],['sign','Signée']];
@@ -1485,7 +1498,7 @@ $('#edPrev').addEventListener('pointermove',function(e){
 });
 
 /* ---------- Comptes, points, collection, boutique, marché (Supabase) ---------- */
-function toast(m){var t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(function(){t.hidden=true},3600)}
+function toast(m,ms){var t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(function(){t.hidden=true},ms||3600)}
 function parisToday(){return new Date().toLocaleDateString('en-CA',{timeZone:'Europe/Paris'})}
 function dailyReady(){return !LASTDAILY||String(LASTDAILY)<parisToday()}
 function wheelReady(){return !LASTWHEEL||String(LASTWHEEL)<parisToday()}
@@ -1531,13 +1544,16 @@ async function loadConfig(){
     else if(x.key==='wheel')CFG.wheel=x.value;
     else if(x.key==='recycle')CFG.recycle=x.value;
     else if(x.key==='daily')CFG.daily=x.value;
+    else if(x.key==='hourly')CFG.hourly=x.value;
+    else if(x.key==='achievements')CFG.ach=x.value;
+    else if(x.key==='sets')CFG.sets=x.value;
     else if(x.key==='market_fee')CFG.fee=+x.value;
   });
   updMid();
 }
 async function loadAll(){
   var p=await SB.from('profiles').select('*').eq('id',USER.id).maybeSingle();
-  if(p.data){PTS=p.data.points;LASTDAILY=p.data.last_daily;LASTWHEEL=p.data.last_wheel;STREAK=p.data.streak||0}
+  if(p.data){PTS=p.data.points;LASTDAILY=p.data.last_daily;LASTWHEEL=p.data.last_wheel;STREAK=p.data.streak||0;LASTCOLLECT=p.data.last_collect||null}
   var u=await SB.from('user_cards').select('card_id,qty').eq('user_id',USER.id);
   INV={};(u.data||[]).forEach(function(r){if(r.qty>0)INV[r.card_id]=r.qty});
   var s=await SB.rpc('stock_count');if(!s.error)STOCK=s.data||0;
@@ -1545,7 +1561,7 @@ async function loadAll(){
 }
 async function startSession(user){
   USER=user;await loadConfig();await loadAll();
-  $('#auth').hidden=true;updPts();
+  $('#auth').hidden=true;updPts();feedStart();checkAch();
 }
 function mkPull(c){
   var serial=c.maxPrint>0?'N° '+String(1+Math.floor(Math.random()*c.maxPrint)).padStart(2,'0')+'/'+c.maxPrint:'';
@@ -1580,7 +1596,7 @@ async function startCards(){
   if(rs.fromBottom)pulls.reverse();
   deck.innerHTML='';
   cards=pulls.map(buildSlot);cur=0;layout();buildDots();$('#cardhint').textContent='';startLoop();
-  updPts();
+  updPts();checkAch();
   var god=packs.some(function(p){return p.god});
   if(god)godFx();
   setTimeout(function(){arrive(cards[0])},god?2000:700);
@@ -1592,7 +1608,7 @@ async function quickOpen(n){
   var packs=r.data;STOCK=Math.max(0,STOCK-packs.length);
   pulls=pullsFrom(packs);markNew(pulls);
   pulls.sort(function(a,b){return b.r-a.r});
-  showOnly('#summary');stage='opening';showSummary();updPts();
+  showOnly('#summary');stage='opening';showSummary();updPts();checkAch();
   if(packs.some(function(p){return p.god}))godFx();
   setNav('intro');
 }
@@ -1601,7 +1617,7 @@ function setNav(t){
 }
 function goTab(t){
   if(['intro','summary','lib','rank','market','shop'].indexOf(stage)<0)return;
-  hideBanner();setNav(t);$('#cardView').hidden=true;
+  hideBanner();setNav(t);$('#cardView').hidden=true;checkAch();feedShow();
   if(t==='intro'){showOnly('#intro');stage='intro';tearBusy=false;buildPack();loadAll()}
   else if(t==='lib'){showOnly('#lib');stage='lib';loadAll().then(libRender)}
   else if(t==='market'){showOnly('#market');stage='market';loadAll().then(function(){mkRender()})}
@@ -1696,13 +1712,20 @@ async function recycleAll(){
 
 /* ----- Classement ----- */
 async function rankRender(){
-  var l=$('#rankList');l.innerHTML='<p class="sum-best">Chargement…</p>';
+  var l=$('#rankList');l.innerHTML='';
+  var bar=document.createElement('div');bar.className='lib-bar';
+  [['top','CLASSEMENT'],['obj','OBJECTIFS']].forEach(function(t){
+    var b=document.createElement('button');b.type='button';b.className='btn'+(RK===t[0]?' gold':'');b.textContent=t[1];
+    b.onclick=function(){RK=t[0];rankRender()};bar.appendChild(b);
+  });
+  l.appendChild(bar);
+  if(RK==='obj'){objRender(l);return}
+  var n=document.createElement('p');n.className='sum-best';n.textContent='Par valeur de collection (suit les prix du marché).';l.appendChild(n);
   var r=await SB.from('leaderboard').select('*').order('val',{ascending:false}).order('uniq',{ascending:false}).limit(50);
-  if(r.error){l.innerHTML='<p class="sum-best">Classement indisponible.</p>';return}
-  l.innerHTML='';
+  if(r.error){n.textContent='Classement indisponible.';return}
   (r.data||[]).forEach(function(p,i){
     var d=document.createElement('div');d.className='rank-row'+(USER&&p.id===USER.id?' me':'');
-    d.innerHTML='<b>'+(i+1)+'</b><span>'+esc(p.pseudo)+'</span><i>'+p.uniq+' cartes · '+p.points+' PTS</i>';
+    d.innerHTML='<b>'+(i+1)+'</b><span>'+esc(p.pseudo)+'</span><i>'+p.val+' de valeur · '+p.uniq+' cartes · '+p.points+' PTS</i>';
     l.appendChild(d);
   });
 }
@@ -1728,6 +1751,10 @@ function shopRender(){
   var h='<div class="shop-card"><b>'+STOCK+' booster'+(STOCK>1?'s':'')+' en stock</b><div class="cv-act">'
    +'<button class="btn gold" id="shOpen" type="button"'+(STOCK?'':' disabled')+'>OUVRIR</button>'
    +'<button class="btn" id="shQuick" type="button"'+(STOCK?'':' disabled')+'>OUVERTURE RAPIDE</button></div></div>';
+  var hp=hourPending();
+  h+='<h3 class="shop-h">BONUS</h3><div class="shop-card"><div><b>Points de l’heure : '+hp+' PTS</b><span>+'+CFG.hourly.rate+' PTS par heure, jusqu’à '+CFG.hourly.cap_hours+' h cumulées.</span><div class="prog"><i style="width:'+Math.round(100*Math.min(hp,CFG.hourly.rate*CFG.hourly.cap_hours)/(CFG.hourly.rate*CFG.hourly.cap_hours))+'%"></i></div></div>'
+   +'<button class="btn gold" id="shHour" type="button"'+(hp>0?'':' disabled')+'>'+(hp>0?'RÉCUPÉRER':'PATIENTE')+'</button></div>';
+  h+='<div class="shop-card"><input class="code" id="shCode" type="text" placeholder="CODE PROMO" maxlength="40" autocomplete="off" autocapitalize="characters"><button class="btn gold" id="shRedeem" type="button">VALIDER</button></div>';
   h+='<h3 class="shop-h">BONUS DU JOUR</h3><div class="shop-card"><div><b>Cadeau quotidien : +'+CFG.daily.amount+' PTS</b><span>Série : '+STREAK+' jour'+(STREAK>1?'s':'')+' · +'+CFG.daily.streak_bonus+' PTS tous les '+CFG.daily.streak_every+' jours</span></div>'
    +'<button class="btn gold" id="shDaily" type="button"'+(dailyReady()?'':' disabled')+'>'+(dailyReady()?'RÉCUPÉRER':'DÉJÀ PRIS')+'</button></div>';
   h+='<div class="shop-card"><div><b>Roue du jour</b><span>Rien, des points ou des boosters gratuits.</span></div>'
@@ -1740,6 +1767,8 @@ function shopRender(){
   $('#shOpen').onclick=function(){goTab('intro')};
   $('#shQuick').onclick=function(){quickOpen(300)};
   $('#shDaily').onclick=claimDaily;
+  $('#shHour').onclick=collectHour;
+  $('#shRedeem').onclick=redeemCode;
   $('#shWheel').onclick=openWheel;
   Array.prototype.forEach.call(el.querySelectorAll('[data-kind]'),function(b){
     b.onclick=function(){
@@ -1916,6 +1945,91 @@ async function initCaps(){
     var s=await SB.auth.getSession();
     if(s.data&&s.data.session)await startSession(s.data.session.user);
   }catch(e){}
+}
+
+/* ----- Points horaires, codes promo ----- */
+function hourPending(){
+  var h=CFG.hourly||{rate:10,cap_hours:10};
+  var lc=LASTCOLLECT?new Date(LASTCOLLECT).getTime():Date.now()-h.cap_hours*3600000;
+  var hrs=Math.floor((Date.now()-lc)/3600000);
+  return Math.max(0,Math.min(hrs,h.cap_hours))*h.rate;
+}
+async function collectHour(){
+  var r=await SB.rpc('collect_hourly');
+  if(r.error){toast(r.error.message);return}
+  if(!r.data.ok)toast('Rien à récupérer pour le moment.');
+  else toast('+'+r.data.gain+' PTS');
+  await loadAll();if(stage==='shop')shopRender();
+}
+async function redeemCode(){
+  var v=$('#shCode').value.trim();if(!v){toast('Entre un code.');return}
+  var r=await SB.rpc('redeem_code',{p_code:v});
+  if(r.error){toast(r.error.message);return}
+  var d=r.data,t=[];
+  if(d.pts)t.push('+'+d.pts+' PTS');
+  if(d.boosters)t.push('+'+d.boosters+' booster'+(d.boosters>1?'s':''));
+  if(d.card&&CBYID[d.card])t.push(CBYID[d.card].n);
+  toast('Code validé : '+(t.join(' · ')||'merci !'),5000);
+  await loadAll();checkAch();if(stage==='shop')shopRender();
+}
+
+/* ----- Flux des gros drops (24 h) ----- */
+var FEED=[],feedI=0,feedT=null,feedP=null;
+function feedStart(){
+  if(feedP)return;
+  var load=async function(){
+    var r=await SB.from('feed_v').select('*').order('id',{ascending:false}).limit(20);
+    if(!r.error)FEED=r.data||[];feedShow();
+  };
+  load();feedP=setInterval(load,60000);
+  feedT=setInterval(function(){feedI++;feedShow()},4500);
+}
+function feedShow(){
+  var el=$('#feedBar');if(!el)return;
+  var okStage=['intro','summary','lib','rank','market','shop'].indexOf(stage)>=0;
+  if(!USER||!FEED.length||!okStage){el.hidden=true;return}
+  var f=FEED[feedI%FEED.length],c=CBYID[f.card_id];
+  el.innerHTML=(f.god?'GOD PACK · ':'')+esc(f.pseudo)+' a sorti <b>'+esc(c?c.n:f.card_id)+'</b> · '+(RAR[f.rarity]?RAR[f.rarity].n:'');
+  el.hidden=false;
+}
+
+/* ----- Objectifs ----- */
+var RK='top';
+async function checkAch(){
+  if(!USER)return;
+  var r=await SB.rpc('check_achievements');
+  if(r.error||!r.data||!r.data.length)return;
+  var pts=0,b=0;r.data.forEach(function(x){pts+=x.pts;b+=x.b});
+  await loadAll();
+  var msg=r.data.length===1?(r.data[0].kind==='set'?'COLLECTION COMPLÈTE : ':'OBJECTIF : ')+r.data[0].l:r.data.length+' objectifs débloqués !';
+  toast(msg+' · '+(pts?'+'+pts+' PTS':'')+(b?' +'+b+' booster'+(b>1?'s':''):''),6000);
+  if(stage==='rank')rankRender();
+  if(stage==='shop')shopRender();
+}
+async function objRender(l){
+  l.innerHTML+='<p class="sum-best">Chargement…</p>';
+  var r=await SB.rpc('my_progress');
+  var box=l.querySelector('p.sum-best');
+  if(r.error){box.textContent='Objectifs indisponibles.';return}
+  box.remove();
+  var st=r.data.stats,cl={};r.data.claimed.forEach(function(x){cl[x]=1});
+  var sp={};r.data.sets.forEach(function(s){sp[s.id]=s});
+  function card(label,sub,cur,max,done,rew){
+    var d=document.createElement('div');d.className='ach-card'+(done?' done':'');
+    d.innerHTML='<div><b>'+esc(label)+'</b><small>'+esc(sub)+'</small><div class="prog"><i style="width:'+Math.round(100*Math.min(cur,max)/max)+'%"></i></div></div><em>'+(done?'✓':rew)+'</em>';
+    l.appendChild(d);
+  }
+  var rewT=function(x){return (x.pts?x.pts+' PTS':'')+(x.pts&&x.b?' + ':'')+(x.b?x.b+' booster'+(x.b>1?'s':''):'')};
+  var h=document.createElement('h3');h.className='shop-h';h.textContent='OBJECTIFS';l.appendChild(h);
+  CFG.ach.forEach(function(a){
+    var cur=a.t==='rar'?(st.rar>=a.n?1:0):(st[a.t]||0),max=a.t==='rar'?1:a.n;
+    card(a.l,a.t==='rar'?'':Math.min(cur,max)+' / '+max,cur,max,!!cl['a:'+a.id],rewT(a));
+  });
+  var h2=document.createElement('h3');h2.className='shop-h';h2.textContent='COLLECTIONS COMPLÈTES';l.appendChild(h2);
+  CFG.sets.forEach(function(s){
+    var p=sp[s.id]||{own:0,need:1};if(!p.need)return;
+    card(s.l,p.own+' / '+p.need,p.own,p.need,!!cl['s:'+s.id],rewT(s));
+  });
 }
 
 $('#gateGo').addEventListener('click',function(){
