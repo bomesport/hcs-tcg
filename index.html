@@ -515,6 +515,10 @@ button{font:inherit;color:inherit;cursor:pointer}
 .f-team{position:absolute;left:0;top:15%;bottom:36%;width:calc(var(--cw)*.085);display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,var(--tcol),color-mix(in srgb,var(--tcol) 70%,#000));border-radius:0 calc(var(--cw)*.02) calc(var(--cw)*.02) 0;box-shadow:2px 0 8px rgba(0,0,0,.55);z-index:3;overflow:hidden}
 .f-team span{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--display);font-size:calc(var(--cw)*var(--tf));letter-spacing:.14em;text-transform:uppercase;white-space:nowrap;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.8)}
 .mini.unk.ghost .front{display:block;opacity:.3;filter:grayscale(.75) brightness(.8)}.mini.unk.ghost::before{display:none}
+.mini .sn{position:absolute;left:3px;right:3px;bottom:3px;z-index:3;background:rgba(5,7,11,.88);border:1px solid var(--gold);color:var(--gold);font-style:normal;font-size:10px;line-height:1.3;text-align:center;border-radius:4px;padding:1px 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mk-drop{opacity:.85;font-size:11px}
+.cv-serlist{max-height:130px;overflow:auto;font-size:13px;line-height:1.6;margin:4px 0 8px;text-align:center}.cv-serlist b{color:var(--gold)}
+.lib-rare{font-size:12px;line-height:1.7;margin:2px 0 10px;opacity:.92}.lib-rare span{display:block}.lib-rare b{color:var(--gold)}
 .au-row{flex-wrap:wrap}.au-row .mk-info{flex:1 1 55%;min-width:0}.au-row .au-act{flex:1 1 100%;justify-content:flex-end}
 .au-bid b{font-size:inherit!important;display:inline!important;letter-spacing:0!important;font-family:inherit!important;text-transform:none!important;color:var(--gold,#f5c542)}
 .au-row .au-act{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
@@ -1820,7 +1824,8 @@ async function loadAll(){
   if(p.data){PTS=p.data.points;LASTDAILY=p.data.last_daily;LASTWHEEL=p.data.last_wheel;STREAK=p.data.streak||0;LASTCOLLECT=p.data.last_collect||null;XP=p.data.xp||0}
   var u=await SB.from('user_cards').select('card_id,qty').eq('user_id',USER.id);
   INV={};(u.data||[]).forEach(function(r){if(r.qty>0)INV[r.card_id]=r.qty});
-  try{var cp=await SB.rpc('my_copies');COPIES={};if(!cp.error)(cp.data||[]).forEach(function(r){(COPIES[r.card_id]=COPIES[r.card_id]||[]).push({s:r.serial,k:r.case_kind||''})})}catch(e){}
+  try{var cp=await SB.rpc('my_copies');COPIES={};if(!cp.error)(cp.data||[]).forEach(function(r){(COPIES[r.card_id]=COPIES[r.card_id]||[]).push({s:r.serial,k:r.case_kind||'',d:r.dropper_pseudo||''})})}catch(e){}
+  try{var rl=await SB.rpc('rare_left');RARE=rl.error?[]:(rl.data||[])}catch(e){}
   try{var cq=await SB.rpc('my_cases');CASEQ={};if(!cq.error)(cq.data||[]).forEach(function(r){CASEQ[r.kind]=r.qty})}catch(e){}
   var s=await SB.rpc('stock_by_series');
   if(!s.error&&s.data)STOCKS=s.data;
@@ -2058,6 +2063,8 @@ function libRender(){
     return '<span class="ms-chip r'+r+(o===t.length?' done':'')+(LIB.r===r?' on':'')+'" data-r="'+r+'">'+RAR[r].n+' '+o+'/'+t.length+'</span>';
   }).join('');
   Array.prototype.forEach.call(ms.querySelectorAll('.ms-chip'),function(ch){ch.onclick=function(){var r=+ch.getAttribute('data-r');LIB.r=LIB.r===r?-1:r;$('#libRar').value=String(LIB.r);libRender()}});
+  var rr=$('#libRare');if(!rr){rr=document.createElement('div');rr.id='libRare';rr.className='lib-rare';ms.parentNode.insertBefore(rr,ms.nextSibling)}
+  rr.innerHTML=rareTxt();rr.hidden=!rr.innerHTML;
   var allOwn=Object.keys(INV).length,allTot=DBCARDS.filter(function(c){return c.active&&!isSec(c)&&CFG.unlocked.indexOf(c.s)>=0}).length;
   $('#libCount').textContent=own+'/'+list.length+' · TOTAL '+allOwn+'/'+allTot;
   var dups=0,gain=0;
@@ -2071,13 +2078,15 @@ function libRender(){
   shown.forEach(function(c){
     var q=INV[c.id]||0,m=document.createElement('div');
     m.className='mini r'+c.r+(c.v==='holo'?' vh':'')+(q?'':' unk');
-    if(q){m.innerHTML='<div class="face front">'+frontHTML(cardD(c),1)+'</div>'+(q>1?'<i class="qty">x'+q+'</i>':'');m.style.cursor='pointer';m.onclick=function(){openView(c)}}
+    if(q){m.innerHTML='<div class="face front">'+frontHTML(cardD(c),1)+'</div>'+(q>1?'<i class="qty">x'+q+'</i>':'')+(q>1&&c.maxPrint>0?snTag(c):'');m.style.cursor='pointer';m.onclick=function(){openView(c)}}
     else if(c.r<=2){m.className+=' ghost';m.innerHTML='<div class="face front">'+frontHTML(cardD(c),1)+'</div>'}
     g.appendChild(m);
   });
 }
 var SELLDEF=[10,30,120,500,2000];
-var COPIES={},CASEQ={};
+var COPIES={},CASEQ={},RARE=[];
+function snTag(c){var a=(COPIES[c.id]||[]).filter(function(x){return x.s>0}).map(function(x){return String(x.s).padStart(2,'0')}).sort();return a.length?'<i class="sn">N° '+a.slice(0,4).join(' · ')+(a.length>4?' …':'')+'</i>':''}
+function rareTxt(){var out=[];[['mythique','MYTHIQUES À TROUVER'],['secret','SECRETS À TROUVER']].forEach(function(k){var p=[];CFG.unlocked.slice().sort().forEach(function(n){var r=RARE.filter(function(x){return x.series===n&&x.kind===k[0]})[0];if(r)p.push('S'+n+' <b>'+r.restants+'</b>/'+r.total)});if(p.length)out.push('<span>'+k[1]+' · '+p.join(' · ')+'</span>')});return out.join('')}
 function caseL(k){return (CFG.cases&&CFG.cases[k]&&CFG.cases[k].l)||k}
 function caseB(k){return (CFG.cases&&CFG.cases[k]&&CFG.cases[k].bonus)||0}
 function openView(c){
@@ -2091,7 +2100,9 @@ function openView(c){
   var free=cps.filter(function(x){return !x.k}),defCp=free.length?free[free.length-1]:cps[cps.length-1];
   paintCard(defCp&&defCp.k);
   var shown=cps.map(function(x,i){return (c.maxPrint>0||x.k)?lab(x,i):''}).filter(Boolean);
-  $('#cvInfo').textContent=RAR[c.r].n+' · '+q+' exemplaire'+(q>1?'s':'')+(shown.length&&shown.length<=6?' · '+shown.join(', '):'');
+  $('#cvInfo').textContent=RAR[c.r].n+' · '+q+' exemplaire'+(q>1?'s':'');
+  var sl=$('#cvSerList');if(!sl){sl=document.createElement('div');sl.id='cvSerList';sl.className='cv-serlist';$('#cvInfo').parentNode.insertBefore(sl,$('#cvInfo').nextSibling)}
+  sl.innerHTML=cps.map(function(x,i){if(!(c.maxPrint>0||x.k||x.d))return '';return '<div><b>'+(c.maxPrint>0?serTxt(x.s,c.maxPrint):'Exemplaire '+(i+1))+'</b>'+(x.k?' · 🛡 '+esc(caseL(x.k)):'')+(x.d?' · drop : '+esc(x.d):'')+'</div>'}).join('');
   var nfree=cps.length?free.length:q;
   var b=$('#cvRec');b.hidden=q<2||nfree<1;b.textContent='RECYCLER 1 DOUBLON · +'+CFG.recycle[c.r]+' PTS';
   b.onclick=async function(){
@@ -2461,7 +2472,7 @@ function mkList(list,body){
     if(ref&&l.case_kind)ref=Math.round(ref*(1+caseB(l.case_kind)));
     if(ref){var df=Math.round((l.price-ref)/ref*100);cote='<span class="mk-cote">Cote '+ref+' PTS'+(df<=-3?' · <em class="dn">'+df+' %</em>':df>=3?' · <em class="up">+'+df+' %</em>':'')+'</span>'}
     else cote='<span class="mk-cote">Cote : pas encore de vente</span>';
-    row.innerHTML=miniHTML(c)+'<div class="mk-info"><b>'+esc(c.n)+'</b><span>'+rarN(c.r)+(MK.tab==='buy'?' · '+esc(l.seller_pseudo)+(own?' · tu en as '+own:''):'')+'</span>'+(l.serial&&c.maxPrint?'<span class="mk-ex">Exemplaire '+serTxt(l.serial,c.maxPrint)+'</span>':'')+(l.case_kind?'<span class="mk-case">🛡 '+esc(caseL(l.case_kind))+' · +'+Math.round(100*caseB(l.case_kind))+' % de valeur</span>':'')+'<span>'+(no?'N° '+no+'/'+tot:'')+(c.maxPrint?(no?' · ':'')+'tirage '+c.maxPrint:'')+'</span>'+cote+'<span class="mk-more">▾ voir la courbe</span></div>';
+    row.innerHTML=miniHTML(c)+'<div class="mk-info"><b>'+esc(c.n)+'</b><span>'+rarN(c.r)+(MK.tab==='buy'?' · '+esc(l.seller_pseudo)+(own?' · tu en as '+own:''):'')+'</span>'+(l.serial&&c.maxPrint?'<span class="mk-ex">Exemplaire '+serTxt(l.serial,c.maxPrint)+'</span>':'')+(l.dropper_pseudo?'<span class="mk-drop">Drop · '+esc(l.dropper_pseudo)+'</span>':'')+(l.case_kind?'<span class="mk-case">🛡 '+esc(caseL(l.case_kind))+' · +'+Math.round(100*caseB(l.case_kind))+' % de valeur</span>':'')+'<span>'+(no?'N° '+no+'/'+tot:'')+(c.maxPrint?(no?' · ':'')+'tirage '+c.maxPrint:'')+'</span>'+cote+'<span class="mk-more">▾ voir la courbe</span></div>';
     if(MK.tab==='buy'&&!own){row.classList.add('mk-new');row.insertAdjacentHTML('afterbegin','<i class="mk-newb">NOUVELLE</i>')}
     if(l.created_at){var ag=Math.max(0,Math.round((Date.now()-new Date(l.created_at).getTime())/60000)),agt=ag<2?'à l’instant':ag<60?'il y a '+ag+' min':ag<1440?'il y a '+Math.round(ag/60)+' h':'il y a '+Math.round(ag/1440)+' j';row.querySelector('.mk-info').insertAdjacentHTML('beforeend','<span class="mk-ago">'+agt+'</span>')}
     var det=document.createElement('div');det.className='ct-box mk-det';det.hidden=true;
@@ -2505,6 +2516,7 @@ async function aucRender(body){
     var mine=INV[c.id]||0;
     row.innerHTML=miniHTML(c)+'<div class="mk-info"><b>'+esc(c.n)+'</b><span>'+rarN(c.r)+' · '+esc(a.seller_pseudo)+(!own&&!mine?' · <em class="au-new">NOUVELLE</em>':'')+'</span>'
       +(a.serial&&c.maxPrint?'<span class="mk-ex">Exemplaire '+serTxt(a.serial,c.maxPrint)+'</span>':'')
+      +(a.dropper_pseudo?'<span class="mk-drop">Drop · '+esc(a.dropper_pseudo)+'</span>':'')
       +(a.case_kind?'<span class="mk-case">🛡 '+esc(caseL(a.case_kind))+' · +'+Math.round(100*caseB(a.case_kind))+' % de valeur</span>':'')
       +'<span class="au-bid">'+(a.bid!=null?'Mise actuelle : <b>'+a.bid+' PTS</b> · '+esc(a.bidder_pseudo||'?')+' ('+a.bids+' mise'+(a.bids>1?'s':'')+')':'Départ : <b>'+a.start_price+' PTS</b> · aucune mise')+'</span>'
       +'<span class="au-t" data-end="'+new Date(a.end_at).getTime()+'">…</span>'+(lead?'<span class="au-you">✓ TU ES EN TÊTE</span>':'')+'</div>';
