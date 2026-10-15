@@ -514,6 +514,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .rp-st i{min-width:24px;text-align:center;font-style:normal;font-weight:700}
 .f-team{position:absolute;left:0;top:15%;bottom:36%;width:calc(var(--cw)*.085);display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,var(--tcol),color-mix(in srgb,var(--tcol) 70%,#000));border-radius:0 calc(var(--cw)*.02) calc(var(--cw)*.02) 0;box-shadow:2px 0 8px rgba(0,0,0,.55);z-index:3;overflow:hidden}
 .f-team span{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--display);font-size:calc(var(--cw)*var(--tf));letter-spacing:.14em;text-transform:uppercase;white-space:nowrap;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+.mini.unk.ghost .front{display:block;opacity:.3;filter:grayscale(.75) brightness(.8)}.mini.unk.ghost::before{display:none}
 .au-row{flex-wrap:wrap}.au-row .mk-info{flex:1 1 55%;min-width:0}.au-row .au-act{flex:1 1 100%;justify-content:flex-end}
 .au-bid b{font-size:inherit!important;display:inline!important;letter-spacing:0!important;font-family:inherit!important;text-transform:none!important;color:var(--gold,#f5c542)}
 .au-row .au-act{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
@@ -2071,6 +2072,7 @@ function libRender(){
     var q=INV[c.id]||0,m=document.createElement('div');
     m.className='mini r'+c.r+(c.v==='holo'?' vh':'')+(q?'':' unk');
     if(q){m.innerHTML='<div class="face front">'+frontHTML(cardD(c),1)+'</div>'+(q>1?'<i class="qty">x'+q+'</i>':'');m.style.cursor='pointer';m.onclick=function(){openView(c)}}
+    else if(c.r<=2){m.className+=' ghost';m.innerHTML='<div class="face front">'+frontHTML(cardD(c),1)+'</div>'}
     g.appendChild(m);
   });
 }
