@@ -422,7 +422,13 @@ button{font:inherit;color:inherit;cursor:pointer}
 .fr-slab::before{content:'BoM · 10 GEM MINT';position:absolute;left:4px;right:4px;top:3px;height:17px;display:grid;place-items:center;background:#0e1d3d;color:#fff;font-family:var(--display);letter-spacing:.1em;font-size:10px;border-radius:2px}
 .st-bois{background:linear-gradient(#3a2614,#5a3a1e 70%,#7a4f27);border-color:#9a6a35;box-shadow:inset 0 -10px 0 #2b1a0c}
 .st-verre{background:linear-gradient(160deg,rgba(120,180,255,.28),rgba(20,40,80,.55));border-color:rgba(150,200,255,.7);box-shadow:inset 0 0 22px rgba(150,200,255,.35)}
-.st-podium{background:linear-gradient(#0c1a3a,#0a0f1d);border:2px solid var(--gold);box-shadow:inset 0 -14px 0 var(--hcs)}
+.st-podium{background:radial-gradient(ellipse at 50% 0,rgba(212,175,55,.3),transparent 65%),linear-gradient(#0c1a3a,#070b16);border:2px solid var(--gold);box-shadow:inset 0 -12px 0 var(--hcs),0 0 20px rgba(212,175,55,.25);align-items:flex-end;padding:34px 10px 30px}
+.st-podium .slotw{margin-bottom:16px}
+.st-podium .slotw::after{content:'';position:absolute;left:-7px;right:-7px;bottom:-16px;height:16px;background:linear-gradient(#f4dc86,#b8932c 55%,#6e5614);border-radius:2px;box-shadow:0 5px 10px rgba(0,0,0,.65);pointer-events:none}
+.st-podium .slotw:first-child{transform:translateY(-16px)}
+.st-podium .slotw:first-child::after{height:32px;bottom:-32px;background:linear-gradient(#fff0a8,#d4af37 45%,#6e5614)}
+.st-podium .slotw.empty::after{display:none}
+.st-podium .slotw.empty{margin-bottom:0}
 .mini.sel{outline:3px solid var(--gold);outline-offset:1px}
 .mini .ord{position:absolute;left:4px;top:4px;z-index:3;background:var(--gold);color:#000;font-style:normal;font-family:var(--display);font-size:13px;padding:1px 7px;border-radius:10px}
 .rank-row[data-uid]{cursor:pointer}
