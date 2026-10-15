@@ -1862,7 +1862,7 @@ async function recycleAll(){
 /* ----- Classement ----- */
 var RKDATA=null,PSORT='val',PQ='';
 async function rankRender(){
-  var l=$('#rankList');l.innerHTML='';
+  var l=$('#rankList');l.innerHTML='';PQ='';
   $('#rankTitle').textContent=RK==='obj'?'OBJECTIFS':'JOUEURS';
   if(RK==='obj'){objRender(l);return}
   var bar=document.createElement('div');bar.className='lib-bar';
@@ -1870,14 +1870,14 @@ async function rankRender(){
     var b=document.createElement('button');b.type='button';b.className='serbtn'+(PSORT===t[0]?' on':'');b.textContent=t[1];
     b.onclick=function(){PSORT=t[0];plRender()};bar.appendChild(b);
   });
-  var q=document.createElement('input');q.type='search';q.id='plQ';q.placeholder='Chercher un joueur';q.value=PQ;q.autocomplete='off';
-  q.oninput=function(){PQ=q.value;plRender()};bar.appendChild(q);
+  var q=document.createElement('input');q.type='text';q.name='pl-filter-'+Date.now();q.id='plQ';q.placeholder='Chercher un joueur';q.value='';q.setAttribute('autocomplete','off');q.setAttribute('data-lpignore','true');
+  q.oninput=function(){PQ=q.value;plRender()};setTimeout(function(){if(!PQ)q.value=''},400);bar.appendChild(q);
   l.appendChild(bar);
   var n=document.createElement('p');n.className='sum-best';n.id='plNote';n.textContent='Touche un joueur pour voir sa vitrine.';l.appendChild(n);
   var box=document.createElement('div');box.id='plList';l.appendChild(box);
   var r=await SB.from('leaderboard').select('*').order('val',{ascending:false}).order('uniq',{ascending:false}).limit(500);
-  if(r.error){n.textContent='Liste indisponible.';return}
-  RKDATA=r.data||[];plRender();
+  if(r.error){n.textContent='Liste indisponible : '+r.error.message;return}
+  RKDATA=r.data||[];n.textContent=RKDATA.length+' joueurs · touche-en un pour voir sa vitrine.';plRender();
 }
 function plRender(){
   var box=$('#plList');if(!box||!RKDATA)return;
