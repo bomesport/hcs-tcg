@@ -494,7 +494,25 @@ button{font:inherit;color:inherit;cursor:pointer}
 .ser2 .pk-ser{color:rgba(243,231,184,.75)}
 .ser2 .pk-aura{background:radial-gradient(closest-side,rgba(255,122,200,.7),rgba(122,232,255,.3) 58%,transparent 78%)}
 .pk-amp{position:absolute;left:0;right:0;top:calc(var(--ph)*.1);text-align:center;font-family:var(--display);font-size:calc(var(--pw)*1.15);line-height:1;color:rgba(255,255,255,.07);pointer-events:none}
-.slot .inner{transition:transform .6s cubic-bezier(.2,.8,.2,1)}.slot.facedown .inner{transform:rotateY(180deg)}.slot .face.back{transform:rotateY(180deg)}@media (prefers-reduced-motion:reduce){.slot .inner{transition:none}}</style>
+.slot .inner{transition:transform .6s cubic-bezier(.2,.8,.2,1)}.slot.facedown .inner{transform:rotateY(180deg)}.slot .face.back{transform:rotateY(180deg)}@media (prefers-reduced-motion:reduce){.slot .inner{transition:none}}#dceView{position:fixed;inset:0;z-index:37;background:rgba(5,7,11,.985);overflow-y:auto;display:grid;justify-items:center;align-items:start;padding:14px 0 60px}
+#dceView[hidden]{display:none}
+.dce-in{width:min(560px,100%);padding:0 14px;display:grid;gap:12px}
+.dce-in h3{font-family:var(--display);font-weight:400;font-size:24px;letter-spacing:.1em;margin:0;color:var(--gold)}
+.dce-in p{margin:0;color:rgba(245,245,245,.75)}
+.dce-req h4{font-family:var(--display);font-weight:400;letter-spacing:.08em;font-size:16px;margin:6px 0 8px;display:flex;justify-content:space-between}
+.dce-req h4 span{color:var(--gold)}
+.dce-req .mini.dim{opacity:.3}
+.dce-in .cv-act{position:sticky;bottom:0;background:linear-gradient(transparent,rgba(5,7,11,.97) 30%);padding:18px 0 4px;justify-content:center}
+.dce-in .btn.red{border-color:#e5484d;color:#fff;background:#8e1b20}
+.dce-rw{color:var(--gold)!important}
+.lvl{margin:6px 0 10px;font-family:var(--display);letter-spacing:.08em}
+.lvl b{color:var(--gold);font-weight:400;font-size:19px}
+.lvl span{float:right;font-size:12px;opacity:.7}
+.lvl .prog{margin-top:6px}
+.medals{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px}
+.medal{padding:4px 9px;border:1px solid rgba(212,175,55,.55);border-radius:99px;font-size:12px;background:rgba(5,7,11,.6);white-space:nowrap}
+.lvtag{font-style:normal;font-size:11px;color:var(--gold);letter-spacing:.08em;margin-left:6px}
+</style>
 
 </head><body>
 <div id="app">
@@ -627,6 +645,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 <div id="insp" hidden><div class="cv-in"><div id="inspStage"><div id="inspCard"></div></div><p id="inspInfo"></p><div class="cv-act"><button class="btn gold" id="inspFlip" type="button">RETOURNER</button><button class="btn" id="inspClose" type="button">FERMER</button></div><p class="insp-h">Glisse pour faire tourner la carte.</p></div></div>
 <div id="mfx"></div>
 <div id="cardView" hidden><div class="cv-in"><div id="cvCard"></div><p id="cvInfo"></p><div class="cv-act" id="cvSellRow"><input id="cvPrice" type="number" min="1" inputmode="numeric" aria-label="Prix de vente"><button class="btn gold" id="cvSell" type="button">VENDRE</button><button class="btn" id="cvTrade" type="button">ÉCHANGER</button></div><div class="cv-act"><button class="btn gold" id="cvRec" type="button" hidden></button><button class="btn" id="cvClose" type="button">FERMER</button></div></div></div>
+<div id="dceView" hidden><div class="dce-in"><h3 id="dceT"></h3><p id="dceD"></p><div id="dceReqs"></div><div class="cv-act"><button class="btn gold" id="dceGo" type="button">VALIDER LE DÉFI</button><button class="btn" id="dceX" type="button">ANNULER</button></div></div></div>
 <div id="wheelView" hidden><div class="cv-in"><div class="wheel"><i class="wptr"></i><div id="wheelDisc"></div></div><p id="wheelMsg"></p><div class="cv-act"><button class="btn gold" id="wheelGo" type="button">TOURNER</button><button class="btn" id="wheelClose" type="button">FERMER</button></div></div></div>
 <div id="toast" hidden></div><div id="feedBar" hidden></div>
 <div id="auth"><form class="auth-in" id="authForm" autocomplete="on">
@@ -1184,17 +1203,19 @@ function imgSrc(d){
 var TCOL={'Shopify Rebellion':'#95bf47','Cloud9':'#1aa5e3','FaZe Clan':'#e43d30','Complexity':'#c8102e'},TPAL=['#3a7bd5','#c0392b','#8e44ad','#16a085','#d35400','#2c82c9','#b8860b','#e84393'];
 function teamCol(d){var m=/·\s*(.+)$/.exec(d.f||''),t=m?m[1].trim():'';if(TCOL[t])return TCOL[t];var h=0,k;for(k=0;k<t.length;k++)h=(h*31+t.charCodeAt(k))>>>0;return TPAL[h%TPAL.length]}
 function isBoM(d){return /^(joueur|leg|myth)-/.test(d.id||'')||d.t==='bom'}
-function frontHTML(d){
-  var src=imgSrc(d),vt=d.v==='holo'?' · HOLO':d.v==='alt'?' · ALT ART':d.v==='sign'?' · SIGNÉE':'';
+var THUMB_OK=false;
+function frontHTML(d,sm){
+  var src=imgSrc(d);if(sm&&THUMB_OK&&/^img\/[^\/]+\.webp$/.test(src))src=src.replace('img/','img/t/');
+  var vt=d.v==='holo'?' · HOLO':d.v==='neg'?' · NÉGATIF':d.v==='alt'?' · ALT ART':d.v==='sign'?' · SIGNÉE':'',sec=String(d.id).indexOf('sec-')===0;
   var bom=isBoM(d),gen=!src&&(d.t==='pro'||d.t==='joueur'||d.t==='bom');
-  return '<div class="in'+(src?' full':gen?' gen':'')+'"'+(src?' style="--img:url(\''+src+'\')"':gen?' style="--tc:'+(bom?'#c9a227':teamCol(d))+'"':'')+'><div class="f-top"><div class="f-type">'+esc(TYPE[d.t]||String(d.t).toUpperCase())+'</div><div class="f-ovr">'+d.ovr+'<small>OVR</small></div></div>'+
-    '<div class="f-art">'+(gen&&bom?'<img class="f-wmlogo" src="img/bom-white.png" alt="">':gen?'<div class="f-wm" style="--wf:'+Math.min(.46,.95/Math.max(3,String(d.n).length)).toFixed(3)+'">'+esc(d.n)+'</div>':(ICON[d.t]||ICON.moment))+'</div><div class="f-name">'+esc(d.n)+'</div><div class="f-rar">◆ '+RAR[d.r].n+vt+' ◆</div>'+
+  return '<div class="in'+(src?' full':gen?' gen':'')+'"'+(src?' style="--img:url(\''+src+'\')"':gen?' style="--tc:'+(bom?'#c9a227':teamCol(d))+'"':'')+'><div class="f-top"><div class="f-type">'+esc(sec?'SECRET':(TYPE[d.t]||String(d.t).toUpperCase()))+'</div><div class="f-ovr">'+d.ovr+'<small>OVR</small></div></div>'+
+    '<div class="f-art">'+(gen&&bom?'<img class="f-wmlogo" src="img/bom-white.png" alt="">':gen?'<div class="f-wm" style="--wf:'+Math.min(.46,.95/Math.max(3,String(d.n).length)).toFixed(3)+'">'+esc(d.n)+'</div>':(ICON[d.t]||ICON.moment))+'</div><div class="f-name">'+esc(d.n)+'</div><div class="f-rar">◆ '+(sec?'SECRET':RAR[d.r].n)+vt+' ◆</div>'+
     '<div class="f-flav">'+esc(d.f)+'</div><div class="f-foot"><span>'+(bom?'<img class="f-bm" src="img/bom-white.png" alt="">':'')+'HCS · S0'+(d.s||1)+' · '+d.no+'/'+d.tot+'</span><span class="ser">'+d.serial+'</span></div></div>'+
     '<div class="holo"></div><div class="glare"></div>';
 }
 function buildSlot(d,i){
   var s=document.createElement('div');
-  s.className='slot facedown r'+d.r+(d.v==='holo'?' vh':'');s.style.zIndex=20-i;s.style.setProperty('--d',i);
+  s.className='slot'+(rs.fromBottom?' facedown':'')+' r'+d.r+(d.v==='holo'?' vh':'');s.style.zIndex=20-i;s.style.setProperty('--d',i);
   s.innerHTML='<div class="card"><div class="aura"></div><div class="tilt"><div class="inner"><div class="face front">'+frontHTML(d)+'</div><div class="face back imgback" style="background-image:url(img/back'+(d.s===2?2:1)+'.webp)"></div></div></div></div>';
   s.addEventListener('animationend',function(){s.style.animation='none'},{once:true});
   deck.appendChild(s);
@@ -1258,6 +1279,7 @@ function activate(c){
   if(r>=2){flashFx(r===4?'#ffffff':RAR[r].col,r===4?.85:r===3?.6:.4);ringFx(cx,cy,r===4?'#fff1c9':RAR[r].col,r>=3?11:8)}
   if(r>=3&&!RM){var st=$('#stage');st.classList.remove('shake','long');void st.offsetWidth;st.classList.add('shake');if(r===4)st.classList.add('long')}
   if(r===4&&!RM)mythicFx(cx,cy);
+  if(String(c.data.id).indexOf('sec-')===0){var sp=document.querySelector('#banner span');if(sp)sp.innerHTML='<i class="prismtxt">SECRET</i>';if(!RM){setTimeout(function(){mythicFx(cx,cy)},2300)}}
   vib([[0],[15],[25,30,25],[40,40,40,40,90],[60,50,60,50,60,50,160,80,200,80,260]][r]);
 }
 function mythicFx(cx,cy){
@@ -1274,6 +1296,7 @@ function peek(pk){
   var n=cards[cur+1];if(!n||n.st==='out')return;
   n.slot.style.setProperty('--d',(1-pk).toFixed(3));
   n.slot.style.setProperty('--aura',(RAR[n.data.r].aura*pk*.8).toFixed(3));
+  if(n.st==='wait')n.slot.classList.toggle('facedown',pk<.12);
 }
 function snapBack(c){
   c.card.style.transition='transform .4s cubic-bezier(.2,1.5,.4,1)';
@@ -1340,7 +1363,7 @@ function showSummary(){
   var shown=pulls.length>12?pulls.filter(function(d){return d.r>=2}).slice(0,80):pulls;
   shown.forEach(function(d){
     var m=document.createElement('div');m.className='mini r'+d.r+(d.v==='holo'?' vh':'')+(d===best&&d.r>=2?' top':'');
-    m.innerHTML='<div class="face front">'+frontHTML(d)+'</div>';
+    m.innerHTML='<div class="face front">'+frontHTML(d,1)+'</div>';
     if(d.isNew)m.insertAdjacentHTML('beforeend','<i class="newb">NEW</i>');
     g.appendChild(m);
   });
@@ -1632,8 +1655,8 @@ function updPts(){
   var n=$('#nav');if(n)n.hidden=!USER;
   $('#costLine').textContent='BOOSTERS EN STOCK : '+STOCK;
   var b=$('#buy1');b.hidden=!(USER&&STOCK<1);serBar($('#serSel'));
-  b.textContent='ACHETER 1 BOOSTER'+(CFG.unlocked.length>1?' '+serName(SSEL):'')+' · '+CFG.prices.booster+' PTS';b.disabled=PTS<CFG.prices.booster;
-  var sh=document.querySelector('#nav [data-tab=shop]');if(sh)sh.classList.toggle('dot',!!USER&&(dailyReady()||wheelReady()));
+  b.textContent='ACHETER 1 BOOSTER'+(CFG.unlocked.length>1?' '+serName(SSEL):'')+' · '+priceFor().booster+' PTS';b.disabled=PTS<priceFor().booster;
+  var sh=document.querySelector('#nav [data-tab=obj]');if(sh)sh.classList.toggle('dot',!!USER&&(dailyReady()||wheelReady()||hourPending()>=CFG.hourly.rate));
 }
 function frErr(e){
   var m=(e&&e.message)||'Erreur';
@@ -1669,7 +1692,7 @@ async function loadConfig(){
     else if(x.key==='daily')CFG.daily=x.value;
     else if(x.key==='hourly')CFG.hourly=x.value;
     else if(x.key==='achievements')CFG.ach=x.value;
-    else if(x.key==='sets')CFG.sets=x.value;
+    else if(x.key==='sets')CFG.sets=x.value;else if(x.key==='teams')CFG.teams=x.value;else if(x.key==='dce')CFG.dce=x.value;else if(x.key==='levels')CFG.levels=x.value;
     else if(x.key==='items')CFG.items=x.value;
     else if(x.key==='series')CFG.series=x.value;
     else if(x.key==='market_fee')CFG.fee=+x.value;
@@ -1678,7 +1701,7 @@ async function loadConfig(){
 }
 async function loadAll(){
   var p=await SB.from('profiles').select('*').eq('id',USER.id).maybeSingle();
-  if(p.data){PTS=p.data.points;LASTDAILY=p.data.last_daily;LASTWHEEL=p.data.last_wheel;STREAK=p.data.streak||0;LASTCOLLECT=p.data.last_collect||null}
+  if(p.data){PTS=p.data.points;LASTDAILY=p.data.last_daily;LASTWHEEL=p.data.last_wheel;STREAK=p.data.streak||0;LASTCOLLECT=p.data.last_collect||null;XP=p.data.xp||0}
   var u=await SB.from('user_cards').select('card_id,qty').eq('user_id',USER.id);
   INV={};(u.data||[]).forEach(function(r){if(r.qty>0)INV[r.card_id]=r.qty});
   var s=await SB.rpc('stock_by_series');
@@ -1691,6 +1714,24 @@ async function startSession(user){
   USER=user;await loadConfig();await loadAll();
   $('#auth').hidden=true;updPts();feedStart();checkAch();
 }
+var XP=0,OBJT='obj',XPS={};
+function priceFor(){
+  var P=CFG.prices,mx=Math.max.apply(null,CFG.unlocked),f=(SSEL>1&&SSEL===mx&&P.newest)?P.newest/P.booster:1;
+  return {booster:Math.round(P.booster*f),display:Math.round(P.display*f),'case':Math.round(P.case*f)};
+}
+function xpNeed(L){var v=CFG.levels||{base:100,step:60};return v.base*(L-1)+v.step*(L-1)*(L-2)/2}
+function lvlOf(xp){var n=1;while(xpNeed(n+1)<=xp)n++;return n}
+function lvlTitle(L){var t='Rookie';((CFG.levels&&CFG.levels.perks)||[]).forEach(function(p){if(p.lvl<=L)t=p.title});return t}
+function hourCap(){return CFG.hourly.cap_hours+Math.floor(lvlOf(XP)/5)}
+function xpBar(xp){var L=lvlOf(xp),a=xpNeed(L),b=xpNeed(L+1);return '<div class="lvl"><b>NIV. '+L+'</b> · '+esc(lvlTitle(L))+' <span>'+xp+' / '+b+' XP</span><div class="prog"><i style="width:'+Math.round(100*(xp-a)/(b-a))+'%"></i></div></div>'}
+function medalList(ids){
+  return (ids||[]).map(function(k){
+    if(k.indexOf('d:')===0){var ch=(CFG.dce||[]).filter(function(x){return 'd:'+x.id===k})[0];return ch?{i:ch.icon||'🏅',l:ch.l}:null}
+    if(k.indexOf('t:')===0)return {i:'🛡️',l:k.slice(2)};
+    if(k==='f:fondateur')return {i:'👑',l:'Fondateur'};
+    return null}).filter(Boolean);
+}
+function isSec(c){return !!c&&String(c.id).indexOf('sec-')===0}
 function mkPull(c){
   var serial=c.maxPrint>0?'N° '+String(1+Math.floor(Math.random()*c.maxPrint)).padStart(2,'0')+'/'+c.maxPrint:'';
   return {id:c.id,n:c.n,t:c.t,r:c.r,f:c.f,img:c.img,v:c.v,ovr:c.ovr||midOvr(c.r),serial:serial,s:c.s,no:c.no,tot:String(SERCNT[c.s]||0).padStart(3,'0')};
@@ -1720,7 +1761,7 @@ function serBar(box){
       if(SSEL===n)return;
       SSEL=n;updPts();
       if(stage==='intro')buildPack();
-      if(stage==='shop')shopRender();
+      refreshViews();
     };
     box.appendChild(b);
   });
@@ -1797,9 +1838,9 @@ function libRender(){
     rs2.onchange=function(){LIB.r=+rs2.value;libRender()};
     $('#libMiss').onchange=function(){LIB.m=this.checked;libRender()};
   }
-  var list=DBCARDS.filter(function(c){return c.active&&c.s===LIB.s});
+  var list=DBCARDS.filter(function(c){return c.active&&c.s===LIB.s&&(!isSec(c)||INV[c.id])});
   var own=list.filter(function(c){return INV[c.id]}).length;
-  var allOwn=Object.keys(INV).length,allTot=DBCARDS.filter(function(c){return c.active&&CFG.unlocked.indexOf(c.s)>=0}).length;
+  var allOwn=Object.keys(INV).length,allTot=DBCARDS.filter(function(c){return c.active&&!isSec(c)&&CFG.unlocked.indexOf(c.s)>=0}).length;
   $('#libCount').textContent=own+'/'+list.length+' · TOTAL '+allOwn+'/'+allTot;
   var dups=0,gain=0;
   DBCARDS.forEach(function(c){var q=INV[c.id]||0;if(q>1){dups+=q-1;gain+=(q-1)*CFG.recycle[c.r]}});
@@ -1812,7 +1853,7 @@ function libRender(){
   shown.forEach(function(c){
     var q=INV[c.id]||0,m=document.createElement('div');
     m.className='mini r'+c.r+(c.v==='holo'?' vh':'')+(q?'':' unk');
-    if(q){m.innerHTML='<div class="face front">'+frontHTML(cardD(c))+'</div>'+(q>1?'<i class="qty">x'+q+'</i>':'');m.style.cursor='pointer';m.onclick=function(){openView(c)}}
+    if(q){m.innerHTML='<div class="face front">'+frontHTML(cardD(c),1)+'</div>'+(q>1?'<i class="qty">x'+q+'</i>':'');m.style.cursor='pointer';m.onclick=function(){openView(c)}}
     g.appendChild(m);
   });
 }
@@ -1879,6 +1920,7 @@ async function rankRender(){
   var box=document.createElement('div');box.id='plList';l.appendChild(box);
   var r=await SB.from('leaderboard').select('*').order('val',{ascending:false}).order('uniq',{ascending:false}).limit(500);
   if(r.error){n.textContent='Liste indisponible : '+r.error.message;return}
+  var px=await SB.from('profiles').select('id,xp');XPS={};((px&&px.data)||[]).forEach(function(z){XPS[z.id]=z.xp||0});
   RKDATA=r.data||[];n.textContent=RKDATA.length+' joueurs · touche-en un pour voir sa vitrine.';plRender();
 }
 function plRender(){
@@ -1891,7 +1933,7 @@ function plRender(){
   else if(PSORT==='cards')rows.sort(function(a,b){return (b.p.uniq-a.p.uniq)||(b.p.val-a.p.val)});
   rows.forEach(function(x){
     var p=x.p,d=document.createElement('div');d.className='rank-row'+(USER&&p.id===USER.id?' me':'');d.setAttribute('data-uid',p.id);d.onclick=function(){showProfile(p.id,false)};
-    d.innerHTML='<b>'+x.rank+'</b><span>'+esc(p.pseudo)+'</span><i>'+p.val+' de valeur · '+p.uniq+' cartes · '+p.points+' PTS</i>';
+    d.innerHTML='<b>'+x.rank+'</b><span>'+esc(p.pseudo)+' <em class="lvtag">NIV. '+lvlOf(XPS[p.id]||0)+'</em></span><i>'+p.val+' de valeur · '+p.uniq+' cartes</i>';
     box.appendChild(d);
   });
   if(!rows.length)box.innerHTML='<p class="sum-best">Aucun joueur trouvé.</p>';
@@ -1904,10 +1946,29 @@ async function buyKind(kind){
   if(r.error){toast(r.error.message);return}
   PTS=r.data;await loadAll();
   toast(({booster:'+1 booster',b5:'+5 boosters',display:'+24 boosters',case:'+288 boosters'})[kind]+(CFG.unlocked.length>1?' '+serName(SSEL):'')+' en stock.');
-  if(stage==='shop')shopRender();
+  refreshViews();
 }
+function bonusHTML(){
+  var h='';
+  var hp=hourPending();
+  h+='<h3 class="shop-h">BONUS</h3><div class="shop-card"><div><b>Points de l’heure : '+hp+' PTS</b><span>+'+CFG.hourly.rate+' PTS par heure, jusqu’à '+hourCap()+' h cumulées.</span><div class="prog"><i style="width:'+Math.round(100*Math.min(hp,CFG.hourly.rate*hourCap())/(CFG.hourly.rate*hourCap()))+'%"></i></div></div>'
+   +'<button class="btn gold" id="shHour" type="button"'+(hp>0?'':' disabled')+'>'+(hp>0?'RÉCUPÉRER':'PATIENTE')+'</button></div>';
+  h+='<div class="shop-card"><input class="code" id="shCode" type="text" placeholder="CODE PROMO" maxlength="40" autocomplete="off" autocapitalize="characters"><button class="btn gold" id="shRedeem" type="button">VALIDER</button></div>';
+  h+='<h3 class="shop-h">BONUS DU JOUR</h3><div class="shop-card"><div><b>Cadeau quotidien : +'+CFG.daily.amount+' PTS</b><span>Série : '+STREAK+' jour'+(STREAK>1?'s':'')+' · +'+CFG.daily.streak_bonus+' PTS tous les '+CFG.daily.streak_every+' jours</span></div>'
+   +'<button class="btn gold" id="shDaily" type="button"'+(dailyReady()?'':' disabled')+'>'+(dailyReady()?'RÉCUPÉRER':'DÉJÀ PRIS')+'</button></div>';
+  h+='<div class="shop-card"><div><b>Roue du jour</b><span>Rien, des points ou des boosters gratuits.</span></div>'
+   +'<button class="btn gold" id="shWheel" type="button"'+(wheelReady()?'':' disabled')+'>'+(wheelReady()?'TOURNER':'DÉJÀ TOURNÉE')+'</button></div>';
+  return h;
+}
+function bindBonus(){
+  $('#shDaily').onclick=claimDaily;
+  $('#shHour').onclick=collectHour;
+  $('#shRedeem').onclick=redeemCode;
+  $('#shWheel').onclick=openWheel;
+}
+function refreshViews(){if(stage==='shop')shopRender();if(stage==='rank'&&RK==='obj')rankRender()}
 function shopRender(){
-  var P=CFG.prices,el=$('#shopBody');
+  var P=priceFor(),el=$('#shopBody');
   var disc=function(price,n){return Math.round(100*(1-price/(n*P.booster)))};
   var items=[
     ['booster','1 BOOSTER','5 cartes',P.booster],
@@ -1918,14 +1979,6 @@ function shopRender(){
   var h='<div id="serSel2" class="lib-bar"></div><div class="shop-card"><b>'+STOCK+' booster'+(STOCK>1?'s':'')+' en stock</b><div class="cv-act">'
    +'<button class="btn gold" id="shOpen" type="button"'+(STOCK?'':' disabled')+'>OUVRIR</button>'
    +'<button class="btn" id="shQuick" type="button"'+(STOCK?'':' disabled')+'>OUVERTURE RAPIDE</button></div></div>';
-  var hp=hourPending();
-  h+='<h3 class="shop-h">BONUS</h3><div class="shop-card"><div><b>Points de l’heure : '+hp+' PTS</b><span>+'+CFG.hourly.rate+' PTS par heure, jusqu’à '+CFG.hourly.cap_hours+' h cumulées.</span><div class="prog"><i style="width:'+Math.round(100*Math.min(hp,CFG.hourly.rate*CFG.hourly.cap_hours)/(CFG.hourly.rate*CFG.hourly.cap_hours))+'%"></i></div></div>'
-   +'<button class="btn gold" id="shHour" type="button"'+(hp>0?'':' disabled')+'>'+(hp>0?'RÉCUPÉRER':'PATIENTE')+'</button></div>';
-  h+='<div class="shop-card"><input class="code" id="shCode" type="text" placeholder="CODE PROMO" maxlength="40" autocomplete="off" autocapitalize="characters"><button class="btn gold" id="shRedeem" type="button">VALIDER</button></div>';
-  h+='<h3 class="shop-h">BONUS DU JOUR</h3><div class="shop-card"><div><b>Cadeau quotidien : +'+CFG.daily.amount+' PTS</b><span>Série : '+STREAK+' jour'+(STREAK>1?'s':'')+' · +'+CFG.daily.streak_bonus+' PTS tous les '+CFG.daily.streak_every+' jours</span></div>'
-   +'<button class="btn gold" id="shDaily" type="button"'+(dailyReady()?'':' disabled')+'>'+(dailyReady()?'RÉCUPÉRER':'DÉJÀ PRIS')+'</button></div>';
-  h+='<div class="shop-card"><div><b>Roue du jour</b><span>Rien, des points ou des boosters gratuits.</span></div>'
-   +'<button class="btn gold" id="shWheel" type="button"'+(wheelReady()?'':' disabled')+'>'+(wheelReady()?'TOURNER':'DÉJÀ TOURNÉE')+'</button></div>';
   h+='<h3 class="shop-h">BOUTIQUE</h3>';
   items.forEach(function(it){
     h+='<div class="shop-card"><div><b>'+it[1]+'</b><span>'+it[2]+'</span></div><button class="btn gold" data-kind="'+it[0]+'" type="button"'+(PTS<it[3]?' disabled':'')+'>'+it[3]+' PTS</button></div>';
@@ -1933,10 +1986,6 @@ function shopRender(){
   el.innerHTML=h;serBar($('#serSel2'));
   $('#shOpen').onclick=function(){goTab('intro')};
   $('#shQuick').onclick=function(){quickOpen(300)};
-  $('#shDaily').onclick=claimDaily;
-  $('#shHour').onclick=collectHour;
-  $('#shRedeem').onclick=redeemCode;
-  $('#shWheel').onclick=openWheel;
   Array.prototype.forEach.call(el.querySelectorAll('[data-kind]'),function(b){
     b.onclick=function(){
       var k=b.getAttribute('data-kind');
@@ -1953,7 +2002,7 @@ async function claimDaily(){
   var d=r.data;
   if(!d.ok){toast('Déjà récupéré aujourd’hui.')}
   else{toast('+'+d.amount+' PTS'+(d.bonus?' · BONUS DE SÉRIE +'+d.bonus+' !':'')+' · série de '+d.streak+' jour'+(d.streak>1?'s':''))}
-  await loadAll();if(stage==='shop')shopRender();
+  await loadAll();refreshViews();
 }
 var WCOL=['#2b5fc4','#c23a2a','#d4af37','#1f8a70','#8e44ad','#d35400','#2c82c9','#b8860b','#16a085'];
 function openWheel(){
@@ -1981,7 +2030,7 @@ function openWheel(){
       $('#wheelMsg').textContent=txt;
       if(w.pts>=500||w.boosters>=3){try{SND.reveal(4)}catch(e){}flashFx('#ffe9a8',.7);burst(W/2,H*.4,3,120)}
       else if(w.pts||w.boosters){try{SND.reveal(2)}catch(e){}}
-      await loadAll();if(stage==='shop')shopRender();
+      await loadAll();refreshViews();
     },4800);
   };
   $('#wheelView').hidden=false;
@@ -1990,7 +2039,7 @@ $('#wheelClose').addEventListener('click',function(){$('#wheelView').hidden=true
 
 /* ----- Marché & échanges ----- */
 var MK={tab:'buy',give:'',q:'',r:-1,arm:0};
-function miniHTML(c,w){return '<div class="mini r'+c.r+(c.v==='holo'?' vh':'')+'" style="--mw:'+(w||64)+'px"><div class="face front">'+frontHTML(cardD(c))+'</div></div>'}
+function miniHTML(c,w){return '<div class="mini r'+c.r+(c.v==='holo'?' vh':'')+'" style="--mw:'+(w||64)+'px"><div class="face front">'+frontHTML(cardD(c),1)+'</div></div>'}
 async function mkRender(){
   var tabs=$('#mkTabs');tabs.innerHTML='';
   [['buy','ACHETER'],['mine','MES ANNONCES'],['trade','ÉCHANGES']].forEach(function(t){
@@ -2047,7 +2096,7 @@ async function tradeRender(body){
   var tr=await SB.from('trades_v').select('*').order('id',{ascending:false});
   var players=pr.data||[],trades=tr.data||[];
   var mine=DBCARDS.filter(function(c){return INV[c.id]}).sort(function(a,b){return a.n<b.n?-1:1});
-  var wants=DBCARDS.filter(function(c){return c.active&&CFG.unlocked.indexOf(c.s)>=0}).sort(function(a,b){return a.n<b.n?-1:1});
+  var wants=DBCARDS.filter(function(c){return c.active&&!isSec(c)&&CFG.unlocked.indexOf(c.s)>=0}).sort(function(a,b){return a.n<b.n?-1:1});
   var h='<p class="sum-best">Échange 1 contre 1 : l’autre joueur doit accepter.</p><div class="shop-card tcol">'
    +'<select id="trTo"><option value="">Avec quel joueur ?</option>'+players.map(function(p){return '<option value="'+p.id+'">'+esc(p.pseudo)+'</option>'}).join('')+'</select>'
    +'<select id="trGive"><option value="">Ma carte à donner</option>'+mine.map(function(c){return '<option value="'+c.id+'"'+(MK.give===c.id?' selected':'')+'>'+esc(c.n)+' ('+rarN(c.r)+', x'+INV[c.id]+')</option>'}).join('')+'</select>'
@@ -2101,8 +2150,9 @@ async function initCaps(){
     var r=await fetch('cards.json',{cache:'no-cache'}),j=await r.json();
     DBCARDS=j.cards||[];
     var cnt={};
-    DBCARDS.forEach(function(c){CBYID[c.id]=c;if(c.active){cnt[c.s]=(cnt[c.s]||0)+1;c.no=String(cnt[c.s]).padStart(3,'0')}});
+    DBCARDS.forEach(function(c){CBYID[c.id]=c;if(c.active&&!isSec(c)){cnt[c.s]=(cnt[c.s]||0)+1;c.no=String(cnt[c.s]).padStart(3,'0')}});
     SERCNT=cnt;
+    var sk={};DBCARDS.forEach(function(c){if(c.active&&isSec(c)){sk[c.s]=(sk[c.s]||0)+1;c.no=String(cnt[c.s]+sk[c.s]).padStart(3,'0')}});
   }catch(e){auErr('Impossible de charger les cartes.')}
   updMid();
   if(!window.supabase){auErr('Connexion au serveur impossible.');return}
@@ -2115,17 +2165,17 @@ async function initCaps(){
 
 /* ----- Points horaires, codes promo ----- */
 function hourPending(){
-  var h=CFG.hourly||{rate:10,cap_hours:10};
-  var lc=LASTCOLLECT?new Date(LASTCOLLECT).getTime():Date.now()-h.cap_hours*3600000;
+  var h=CFG.hourly||{rate:10,cap_hours:10},cap=h.cap_hours+Math.floor(lvlOf(XP)/5);
+  var lc=LASTCOLLECT?new Date(LASTCOLLECT).getTime():Date.now()-cap*3600000;
   var hrs=Math.floor((Date.now()-lc)/3600000);
-  return Math.max(0,Math.min(hrs,h.cap_hours))*h.rate;
+  return Math.max(0,Math.min(hrs,cap))*h.rate;
 }
 async function collectHour(){
   var r=await SB.rpc('collect_hourly');
   if(r.error){toast(r.error.message);return}
   if(!r.data.ok)toast('Rien à récupérer pour le moment.');
   else toast('+'+r.data.gain+' PTS');
-  await loadAll();if(stage==='shop')shopRender();
+  await loadAll();refreshViews();
 }
 async function redeemCode(){
   var v=$('#shCode').value.trim();if(!v){toast('Entre un code.');return}
@@ -2136,7 +2186,7 @@ async function redeemCode(){
   if(d.boosters)t.push('+'+d.boosters+' booster'+(d.boosters>1?'s':''));
   if(d.card&&CBYID[d.card])t.push(CBYID[d.card].n);
   toast('Code validé : '+(t.join(' · ')||'merci !'),5000);
-  await loadAll();checkAch();if(stage==='shop')shopRender();
+  await loadAll();checkAch();refreshViews();
 }
 
 /* ----- Flux des gros drops (24 h) ----- */
@@ -2155,7 +2205,7 @@ function feedShow(){
   var okStage=['intro','summary','lib','rank','market','shop','profile'].indexOf(stage)>=0;
   if(!USER||!FEED.length||!okStage){el.hidden=true;return}
   var f=FEED[feedI%FEED.length],c=CBYID[f.card_id];
-  el.innerHTML=(f.god?'GOD PACK · ':'')+esc(f.pseudo)+' a sorti <b>'+esc(c?c.n:f.card_id)+'</b> · '+(RAR[f.rarity]?RAR[f.rarity].n:'');
+  el.innerHTML=(f.god?'GOD PACK · ':'')+esc(f.pseudo)+' a sorti <b>'+esc(c?c.n:f.card_id)+'</b> · '+(isSec(c)?'SECRET':RAR[f.rarity]?RAR[f.rarity].n:'');
   el.hidden=false;
 }
 
@@ -2170,7 +2220,7 @@ async function checkAch(){
   var msg=r.data.length===1?(r.data[0].kind==='set'?'COLLECTION COMPLÈTE : ':'OBJECTIF : ')+r.data[0].l:r.data.length+' objectifs débloqués !';
   toast(msg+' · '+(pts?'+'+pts+' PTS':'')+(b?' +'+b+' booster'+(b>1?'s':''):''),6000);
   if(stage==='rank')rankRender();
-  if(stage==='shop')shopRender();
+  refreshViews();
 }
 async function objRender(l){
   var box=document.createElement('p');box.className='sum-best';box.textContent='Chargement…';l.appendChild(box);
@@ -2185,6 +2235,11 @@ async function objRender(l){
     l.appendChild(d);
   }
   var rewT=function(x){return (x.pts?x.pts+' PTS':'')+(x.pts&&x.b?' + ':'')+(x.b?x.b+' booster'+(x.b>1?'s':''):'')};
+  var sw=document.createElement('div');sw.className='lib-bar';
+  [['obj','OBJECTIFS'],['dce','DÉFIS']].forEach(function(t){var b=document.createElement('button');b.type='button';b.className='serbtn'+(OBJT===t[0]?' on':'');b.textContent=t[1];b.onclick=function(){OBJT=t[0];rankRender()};sw.appendChild(b)});
+  l.insertBefore(sw,l.firstChild);
+  if(OBJT==='dce'){dceRender(l,cl,card,rewT,r.data);return}
+  var bx=document.createElement('div');bx.innerHTML=bonusHTML();l.appendChild(bx);bindBonus();
   var h=document.createElement('h3');h.className='shop-h';h.textContent='OBJECTIFS';l.appendChild(h);
   CFG.ach.forEach(function(a){
     var cur=a.t==='rar'?(st.rar>=a.n?1:0):(st[a.t]||0),max=a.t==='rar'?1:a.n;
@@ -2196,6 +2251,110 @@ async function objRender(l){
     card(s.l,p.own+' / '+p.need,p.own,p.need,!!cl['s:'+s.id],rewT(s));
   });
 }
+
+/* ----- DÉFIS D'ÉQUIPE (DCE) ----- */
+function dceToday(){return new Date().toISOString().slice(0,10)}
+function dceOpen(ch){var t=dceToday();return !(ch.from&&t<ch.from)&&!(ch.to&&t>ch.to)}
+function dceCardOK(c,rq){
+  if(!c.active||isSec(c)||c.v==='sign'||String(c.id).indexOf('signed')>=0)return false;
+  if(rq.rmin!=null&&c.r<rq.rmin)return false;if(rq.rmax!=null&&c.r>rq.rmax)return false;
+  if(rq.series!=null&&c.s!==rq.series)return false;
+  if(rq.grp&&!(rq.grp==='BoM'&&/^joueur-/.test(c.id)))return false;
+  if(rq.kind&&c.t!==rq.kind)return false;
+  return true;
+}
+function dceTeam(c){return c.t==='pro'?String(c.f).split('·').pop().trim():''}
+function dceReqText(rq){
+  var rn=rq.rmin!=null?(rq.rmin===rq.rmax?RAR[rq.rmin].n:RAR[rq.rmin].n+' à '+RAR[rq.rmax].n):'';
+  return rq.n+' carte'+(rq.n>1?'s':'')+(rq.kind==='pro'?' de pro':rq.kind==='joueur'?' de joueur':'')+(rn?' · '+rn:'')+(rq.grp?' · '+rq.grp:'')+(rq.sameteam?' · même équipe':'');
+}
+function dceRender(l,cl,card,rewT,prog){
+  var box=document.createElement('div');box.innerHTML=xpBar(XP);l.appendChild(box);
+  var h=document.createElement('h3');h.className='shop-h';h.textContent='DÉFIS D’ÉQUIPE';l.appendChild(h);
+  var np=document.createElement('p');np.className='sum-best';np.textContent='Donne des cartes pour relever un défi : elles sont détruites et retournent dans le pool des boosters. Une seule fois par défi. Les cartes secrètes et signées sont interdites.';l.appendChild(np);
+  var list=(CFG.dce||[]).filter(dceOpen);
+  list.forEach(function(ch){
+    var done=!!cl['d:'+ch.id],d=document.createElement('div');d.className='ach-card dce'+(done?' done':'');
+    var rw=ch.rew||{},rt=(rw.pts?rw.pts+' PTS':'')+(rw.pts&&rw.b?' + ':'')+(rw.b?rw.b+' booster'+(rw.b>1?'s':''):'')+(rw.xp?' · +'+rw.xp+' XP':'');
+    d.innerHTML='<div><b>'+(ch.icon||'🏅')+' '+esc(ch.l)+'</b><small>'+esc(ch.d||'')+(ch.to?' · jusqu’au '+ch.to.split('-').reverse().slice(0,2).join('/'):'')+'</small><small class="dce-rw">'+esc(rt)+'</small></div>';
+    var b=document.createElement('button');b.type='button';b.className='btn'+(done?'':' gold');b.textContent=done?'✓ RÉUSSI':'RELEVER';b.disabled=done;
+    b.onclick=function(){dceOpenPicker(ch)};d.appendChild(b);l.appendChild(d);
+  });
+  var ml=medalList(Object.keys(cl));
+  var mh=document.createElement('h3');mh.className='shop-h';mh.textContent='MÉDAILLES ('+ml.length+')';l.appendChild(mh);
+  var mb=document.createElement('div');mb.className='medals';
+  mb.innerHTML=ml.length?ml.map(function(m){return '<span class="medal" title="'+esc(m.l)+'">'+m.i+' '+esc(m.l)+'</span>'}).join(''):'<p class="sum-best">Aucune médaille pour l’instant : relève un défi ou complète une équipe !</p>';
+  l.appendChild(mb);
+  dceTeams(l,cl,card,rewT);
+}
+async function dceTeams(l,cl,card,rewT){
+  var T=CFG.teams,tr=await SB.rpc('my_teams');
+  if(T&&!tr.error&&tr.data&&tr.data.length){
+    var h3=document.createElement('h3');h3.className='shop-h';h3.textContent='ÉQUIPES DE PROS';l.appendChild(h3);
+    var ncl=Object.keys(cl).filter(function(k){return k.indexOf('t:')===0}).length;
+    (T.tiers||[]).forEach(function(t){card(t.n+' équipes complètes',Math.min(ncl,t.n)+' / '+t.n,ncl,t.n,!!cl['tt:'+t.n],rewT(t))});
+    var tl=tr.data,shown=0,more=document.createElement('button');
+    function drawT(all){
+      l.querySelectorAll('.tmcard').forEach(function(e){e.remove()});
+      tl.forEach(function(x,i){
+        if(!all&&i>=8)return;
+        var rw=x.need*T.per_card;card(x.t,x.own+' / '+x.need,x.own,x.need,!!cl['t:'+x.t],rw+' PTS'+(x.need>=T.book_from?' + 1 booster':''));
+        l.lastChild.classList.add('tmcard');
+      });
+      l.appendChild(more);more.textContent=all?'Réduire':'Voir les '+tl.length+' équipes';
+    }
+    more.type='button';more.className='serbtn';var allOn=false;
+    more.onclick=function(){allOn=!allOn;drawT(allOn)};
+    drawT(false);
+  }
+}
+var DP=null;
+function dceOpenPicker(ch){
+  DP={ch:ch,sel:ch.req.map(function(){return []}),arm:false};
+  $('#dceT').textContent=(ch.icon||'🏅')+' '+ch.l;$('#dceD').textContent=ch.d||'';
+  dceDraw();$('#dceView').hidden=false;
+}
+function dceDraw(){
+  var ch=DP.ch,box=$('#dceReqs');box.innerHTML='';
+  var used={};DP.sel.forEach(function(s){s.forEach(function(id){used[id]=(used[id]||0)+1})});
+  var ok=true;
+  ch.req.forEach(function(rq,i){
+    var sel=DP.sel[i];if(sel.length!==rq.n)ok=false;
+    var sec=document.createElement('div');sec.className='dce-req';
+    sec.innerHTML='<h4>'+dceReqText(rq)+' <span>'+sel.length+' / '+rq.n+'</span></h4>';
+    var g=document.createElement('div');g.className='sum-grid';
+    var teamSel=rq.sameteam&&sel.length?dceTeam(CBYID[sel[0]]):null;
+    var own=DBCARDS.filter(function(c){return INV[c.id]>0&&dceCardOK(c,rq)&&(!rq.sameteam||(dceTeam(c)&&dceTeam(c)!=='Agent libre'))}).sort(function(a,b){return (b.r-a.r)||(a.n<b.n?-1:1)});
+    if(!own.length)g.innerHTML='<p class="sum-best">Aucune carte éligible dans ta collection.</p>';
+    own.forEach(function(c){
+      var k=sel.indexOf(c.id),m=document.createElement('div');
+      var dis=k<0&&((used[c.id]||0)>=INV[c.id]||(teamSel&&dceTeam(c)!==teamSel));
+      m.className='mini r'+c.r+(c.v==='holo'?' vh':'')+(k>=0?' sel':'')+(dis?' dim':'');m.style.cursor='pointer';
+      m.innerHTML='<div class="face front">'+frontHTML(cardD(c),1)+'</div>'+(k>=0?'<i class="ord">✓</i>':'');
+      m.onclick=function(){
+        DP.arm=false;
+        if(k>=0)sel.splice(k,1);
+        else{if(sel.length>=rq.n){toast('Déjà '+rq.n+' carte'+(rq.n>1?'s':'')+' sélectionnée'+(rq.n>1?'s':'')+'.');return}if(dis)return;sel.push(c.id)}
+        dceDraw();
+      };
+      g.appendChild(m);
+    });
+    sec.appendChild(g);box.appendChild(sec);
+  });
+  var go=$('#dceGo');go.disabled=!ok;go.textContent=DP.arm?'CONFIRMER : CARTES DÉTRUITES':'VALIDER LE DÉFI';go.className='btn '+(DP.arm?'red':'gold');
+}
+$('#dceGo').addEventListener('click',async function(){
+  if(!DP)return;
+  if(!DP.arm){DP.arm=true;dceDraw();return}
+  this.disabled=true;
+  var r=await SB.rpc('submit_dce',{p_id:DP.ch.id,p_cards:DP.sel});
+  if(r.error){toast(r.error.message);DP.arm=false;dceDraw();return}
+  var o=r.data;$('#dceView').hidden=true;DP=null;
+  await loadAll();
+  toast('Défi réussi : '+o.l+' · '+(o.pts?'+'+o.pts+' PTS ':'')+(o.b?'+'+o.b+' booster'+(o.b>1?'s':'')+' ':'')+'+'+o.xp+' XP'+(o.lvl>o.lvl_before?' · NIVEAU '+o.lvl+' !':''));
+  if(stage==='rank')rankRender();
+});
+$('#dceX').addEventListener('click',function(){$('#dceView').hidden=true;DP=null});
 
 /* ----- Profils, vitrine, accessoires ----- */
 var PF={uid:null,edit:false,sel:[],d:null,sub:'vit'};
@@ -2228,7 +2387,7 @@ function pfSlot(id,fr,click){
   var c=CBYID[id];if(!c)return null;
   var w=document.createElement('div');w.className='slotw'+(fr?' fr-'+fr:'');
   var m=document.createElement('div');m.className='mini r'+c.r+(c.v==='holo'?' vh':'');
-  m.innerHTML='<div class="face front">'+frontHTML(cardD(c))+'</div>';
+  m.innerHTML='<div class="face front">'+frontHTML(cardD(c),1)+'</div>';
   w.appendChild(m);if(click){w.style.cursor='pointer';w.onclick=click}
   return w;
 }
@@ -2245,10 +2404,13 @@ function pfRender(){
   var accOnly=me&&PF.sub==='acc';
   if(me&&!PF.edit){var lo=document.createElement('button');lo.type='button';lo.className='btn pf-logout';lo.textContent='SE DÉCONNECTER';lo.onclick=async function(){try{await SB.auth.signOut()}catch(e){}location.reload()};setTimeout(function(){el.appendChild(lo)},0)}
   var h=document.createElement('h2');h.className='pf-name';h.textContent=d.pseudo;el.appendChild(h);
+  var lv=document.createElement('div');lv.innerHTML=xpBar(d.xp||0);el.appendChild(lv);
   var ch=document.createElement('div');ch.className='pf-chips';
-  var tot=DBCARDS.filter(function(c){return c.active&&CFG.unlocked.indexOf(c.s)>=0}).length;
+  var tot=DBCARDS.filter(function(c){return c.active&&!isSec(c)&&CFG.unlocked.indexOf(c.s)>=0}).length;
   ch.innerHTML='<span>VALEUR <b>'+d.val+'</b></span><span>CARTES <b>'+st.uniq+'/'+tot+'</b></span><span>BOOSTERS <b>'+st.opened+'</b></span><span>OBJECTIFS <b>'+d.achv+'</b></span>'+(st.gods?'<span>GOD PACKS <b>'+st.gods+'</b></span>':'');
   el.appendChild(ch);
+  var ml=medalList(d.medals);
+  if(ml.length){var mb=document.createElement('div');mb.className='medals';mb.innerHTML=ml.map(function(m){return '<span class="medal" title="'+esc(m.l)+'">'+m.i+' '+esc(m.l)+'</span>'}).join('');el.appendChild(mb)}
   if(!accOnly){
   var sh=document.createElement('div');sh.className='shelf'+(eq.stand?' st-'+eq.stand:'');
   var ids=PF.edit?PF.sel:(d.showcase||[]);
@@ -2276,7 +2438,7 @@ function pfRender(){
     own.forEach(function(c){
       var m=document.createElement('div'),k=PF.sel.indexOf(c.id);
       m.className='mini r'+c.r+(c.v==='holo'?' vh':'')+(k>=0?' sel':'');m.style.cursor='pointer';
-      m.innerHTML='<div class="face front">'+frontHTML(cardD(c))+'</div>'+(k>=0?'<i class="ord">'+(k+1)+'</i>':'');
+      m.innerHTML='<div class="face front">'+frontHTML(cardD(c),1)+'</div>'+(k>=0?'<i class="ord">'+(k+1)+'</i>':'');
       m.onclick=function(){
         var j=PF.sel.indexOf(c.id);
         if(j>=0)PF.sel.splice(j,1);
@@ -2359,6 +2521,9 @@ function closeInspect(){IN.open=false;cancelAnimationFrame(IN.raf);$('#insp').hi
   $('#inspClose').addEventListener('click',closeInspect);
   $('#insp').addEventListener('click',function(e){if(e.target===this)closeInspect()});
 })();
+
+/* miniatures légères (si le dossier img/t est en ligne) */
+(function(){var i=new Image();i.onload=function(){THUMB_OK=true};i.src='img/t/benz.webp'})();
 
 $('#gateGo').addEventListener('click',function(){
   unlockAudio();$('#gate').hidden=true;SND.click();
