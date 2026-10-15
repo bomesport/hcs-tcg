@@ -510,6 +510,8 @@ button{font:inherit;color:inherit;cursor:pointer}
 .rp-st{grid-row:1/3;grid-column:2;display:flex;align-items:center;gap:4px}
 .rp-st button{min-width:34px;height:34px;border:1px solid rgba(245,245,245,.3);background:rgba(245,245,245,.06);color:inherit;border-radius:4px;font:inherit;cursor:pointer}
 .rp-st i{min-width:24px;text-align:center;font-style:normal;font-weight:700}
+.f-team{position:absolute;left:0;top:15%;bottom:36%;width:calc(var(--cw)*.085);display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,var(--tcol),color-mix(in srgb,var(--tcol) 70%,#000));border-radius:0 calc(var(--cw)*.02) calc(var(--cw)*.02) 0;box-shadow:2px 0 8px rgba(0,0,0,.55);z-index:3;overflow:hidden}
+.f-team span{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--display);font-size:calc(var(--cw)*var(--tf));letter-spacing:.14em;text-transform:uppercase;white-space:nowrap;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.8)}
 .mk-ex{color:var(--gold,#f5c542)!important;font-weight:700;letter-spacing:.04em}
 #cvSer{height:42px;background:rgba(5,7,11,.7);color:var(--bone);border:1px solid rgba(245,245,245,.3);border-radius:4px;padding:0 8px;font:inherit;max-width:100%}
 #mkQ{flex:1 1 100%}
@@ -1997,6 +1999,18 @@ var LIB={s:1,r:-1,m:false},recArm=0;
 function cardD(c){
   return {id:c.id,n:c.n,t:c.t,r:c.r,f:c.f,img:c.img,v:c.v,ovr:c.ovr||midOvr(c.r),serial:'',s:c.s,no:c.no,tot:String(SERCNT[c.s]||0).padStart(3,'0')};
 }
+(function(){
+  var o=frontHTML;
+  frontHTML=function(d,sm){
+    var h=o(d,sm),c=CBYID[d.id];
+    if(!c||!c.tm)return h;
+    h=h.replace(/--tc:#[0-9a-fA-F]{6}/,'--tc:'+c.tc);
+    var fs=Math.min(.06,.74/Math.max(8,c.tm.length)).toFixed(4);
+    var st='<div class="f-team" style="--tcol:'+c.tc+';--tf:'+fs+'"><span>'+esc(c.tm)+'</span></div>';
+    var i=h.indexOf('</div><div class="holo">');
+    return i<0?h:h.slice(0,i)+st+h.slice(i);
+  };
+})();
 var NONBOM=['joueur-stanzzee','joueur-claw-2014','joueur-brainiak','joueur-brainiak-2014','joueur-yoshi-2014','joueur-benz-valencia','joueur-nutsinette-2014','joueur-benz-2014'];
 function isBomId(id){return NONBOM.indexOf(id)<0&&/^(joueur|leg|myth)-/.test(id)}
 function libRender(){
