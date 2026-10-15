@@ -494,7 +494,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .ser2 .pk-ser{color:rgba(243,231,184,.75)}
 .ser2 .pk-aura{background:radial-gradient(closest-side,rgba(255,122,200,.7),rgba(122,232,255,.3) 58%,transparent 78%)}
 .pk-amp{position:absolute;left:0;right:0;top:calc(var(--ph)*.1);text-align:center;font-family:var(--display);font-size:calc(var(--pw)*1.15);line-height:1;color:rgba(255,255,255,.07);pointer-events:none}
-</style>
+.slot .inner{transition:transform .6s cubic-bezier(.2,.8,.2,1)}.slot.facedown .inner{transform:rotateY(180deg)}.slot .face.back{transform:rotateY(180deg)}@media (prefers-reduced-motion:reduce){.slot .inner{transition:none}}</style>
 
 </head><body>
 <div id="app">
@@ -1194,8 +1194,8 @@ function frontHTML(d){
 }
 function buildSlot(d,i){
   var s=document.createElement('div');
-  s.className='slot r'+d.r+(d.v==='holo'?' vh':'');s.style.zIndex=20-i;s.style.setProperty('--d',i);
-  s.innerHTML='<div class="card"><div class="aura"></div><div class="tilt"><div class="inner"><div class="face front">'+frontHTML(d)+'</div></div></div></div>';
+  s.className='slot facedown r'+d.r+(d.v==='holo'?' vh':'');s.style.zIndex=20-i;s.style.setProperty('--d',i);
+  s.innerHTML='<div class="card"><div class="aura"></div><div class="tilt"><div class="inner"><div class="face front">'+frontHTML(d)+'</div><div class="face back imgback" style="background-image:url(img/back'+(d.s===2?2:1)+'.webp)"></div></div></div></div>';
   s.addEventListener('animationend',function(){s.style.animation='none'},{once:true});
   deck.appendChild(s);
   return {data:d,slot:s,card:s.querySelector('.card'),tilt:s.querySelector('.tilt'),front:s.querySelector('.front'),st:'wait',mx:.5,my:.5,lock:0};
@@ -1248,7 +1248,7 @@ function arrive(c){
 function activate(c){
   if(c.st==='out')return;
   var r=c.data.r;
-  c.slot.classList.remove('charge');
+  c.slot.classList.remove('charge');c.slot.classList.remove('facedown');
   c.st='up';c.lock=performance.now()+RAR[r].lock;
   c.slot.style.setProperty('--aura',(r>=1?RAR[r].aura*.45:0).toFixed(2));
   markDot(cards.indexOf(c),r);setHint();
