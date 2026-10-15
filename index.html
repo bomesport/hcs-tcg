@@ -1202,7 +1202,7 @@ function imgSrc(d){
 }
 var TCOL={'Shopify Rebellion':'#95bf47','Cloud9':'#1aa5e3','FaZe Clan':'#e43d30','Complexity':'#c8102e'},TPAL=['#3a7bd5','#c0392b','#8e44ad','#16a085','#d35400','#2c82c9','#b8860b','#e84393'];
 function teamCol(d){var m=/·\s*(.+)$/.exec(d.f||''),t=m?m[1].trim():'';if(TCOL[t])return TCOL[t];var h=0,k;for(k=0;k<t.length;k++)h=(h*31+t.charCodeAt(k))>>>0;return TPAL[h%TPAL.length]}
-function isBoM(d){return /^(joueur|leg|myth)-/.test(d.id||'')||d.t==='bom'}
+function isBoM(d){return ['joueur-stanzzee','joueur-claw-2014','joueur-brainiak','joueur-brainiak-2014','joueur-yoshi-2014','joueur-benz-valencia','joueur-nutsinette-2014','joueur-benz-2014'].indexOf(d.id)<0&&(/^(joueur|leg|myth)-/.test(d.id||'')||d.t==='bom')}
 var THUMB_OK=false;
 function frontHTML(d,sm){
   var src=imgSrc(d);if(sm&&THUMB_OK&&/^img\/[^\/]+\.webp$/.test(src))src=src.replace('img/','img/t/');
@@ -1822,7 +1822,8 @@ var LIB={s:1,r:-1,m:false},recArm=0;
 function cardD(c){
   return {id:c.id,n:c.n,t:c.t,r:c.r,f:c.f,img:c.img,v:c.v,ovr:c.ovr||midOvr(c.r),serial:'',s:c.s,no:c.no,tot:String(SERCNT[c.s]||0).padStart(3,'0')};
 }
-function isBomId(id){return /^(joueur|leg|myth)-/.test(id)}
+var NONBOM=['joueur-stanzzee','joueur-claw-2014','joueur-brainiak','joueur-brainiak-2014','joueur-yoshi-2014','joueur-benz-valencia','joueur-nutsinette-2014','joueur-benz-2014'];
+function isBomId(id){return NONBOM.indexOf(id)<0&&/^(joueur|leg|myth)-/.test(id)}
 function libRender(){
   profTabs($('#libProf'),'lib');
   var bar=$('#libSer');bar.innerHTML='';
@@ -2259,7 +2260,7 @@ function dceCardOK(c,rq){
   if(!c.active||isSec(c)||c.v==='sign'||String(c.id).indexOf('signed')>=0)return false;
   if(rq.rmin!=null&&c.r<rq.rmin)return false;if(rq.rmax!=null&&c.r>rq.rmax)return false;
   if(rq.series!=null&&c.s!==rq.series)return false;
-  if(rq.grp&&!(rq.grp==='BoM'&&/^joueur-/.test(c.id)))return false;
+  if(rq.grp&&!(rq.grp==='BoM'&&/^joueur-/.test(c.id)&&NONBOM.indexOf(c.id)<0))return false;
   if(rq.kind&&c.t!==rq.kind)return false;
   return true;
 }
