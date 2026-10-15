@@ -493,6 +493,13 @@ button{font:inherit;color:inherit;cursor:pointer}
 @keyframes cfQuake{0%{transform:translate(0,0)}20%{transform:translate(-9px,6px)}40%{transform:translate(8px,-7px)}60%{transform:translate(-7px,-5px)}80%{transform:translate(9px,5px)}100%{transform:translate(0,0)}}
 @media (prefers-reduced-motion:reduce){#caseFx.quake{animation:none}.cf-rays,.cf-hit.big::before{animation:none}}
 #sumBilan[hidden]{display:none}
+.mk-row{position:relative}
+.mk-row.mk-new{border-color:#5fd98a;background:linear-gradient(90deg,rgba(95,217,138,.16),rgba(5,7,11,.62) 55%);box-shadow:0 0 0 1px rgba(95,217,138,.55),0 0 14px rgba(95,217,138,.3)}
+.mk-newb{position:absolute;top:-8px;left:10px;z-index:2;background:#5fd98a;color:#04140a;font-style:normal;font-family:var(--display);letter-spacing:.1em;font-size:12px;padding:1px 9px;border-radius:10px}
+.mk-ago{font-size:11px!important;opacity:.55}
+.mk-ex{color:var(--gold,#f5c542)!important;font-weight:700;letter-spacing:.04em}
+#cvSer{height:42px;background:rgba(5,7,11,.7);color:var(--bone);border:1px solid rgba(245,245,245,.3);border-radius:4px;padding:0 8px;font:inherit;max-width:100%}
+#mkQ{flex:1 1 100%}
 .st-bois{background:linear-gradient(#3a2614,#5a3a1e 70%,#7a4f27);border-color:#9a6a35;box-shadow:inset 0 -10px 0 #2b1a0c}
 .st-verre{background:linear-gradient(160deg,rgba(120,180,255,.28),rgba(20,40,80,.55));border-color:rgba(150,200,255,.7);box-shadow:inset 0 0 22px rgba(150,200,255,.35)}
 .st-podium{background:linear-gradient(rgba(4,7,14,.15),rgba(4,7,14,.05)),url(img/podium-bg.webp) center 80%/cover no-repeat #060a14;border:2px solid var(--gold);box-shadow:0 0 20px rgba(212,175,55,.25);align-items:flex-end;padding:50px 10px 70px;min-height:340px}
@@ -1779,6 +1786,7 @@ async function loadAll(){
   if(p.data){PTS=p.data.points;LASTDAILY=p.data.last_daily;LASTWHEEL=p.data.last_wheel;STREAK=p.data.streak||0;LASTCOLLECT=p.data.last_collect||null;XP=p.data.xp||0}
   var u=await SB.from('user_cards').select('card_id,qty').eq('user_id',USER.id);
   INV={};(u.data||[]).forEach(function(r){if(r.qty>0)INV[r.card_id]=r.qty});
+  try{var cp=await SB.rpc('my_copies');COPIES={};if(!cp.error)(cp.data||[]).forEach(function(r){(COPIES[r.card_id]=COPIES[r.card_id]||[]).push(r.serial)})}catch(e){}
   var s=await SB.rpc('stock_by_series');
   if(!s.error&&s.data)STOCKS=s.data;
   else{var s1=await SB.rpc('stock_count');if(!s1.error)STOCKS={1:s1.data||0}}
@@ -1807,13 +1815,14 @@ function medalList(ids){
     return null}).filter(Boolean);
 }
 function isSec(c){return !!c&&String(c.id).indexOf('sec-')===0}
-function mkPull(c){
-  var serial=c.maxPrint>0?'N° '+String(1+Math.floor(Math.random()*c.maxPrint)).padStart(2,'0')+'/'+c.maxPrint:'';
+function serTxt(n,mp){return n>0?'N° '+String(n).padStart(2,'0')+'/'+mp:''}
+function mkPull(c,ser){
+  var serial=c.maxPrint>0?(ser===undefined?'N° '+String(1+Math.floor(Math.random()*c.maxPrint)).padStart(2,'0')+'/'+c.maxPrint:serTxt(ser,c.maxPrint)):'';
   return {id:c.id,n:c.n,t:c.t,r:c.r,f:c.f,img:c.img,v:c.v,ovr:c.ovr||midOvr(c.r),serial:serial,s:c.s,no:c.no,tot:String(SERCNT[c.s]||0).padStart(3,'0')};
 }
 function pullsFrom(packs){
   var out=[];
-  packs.forEach(function(pk){pk.cards.forEach(function(id){var c=CBYID[id];if(c)out.push(mkPull(c))})});
+  packs.forEach(function(pk){pk.cards.forEach(function(id,i){var c=CBYID[id];if(c)out.push(mkPull(c,pk.serials?pk.serials[i]:undefined))})});
   return out;
 }
 function markNew(ps){
@@ -2020,28 +2029,34 @@ function libRender(){
   });
 }
 var SELLDEF=[10,30,120,500,2000];
+var COPIES={};
 function openView(c){
   var q=INV[c.id]||0;
   $('#cvCard').innerHTML='<div class="bigc r'+c.r+(c.v==='holo'?' vh':'')+'"><div class="face front">'+frontHTML(cardD(c))+'</div></div>';
-  $('#cvInfo').textContent=RAR[c.r].n+' · '+q+' exemplaire'+(q>1?'s':'');
+  var cps=(COPIES[c.id]||[]).slice().sort(function(a,b){return a-b}).filter(function(x){return x>0});
+  $('#cvInfo').textContent=RAR[c.r].n+' · '+q+' exemplaire'+(q>1?'s':'')+(cps.length?' · '+cps.map(function(x){return 'N° '+String(x).padStart(2,'0')+'/'+c.maxPrint}).join(', '):'');
   var b=$('#cvRec');b.hidden=q<2;b.textContent='RECYCLER 1 DOUBLON · +'+CFG.recycle[c.r]+' PTS';
   b.onclick=async function(){
     b.disabled=true;
     var r=await SB.rpc('recycle',{p_card:c.id,p_qty:1});
     b.disabled=false;
     if(r.error){toast(r.error.message);return}
-    PTS=r.data;INV[c.id]--;updPts();libRender();
+    PTS=r.data;INV[c.id]--;updPts();await loadAll();libRender();
     if(INV[c.id]>=2)openView(c);else $('#cardView').hidden=true;
   };
   var pi=$('#cvPrice');pi.value=SELLDEF[c.r];
+  var sx=$('#cvSer');if(sx)sx.remove();
+  var ser=null;
+  if(cps.length>1){ser=document.createElement('select');ser.id='cvSer';ser.innerHTML=cps.map(function(x){return '<option value="'+x+'">Exemplaire N° '+String(x).padStart(2,'0')+'/'+c.maxPrint+'</option>'}).join('');pi.parentNode.insertBefore(ser,pi)}
   $('#cvSell').onclick=async function(){
     var pr=Math.floor(+pi.value);
     if(!(pr>=1)){toast('Prix invalide.');return}
     this.disabled=true;
-    var r=await SB.rpc('list_card',{p_card:c.id,p_price:pr});
+    var la={p_card:c.id,p_price:pr};if(ser)la.p_serial=+ser.value;
+    var r=await SB.rpc('list_card',la);
     this.disabled=false;
     if(r.error){toast(r.error.message);return}
-    INV[c.id]--;if(INV[c.id]<=0)delete INV[c.id];
+    INV[c.id]--;if(INV[c.id]<=0)delete INV[c.id];loadAll();
     $('#cardView').hidden=true;libRender();toast('Mise en vente : '+c.n+' à '+pr+' PTS.');
   };
   $('#cvTrade').onclick=function(){
@@ -2230,7 +2245,7 @@ function openWheel(){
 $('#wheelClose').addEventListener('click',function(){$('#wheelView').hidden=true});
 
 /* ----- Marché & échanges ----- */
-var MKS={};var MK={tab:'buy',give:'',q:'',r:-1,arm:0};
+var MKS={};var MK={tab:'buy',give:'',q:'',r:-1,arm:0,sort:'price',nw:false};
 function miniHTML(c,w){return '<div class="mini r'+c.r+(c.v==='holo'?' vh':'')+'" style="--mw:'+(w||64)+'px"><div class="face front">'+frontHTML(cardD(c),1)+'</div></div>'}
 async function mkRender(){
   var tabs=$('#mkTabs');tabs.innerHTML='';
@@ -2249,10 +2264,12 @@ async function mkRender(){
   body.innerHTML='';
   if(MK.tab==='buy'){
     var f=document.createElement('div');f.className='lib-bar';
-    f.innerHTML='<input id="mkQ" type="search" placeholder="Rechercher une carte" value="'+esc(MK.q)+'"><select id="mkR"><option value="-1">Toutes raretés</option>'+RAR.map(function(x,i){return '<option value="'+i+'"'+(MK.r===i?' selected':'')+'>'+x.n+'</option>'}).join('')+'</select>';
+    f.innerHTML='<input id="mkQ" type="search" placeholder="Rechercher une carte" value="'+esc(MK.q)+'"><select id="mkR"><option value="-1">Toutes raretés</option>'+RAR.map(function(x,i){return '<option value="'+i+'"'+(MK.r===i?' selected':'')+'>'+x.n+'</option>'}).join('')+'</select>'+'<select id="mkS" aria-label="Trier"><option value="price">Prix croissant</option><option value="new">Plus récentes</option><option value="priceD">Prix décroissant</option><option value="rar">Rareté</option></select><label class="chk" for="mkN"><input id="mkN" type="checkbox"'+(MK.nw?' checked':'')+'>Nouvelles seulement</label>';
     body.appendChild(f);
     $('#mkQ').oninput=function(){MK.q=this.value;mkList(list,body)};
     $('#mkR').onchange=function(){MK.r=+this.value;mkList(list,body)};
+    $('#mkS').value=MK.sort;$('#mkS').onchange=function(){MK.sort=this.value;mkList(list,body)};
+    $('#mkN').onchange=function(){MK.nw=this.checked;mkList(list,body)};
   }else{
     var p=document.createElement('p');p.className='sum-best';p.textContent='Pour vendre une carte : ouvre-la dans COLLECTION. Commission de '+Math.round(CFG.fee*100)+' % à la vente.';body.appendChild(p);
   }
@@ -2264,8 +2281,15 @@ function mkList(list,body){
   var q=slug(MK.q||'');
   var rows=list.filter(function(l){
     var c=CBYID[l.card_id];if(!c)return false;
-    if(MK.tab==='buy'){if(MK.r>=0&&c.r!==MK.r)return false;if(q&&slug(c.n).indexOf(q)<0)return false}
+    if(MK.tab==='buy'){if(MK.r>=0&&c.r!==MK.r)return false;if(q&&slug(c.n).indexOf(q)<0)return false;if(MK.nw&&INV[c.id])return false}
     return true;
+  });
+  var tm=function(l){return new Date(l.created_at||0).getTime()};
+  rows.sort(function(a,b){
+    if(MK.tab!=='buy'||MK.sort==='price')return a.price-b.price;
+    if(MK.sort==='new')return tm(b)-tm(a);
+    if(MK.sort==='priceD')return b.price-a.price;
+    return (CBYID[b.card_id].r-CBYID[a.card_id].r)||(a.price-b.price);
   });
   if(!rows.length){box.innerHTML='<p class="sum-best">'+(MK.tab==='mine'?'Aucune annonce.':'Aucune annonce pour le moment.')+'</p>';return}
   rows.forEach(function(l){
@@ -2274,7 +2298,9 @@ function mkList(list,body){
     var tot=String(SERCNT[c.s]||0).padStart(3,'0'),no=c.no?String(c.no).padStart(3,'0'):'',st=MKS[c.id],ref=st&&(st.avg5||st.last),cote='';
     if(ref){var df=Math.round((l.price-ref)/ref*100);cote='<span class="mk-cote">Cote '+ref+' PTS'+(df<=-3?' · <em class="dn">'+df+' %</em>':df>=3?' · <em class="up">+'+df+' %</em>':'')+'</span>'}
     else cote='<span class="mk-cote">Cote : pas encore de vente</span>';
-    row.innerHTML=miniHTML(c)+'<div class="mk-info"><b>'+esc(c.n)+'</b><span>'+rarN(c.r)+(MK.tab==='buy'?' · '+esc(l.seller_pseudo)+(own?' · tu en as '+own:' · NOUVELLE'):'')+'</span><span>'+(no?'N° '+no+'/'+tot:'')+(c.maxPrint?(no?' · ':'')+'tirage '+c.maxPrint:'')+'</span>'+cote+'<span class="mk-more">▾ voir la courbe</span></div>';
+    row.innerHTML=miniHTML(c)+'<div class="mk-info"><b>'+esc(c.n)+'</b><span>'+rarN(c.r)+(MK.tab==='buy'?' · '+esc(l.seller_pseudo)+(own?' · tu en as '+own:''):'')+'</span>'+(l.serial&&c.maxPrint?'<span class="mk-ex">Exemplaire '+serTxt(l.serial,c.maxPrint)+'</span>':'')+'<span>'+(no?'N° '+no+'/'+tot:'')+(c.maxPrint?(no?' · ':'')+'tirage '+c.maxPrint:'')+'</span>'+cote+'<span class="mk-more">▾ voir la courbe</span></div>';
+    if(MK.tab==='buy'&&!own){row.classList.add('mk-new');row.insertAdjacentHTML('afterbegin','<i class="mk-newb">NOUVELLE</i>')}
+    if(l.created_at){var ag=Math.max(0,Math.round((Date.now()-new Date(l.created_at).getTime())/60000)),agt=ag<2?'à l’instant':ag<60?'il y a '+ag+' min':ag<1440?'il y a '+Math.round(ag/60)+' h':'il y a '+Math.round(ag/1440)+' j';row.querySelector('.mk-info').insertAdjacentHTML('beforeend','<span class="mk-ago">'+agt+'</span>')}
     var det=document.createElement('div');det.className='ct-box mk-det';det.hidden=true;
     row.querySelector('.mk-info').onclick=function(){det.hidden=!det.hidden;if(!det.hidden)mktFill(det,c)};
     var b=document.createElement('button');b.type='button';b.className='btn gold';
