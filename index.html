@@ -514,6 +514,16 @@ button{font:inherit;color:inherit;cursor:pointer}
 .rp-st i{min-width:24px;text-align:center;font-style:normal;font-weight:700}
 .f-team{position:absolute;left:0;top:15%;bottom:36%;width:calc(var(--cw)*.085);display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,var(--tcol),color-mix(in srgb,var(--tcol) 70%,#000));border-radius:0 calc(var(--cw)*.02) calc(var(--cw)*.02) 0;box-shadow:2px 0 8px rgba(0,0,0,.55);z-index:3;overflow:hidden}
 .f-team span{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--display);font-size:calc(var(--cw)*var(--tf));letter-spacing:.14em;text-transform:uppercase;white-space:nowrap;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+.au-row{flex-wrap:wrap}.au-row .mk-info{flex:1 1 55%;min-width:0}.au-row .au-act{flex:1 1 100%;justify-content:flex-end}
+.au-bid b{font-size:inherit!important;display:inline!important;letter-spacing:0!important;font-family:inherit!important;text-transform:none!important;color:var(--gold,#f5c542)}
+.au-row .au-act{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.au-act input{width:90px;height:42px;background:rgba(5,7,11,.7);color:var(--bone);border:1px solid rgba(245,245,245,.3);border-radius:4px;padding:0 8px;font:inherit}
+.au-t{color:#ffb74d!important;font-weight:700;font-variant-numeric:tabular-nums}
+.au-you{color:#7ee787!important;font-weight:700}
+.au-lead{box-shadow:inset 0 0 0 1px rgba(126,231,135,.5)}
+.au-new{font-style:normal;background:#c0392b;color:#fff;border-radius:3px;padding:0 5px;font-size:10px}
+#cvAucP{width:100px;height:42px;background:rgba(5,7,11,.7);color:var(--bone);border:1px solid rgba(245,245,245,.3);border-radius:4px;padding:0 8px;font:inherit}
+#cvAucH{height:42px;background:rgba(5,7,11,.7);color:var(--bone);border:1px solid rgba(245,245,245,.3);border-radius:4px;padding:0 8px;font:inherit}
 .mk-case{color:#9ad7ff!important;font-weight:700}
 .mk-row.mk-enc{box-shadow:inset 0 0 0 1px rgba(154,215,255,.45)}
 .cv-hint{font-size:12px;opacity:.7;max-width:320px;text-align:center}
@@ -2142,6 +2152,24 @@ function openView(c){
     }
     $('#cvSellRow').parentNode.insertBefore(cr,$('#cvSellRow').nextSibling);
   }
+  var ar=$('#cvAucRow');if(ar)ar.remove();
+  if(q>=1){
+    ar=document.createElement('div');ar.id='cvAucRow';ar.className='cv-act';
+    ar.innerHTML='<input id="cvAucP" type="number" min="1" inputmode="numeric" aria-label="Prix de départ" placeholder="Départ" value="'+SELLDEF[c.r]+'"><select id="cvAucH" aria-label="Durée"><option value="6">6 h</option><option value="24" selected>24 h</option><option value="48">48 h</option><option value="72">72 h</option></select><button class="btn" id="cvAucGo" type="button">LANCER UNE ENCHÈRE</button>';
+    $('#cvSellRow').parentNode.insertBefore(ar,$('#cvSellRow').nextSibling);
+    $('#cvAucGo').onclick=async function(){
+      var pr=Math.floor(+$('#cvAucP').value),hh=+$('#cvAucH').value;
+      if(!(pr>=1)){toast('Prix de départ invalide.');return}
+      var g=this;
+      if(g.getAttribute('data-arm')!=='1'){g.setAttribute('data-arm','1');g.textContent='CONFIRMER ? ('+hh+' h)';setTimeout(function(){if(g.isConnected){g.setAttribute('data-arm','0');g.textContent='LANCER UNE ENCHÈRE'}},3500);return}
+      g.disabled=true;
+      var aa={p_card:c.id,p_start:pr,p_hours:hh};var x=curCp();if(ser&&x)aa.p_serial=x.s;
+      var r=await SB.rpc('create_auction',aa);
+      if(r.error){toast(r.error.message);g.disabled=false;return}
+      INV[c.id]--;if(INV[c.id]<=0)delete INV[c.id];await loadAll();
+      $('#cardView').hidden=true;libRender();toast('Enchère lancée : '+c.n+' · départ '+pr+' PTS · '+hh+' h.');
+    };
+  }
   mktShow(c);
   $('#cardView').hidden=false;
 }
@@ -2380,12 +2408,13 @@ var MKS={};var MK={tab:'buy',give:'',q:'',r:-1,arm:0,sort:'price',nw:false};
 function miniHTML(c,w){return '<div class="mini r'+c.r+(c.v==='holo'?' vh':'')+'" style="--mw:'+(w||64)+'px"><div class="face front">'+frontHTML(cardD(c),1)+'</div></div>'}
 async function mkRender(){
   var tabs=$('#mkTabs');tabs.innerHTML='';
-  [['buy','ACHETER'],['mine','MES ANNONCES'],['trade','ÉCHANGES']].forEach(function(t){
+  [['buy','ACHETER'],['auc','ENCHÈRES'],['mine','MES ANNONCES'],['trade','ÉCHANGES']].forEach(function(t){
     var b=document.createElement('button');b.type='button';b.className='serbtn'+(MK.tab===t[0]?' on':'');b.textContent=t[1];
     b.onclick=function(){MK.tab=t[0];mkRender()};tabs.appendChild(b);
   });
   var body=$('#mkBody');body.innerHTML='<p class="sum-best">Chargement…</p>';
   if(MK.tab==='trade')return tradeRender(body);
+  if(MK.tab==='auc')return aucRender(body);
   var r=await SB.from('listings_v').select('*').order('price',{ascending:true}).limit(300);
   if(r.error){body.innerHTML='<p class="sum-best">Marché indisponible.</p>';return}
   try{var ms=await SB.rpc('market_stats');MKS=(ms&&ms.data)||{}}catch(e){MKS={}}
@@ -2446,6 +2475,73 @@ function mkList(list,body){
       };}
     row.appendChild(b);row.appendChild(det);box.appendChild(row);
   });
+}
+
+/* ----- ENCHÈRES ----- */
+var AUCT=0;
+function aucFmt(ms){
+  if(ms<=0)return 'Terminée';
+  var s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;
+  if(h>=24)return Math.floor(h/24)+' j '+(h%24)+' h';
+  if(h>=1)return h+' h '+String(m).padStart(2,'0')+' min';
+  return String(m).padStart(2,'0')+':'+String(x).padStart(2,'0');
+}
+function aucMin(a){return a.bid==null?a.start_price:Math.max(a.bid+1,Math.ceil(a.bid*1.05))}
+async function aucRender(body){
+  try{await SB.rpc('settle_auctions')}catch(e){}
+  var r=await SB.from('auctions_v').select('*').order('end_at',{ascending:true}).limit(100);
+  if(r.error){body.innerHTML='<p class="sum-best">Enchères indisponibles.</p>';return}
+  try{await loadAll()}catch(e){}
+  var rows=r.data||[],open=rows.filter(function(a){return a.status==='open'}),done=rows.filter(function(a){return a.status==='sold'}).sort(function(a,b){return new Date(b.closed_at)-new Date(a.closed_at)}).slice(0,8);
+  body.innerHTML='<p class="sum-best">Mise minimale : +5 % sur la mise précédente. Tes points sont bloqués tant que tu es en tête, et rendus si on te surenchérit. Une mise dans les 5 dernières minutes prolonge l’enchère de 5 min. Commission de '+Math.round(CFG.fee*100)+' % pour le vendeur. Pour lancer une enchère : ouvre une carte dans COLLECTION.</p>';
+  var box=document.createElement('div');box.className='mk-list';body.appendChild(box);
+  if(!open.length)box.innerHTML='<p class="sum-best">Aucune enchère en cours.</p>';
+  open.forEach(function(a){
+    var c=CBYID[a.card_id];if(!c)return;
+    var own=a.seller===USER.id,lead=a.bidder===USER.id,row=document.createElement('div');
+    row.className='mk-row au-row'+(lead?' au-lead':'')+(a.case_kind?' mk-enc':'');
+    var mine=INV[c.id]||0;
+    row.innerHTML=miniHTML(c)+'<div class="mk-info"><b>'+esc(c.n)+'</b><span>'+rarN(c.r)+' · '+esc(a.seller_pseudo)+(!own&&!mine?' · <em class="au-new">NOUVELLE</em>':'')+'</span>'
+      +(a.serial&&c.maxPrint?'<span class="mk-ex">Exemplaire '+serTxt(a.serial,c.maxPrint)+'</span>':'')
+      +(a.case_kind?'<span class="mk-case">🛡 '+esc(caseL(a.case_kind))+' · +'+Math.round(100*caseB(a.case_kind))+' % de valeur</span>':'')
+      +'<span class="au-bid">'+(a.bid!=null?'Mise actuelle : <b>'+a.bid+' PTS</b> · '+esc(a.bidder_pseudo||'?')+' ('+a.bids+' mise'+(a.bids>1?'s':'')+')':'Départ : <b>'+a.start_price+' PTS</b> · aucune mise')+'</span>'
+      +'<span class="au-t" data-end="'+new Date(a.end_at).getTime()+'">…</span>'+(lead?'<span class="au-you">✓ TU ES EN TÊTE</span>':'')+'</div>';
+    var act=document.createElement('div');act.className='au-act';
+    if(own){
+      var cb=document.createElement('button');cb.type='button';cb.className='btn';cb.textContent=a.bid==null?'ANNULER':'TA VENTE';cb.disabled=a.bid!=null;
+      cb.onclick=async function(){cb.disabled=true;var rr=await SB.rpc('cancel_auction',{p_id:a.id});if(rr.error){toast(rr.error.message);cb.disabled=false;return}await loadAll();mkRender()};
+      act.appendChild(cb);
+    }else{
+      var mn=aucMin(a),inp=document.createElement('input');inp.type='number';inp.min=mn;inp.value=mn;inp.setAttribute('inputmode','numeric');inp.setAttribute('aria-label','Ta mise');
+      var bb=document.createElement('button');bb.type='button';bb.className='btn gold';bb.textContent='ENCHÉRIR';bb.disabled=PTS<mn;
+      bb.onclick=async function(){
+        var v=Math.floor(+inp.value);
+        if(!(v>=mn)){toast('Mise minimale : '+mn+' PTS.');return}
+        if(bb.getAttribute('data-arm')!=='1'){bb.setAttribute('data-arm','1');bb.textContent='MISER '+v+' ?';setTimeout(function(){if(bb.isConnected){bb.setAttribute('data-arm','0');bb.textContent='ENCHÉRIR'}},3500);return}
+        bb.disabled=true;var rr=await SB.rpc('place_bid',{p_id:a.id,p_amount:v});
+        if(rr.error){toast(rr.error.message);mkRender();return}
+        PTS=rr.data;updPts();toast('Mise de '+v+' PTS enregistrée.');mkRender();
+      };
+      act.appendChild(inp);act.appendChild(bb);
+    }
+    row.appendChild(act);box.appendChild(row);
+  });
+  if(done.length){
+    var h=document.createElement('h3');h.className='shop-h';h.textContent='TERMINÉES RÉCEMMENT';body.appendChild(h);
+    var dl=document.createElement('div');dl.className='mk-list';body.appendChild(dl);
+    done.forEach(function(a){
+      var c=CBYID[a.card_id];if(!c)return;var d=document.createElement('div');d.className='mk-row';
+      d.innerHTML=miniHTML(c,54)+'<div class="mk-info"><b>'+esc(c.n)+(a.serial&&c.maxPrint?' · '+serTxt(a.serial,c.maxPrint):'')+'</b><span>Remportée par '+esc(a.bidder_pseudo||'?')+' pour <b>'+a.bid+' PTS</b></span></div>';
+      dl.appendChild(d);
+    });
+  }
+  clearInterval(AUCT);
+  var tick=function(){
+    var ts=body.querySelectorAll('.au-t');
+    if(!ts.length||!ts[0].isConnected){clearInterval(AUCT);return}
+    Array.prototype.forEach.call(ts,function(e){e.textContent='⏱ '+aucFmt(+e.getAttribute('data-end')-Date.now())});
+  };
+  tick();AUCT=setInterval(tick,1000);
 }
 async function tradeRender(body){
   var pr=await SB.from('profiles').select('id,pseudo').neq('id',USER.id).order('pseudo');
