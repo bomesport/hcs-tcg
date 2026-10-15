@@ -361,7 +361,9 @@ button{font:inherit;color:inherit;cursor:pointer}
 .bigc{width:var(--mw);height:calc(var(--mw)*1.4);position:relative;--cw:var(--mw)}
 .bigc .front{transform:none;position:absolute;inset:0;animation:none}
 #cvInfo{margin:0;font-style:italic;color:rgba(245,245,245,.8);text-align:center}
-.cv-act{display:flex;gap:8px}
+.cv-act{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+#cvSer,#cvCaseKind{max-width:calc(100vw - 32px)}
+.cv-in{max-width:100vw;box-sizing:border-box}
 #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:70;background:var(--ink);border:1px solid var(--gold);color:var(--bone);padding:10px 16px;border-radius:6px;max-width:90vw;text-align:center}
 #toast[hidden]{display:none}
 
@@ -512,6 +514,11 @@ button{font:inherit;color:inherit;cursor:pointer}
 .rp-st i{min-width:24px;text-align:center;font-style:normal;font-weight:700}
 .f-team{position:absolute;left:0;top:15%;bottom:36%;width:calc(var(--cw)*.085);display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,var(--tcol),color-mix(in srgb,var(--tcol) 70%,#000));border-radius:0 calc(var(--cw)*.02) calc(var(--cw)*.02) 0;box-shadow:2px 0 8px rgba(0,0,0,.55);z-index:3;overflow:hidden}
 .f-team span{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--display);font-size:calc(var(--cw)*var(--tf));letter-spacing:.14em;text-transform:uppercase;white-space:nowrap;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+.mk-case{color:#9ad7ff!important;font-weight:700}
+.mk-row.mk-enc{box-shadow:inset 0 0 0 1px rgba(154,215,255,.45)}
+.cv-hint{font-size:12px;opacity:.7;max-width:320px;text-align:center}
+.cv-enc{display:inline-block;position:relative}
+#cvCaseKind{height:42px;background:rgba(5,7,11,.7);color:var(--bone);border:1px solid rgba(245,245,245,.3);border-radius:4px;padding:0 8px;font:inherit;max-width:100%}
 .mk-ex{color:var(--gold,#f5c542)!important;font-weight:700;letter-spacing:.04em}
 #cvSer{height:42px;background:rgba(5,7,11,.7);color:var(--bone);border:1px solid rgba(245,245,245,.3);border-radius:4px;padding:0 8px;font:inherit;max-width:100%}
 #mkQ{flex:1 1 100%}
@@ -1793,6 +1800,7 @@ async function loadConfig(){
     else if(x.key==='items')CFG.items=x.value;
     else if(x.key==='series')CFG.series=x.value;
     else if(x.key==='market_fee')CFG.fee=+x.value;
+    else if(x.key==='cases')CFG.cases=x.value;
   });
   updMid();
 }
@@ -1801,7 +1809,8 @@ async function loadAll(){
   if(p.data){PTS=p.data.points;LASTDAILY=p.data.last_daily;LASTWHEEL=p.data.last_wheel;STREAK=p.data.streak||0;LASTCOLLECT=p.data.last_collect||null;XP=p.data.xp||0}
   var u=await SB.from('user_cards').select('card_id,qty').eq('user_id',USER.id);
   INV={};(u.data||[]).forEach(function(r){if(r.qty>0)INV[r.card_id]=r.qty});
-  try{var cp=await SB.rpc('my_copies');COPIES={};if(!cp.error)(cp.data||[]).forEach(function(r){(COPIES[r.card_id]=COPIES[r.card_id]||[]).push(r.serial)})}catch(e){}
+  try{var cp=await SB.rpc('my_copies');COPIES={};if(!cp.error)(cp.data||[]).forEach(function(r){(COPIES[r.card_id]=COPIES[r.card_id]||[]).push({s:r.serial,k:r.case_kind||''})})}catch(e){}
+  try{var cq=await SB.rpc('my_cases');CASEQ={};if(!cq.error)(cq.data||[]).forEach(function(r){CASEQ[r.kind]=r.qty})}catch(e){}
   var s=await SB.rpc('stock_by_series');
   if(!s.error&&s.data)STOCKS=s.data;
   else{var s1=await SB.rpc('stock_count');if(!s1.error)STOCKS={1:s1.data||0}}
@@ -2056,13 +2065,23 @@ function libRender(){
   });
 }
 var SELLDEF=[10,30,120,500,2000];
-var COPIES={};
+var COPIES={},CASEQ={};
+function caseL(k){return (CFG.cases&&CFG.cases[k]&&CFG.cases[k].l)||k}
+function caseB(k){return (CFG.cases&&CFG.cases[k]&&CFG.cases[k].bonus)||0}
 function openView(c){
-  var q=INV[c.id]||0;
-  $('#cvCard').innerHTML='<div class="bigc r'+c.r+(c.v==='holo'?' vh':'')+'"><div class="face front">'+frontHTML(cardD(c))+'</div></div>';
-  var cps=(COPIES[c.id]||[]).slice().sort(function(a,b){return a-b}).filter(function(x){return x>0});
-  $('#cvInfo').textContent=RAR[c.r].n+' · '+q+' exemplaire'+(q>1?'s':'')+(cps.length?' · '+cps.map(function(x){return 'N° '+String(x).padStart(2,'0')+'/'+c.maxPrint}).join(', '):'');
-  var b=$('#cvRec');b.hidden=q<2;b.textContent='RECYCLER 1 DOUBLON · +'+CFG.recycle[c.r]+' PTS';
+  var q=INV[c.id]||0,P2=function(n){return String(n).padStart(2,'0')};
+  var cps=(COPIES[c.id]||[]).slice().sort(function(a,b){return a.s-b.s}).filter(function(x){return x.s>0});
+  function lab(x,i){return (c.maxPrint>0?'N° '+P2(x.s)+'/'+c.maxPrint:'Exemplaire '+(i+1))+(x.k?' · 🛡 '+caseL(x.k):'')}
+  function paintCard(k){
+    var big='<div class="bigc r'+c.r+(c.v==='holo'?' vh':'')+'"><div class="face front">'+frontHTML(cardD(c))+'</div></div>';
+    $('#cvCard').innerHTML=k?'<div class="fr-'+k+' cv-enc">'+big+'</div>':big;
+  }
+  var free=cps.filter(function(x){return !x.k}),defCp=free.length?free[free.length-1]:cps[cps.length-1];
+  paintCard(defCp&&defCp.k);
+  var shown=cps.map(function(x,i){return (c.maxPrint>0||x.k)?lab(x,i):''}).filter(Boolean);
+  $('#cvInfo').textContent=RAR[c.r].n+' · '+q+' exemplaire'+(q>1?'s':'')+(shown.length&&shown.length<=6?' · '+shown.join(', '):'');
+  var nfree=cps.length?free.length:q;
+  var b=$('#cvRec');b.hidden=q<2||nfree<1;b.textContent='RECYCLER 1 DOUBLON · +'+CFG.recycle[c.r]+' PTS';
   b.onclick=async function(){
     b.disabled=true;
     var r=await SB.rpc('recycle',{p_card:c.id,p_qty:1});
@@ -2074,7 +2093,13 @@ function openView(c){
   var pi=$('#cvPrice');pi.value=SELLDEF[c.r];
   var sx=$('#cvSer');if(sx)sx.remove();
   var ser=null;
-  if(cps.length>1){ser=document.createElement('select');ser.id='cvSer';ser.innerHTML=cps.map(function(x){return '<option value="'+x+'">Exemplaire N° '+String(x).padStart(2,'0')+'/'+c.maxPrint+'</option>'}).join('');pi.parentNode.insertBefore(ser,pi)}
+  if(cps.length>1){
+    ser=document.createElement('select');ser.id='cvSer';
+    ser.innerHTML=cps.map(function(x,i){return '<option value="'+x.s+'"'+(defCp&&x.s===defCp.s?' selected':'')+'>'+lab(x,i)+'</option>'}).join('');
+    pi.parentNode.insertBefore(ser,pi);
+    ser.onchange=function(){var x=cps.filter(function(y){return y.s===+ser.value})[0];paintCard(x&&x.k);syncCase()};
+  }
+  function curCp(){return ser?cps.filter(function(y){return y.s===+ser.value})[0]:(cps.length===1?cps[0]:null)}
   $('#cvSell').onclick=async function(){
     var pr=Math.floor(+pi.value);
     if(!(pr>=1)){toast('Prix invalide.');return}
@@ -2090,6 +2115,33 @@ function openView(c){
     $('#cardView').hidden=true;MK.tab='trade';MK.give=c.id;goTab('market');
   };
   $('#cvSellRow').hidden=q<1;
+  /* ----- étuis ----- */
+  var cr=$('#cvCaseRow');if(cr)cr.remove();
+  var syncCase=function(){};
+  if(c.r>=2&&q>=1&&CFG.cases){
+    cr=document.createElement('div');cr.id='cvCaseRow';cr.className='cv-act';
+    var kinds=Object.keys(CFG.cases),have=kinds.filter(function(k){return (CASEQ[k]||0)>0});
+    if(!have.length){
+      cr.innerHTML='<span class="cv-hint">🛡 Protège cette carte avec un étui (+'+Math.round(100*caseB('toploader'))+' à +'+Math.round(100*caseB('slab'))+' % de valeur) : achète-en dans la BOUTIQUE.</span>';
+    }else{
+      var sel=document.createElement('select');sel.id='cvCaseKind';
+      sel.innerHTML=have.map(function(k){return '<option value="'+k+'">'+esc(caseL(k))+' (x'+CASEQ[k]+') · +'+Math.round(100*caseB(k))+' %</option>'}).join('');
+      var gb=document.createElement('button');gb.type='button';gb.className='btn';gb.id='cvCaseGo';gb.textContent='PROTÉGER';
+      cr.appendChild(sel);cr.appendChild(gb);
+      syncCase=function(){var x=curCp();gb.disabled=!!(x&&x.k)||(!x&&cps.length>0&&!free.length)};syncCase();
+      gb.onclick=async function(){
+        var x=curCp(),k=sel.value;
+        if(gb.getAttribute('data-arm')!=='1'){gb.setAttribute('data-arm','1');gb.textContent='DÉFINITIF · CONFIRMER ?';setTimeout(function(){if(gb.isConnected){gb.setAttribute('data-arm','0');gb.textContent='PROTÉGER'}},3500);return}
+        gb.disabled=true;
+        var a={p_card:c.id,p_kind:k};if(x)a.p_serial=x.s;
+        var r=await SB.rpc('encase',a);
+        if(r.error){toast(r.error.message);gb.disabled=false;return}
+        toast(c.n+' est maintenant sous '+caseL(k)+'.');
+        await loadAll();libRender();openView(c);
+      };
+    }
+    $('#cvSellRow').parentNode.insertBefore(cr,$('#cvSellRow').nextSibling);
+  }
   mktShow(c);
   $('#cardView').hidden=false;
 }
@@ -2256,7 +2308,20 @@ function shopRender(){
   items.forEach(function(it){
     h+='<div class="shop-card"><div><b>'+it[1]+'</b><span>'+it[2]+'</span></div><button class="btn gold" data-kind="'+it[0]+'" type="button"'+(PTS<it[3]?' disabled':'')+'>'+it[3]+' PTS</button></div>';
   });
+  if(CFG.cases){
+    h+='<h3 class="shop-h">ÉTUIS POUR CARTES</h3><p class="sum-best">Protège définitivement une carte Très rare ou mieux : l’étui reste sur la carte, la suit à la vente et augmente sa valeur.</p>';
+    Object.keys(CFG.cases).forEach(function(k){var ci=CFG.cases[k];
+      h+='<div class="shop-card"><div><b>'+esc(ci.l)+' · +'+Math.round(100*ci.bonus)+' % de valeur</b><span>Tu en as '+(CASEQ[k]||0)+'</span></div><button class="btn gold" data-case="'+k+'" type="button"'+(PTS<ci.price?' disabled':'')+'>'+ci.price+' PTS</button></div>';
+    });
+  }
   el.innerHTML=h;serBar($('#serSel2'));
+  Array.prototype.forEach.call(el.querySelectorAll('[data-case]'),function(b){
+    b.onclick=async function(){
+      b.disabled=true;var r=await SB.rpc('buy_case',{p_kind:b.getAttribute('data-case'),p_n:1});
+      if(r.error){toast(r.error.message);b.disabled=false;return}
+      PTS=r.data;updPts();await loadAll();toast('Étui acheté !');shopRender();
+    };
+  });
   $('#shOpen').onclick=function(){goTab('intro')};
   $('#shQuick').onclick=function(){quickOpen(300)};
   Array.prototype.forEach.call(el.querySelectorAll('[data-kind]'),function(b){
@@ -2359,12 +2424,13 @@ function mkList(list,body){
   });
   if(!rows.length){box.innerHTML='<p class="sum-best">'+(MK.tab==='mine'?'Aucune annonce.':'Aucune annonce pour le moment.')+'</p>';return}
   rows.forEach(function(l){
-    var c=CBYID[l.card_id],row=document.createElement('div');row.className='mk-row';
+    var c=CBYID[l.card_id],row=document.createElement('div');row.className='mk-row'+(l.case_kind?' mk-enc':'');
     var own=INV[c.id]||0;
     var tot=String(SERCNT[c.s]||0).padStart(3,'0'),no=c.no?String(c.no).padStart(3,'0'):'',st=MKS[c.id],ref=st&&(st.avg5||st.last),cote='';
+    if(ref&&l.case_kind)ref=Math.round(ref*(1+caseB(l.case_kind)));
     if(ref){var df=Math.round((l.price-ref)/ref*100);cote='<span class="mk-cote">Cote '+ref+' PTS'+(df<=-3?' · <em class="dn">'+df+' %</em>':df>=3?' · <em class="up">+'+df+' %</em>':'')+'</span>'}
     else cote='<span class="mk-cote">Cote : pas encore de vente</span>';
-    row.innerHTML=miniHTML(c)+'<div class="mk-info"><b>'+esc(c.n)+'</b><span>'+rarN(c.r)+(MK.tab==='buy'?' · '+esc(l.seller_pseudo)+(own?' · tu en as '+own:''):'')+'</span>'+(l.serial&&c.maxPrint?'<span class="mk-ex">Exemplaire '+serTxt(l.serial,c.maxPrint)+'</span>':'')+'<span>'+(no?'N° '+no+'/'+tot:'')+(c.maxPrint?(no?' · ':'')+'tirage '+c.maxPrint:'')+'</span>'+cote+'<span class="mk-more">▾ voir la courbe</span></div>';
+    row.innerHTML=miniHTML(c)+'<div class="mk-info"><b>'+esc(c.n)+'</b><span>'+rarN(c.r)+(MK.tab==='buy'?' · '+esc(l.seller_pseudo)+(own?' · tu en as '+own:''):'')+'</span>'+(l.serial&&c.maxPrint?'<span class="mk-ex">Exemplaire '+serTxt(l.serial,c.maxPrint)+'</span>':'')+(l.case_kind?'<span class="mk-case">🛡 '+esc(caseL(l.case_kind))+' · +'+Math.round(100*caseB(l.case_kind))+' % de valeur</span>':'')+'<span>'+(no?'N° '+no+'/'+tot:'')+(c.maxPrint?(no?' · ':'')+'tirage '+c.maxPrint:'')+'</span>'+cote+'<span class="mk-more">▾ voir la courbe</span></div>';
     if(MK.tab==='buy'&&!own){row.classList.add('mk-new');row.insertAdjacentHTML('afterbegin','<i class="mk-newb">NOUVELLE</i>')}
     if(l.created_at){var ag=Math.max(0,Math.round((Date.now()-new Date(l.created_at).getTime())/60000)),agt=ag<2?'à l’instant':ag<60?'il y a '+ag+' min':ag<1440?'il y a '+Math.round(ag/60)+' h':'il y a '+Math.round(ag/1440)+' j';row.querySelector('.mk-info').insertAdjacentHTML('beforeend','<span class="mk-ago">'+agt+'</span>')}
     var det=document.createElement('div');det.className='ct-box mk-det';det.hidden=true;
