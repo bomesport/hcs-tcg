@@ -427,6 +427,17 @@ button{font:inherit;color:inherit;cursor:pointer}
 .ifr-slab{inset:-30px -8px -8px;border:solid #d3dae5;border-width:30px 8px 8px;border-radius:7px;box-shadow:inset 0 0 0 1px #fff,0 4px 14px rgba(0,0,0,.55)}
 .ifr-slab::before{content:'BoM · 10 GEM MINT';position:absolute;left:4px;right:4px;top:-27px;height:22px;display:grid;place-items:center;background:#0e1d3d;color:#fff;font-family:var(--display);letter-spacing:.1em;font-size:12px;border-radius:2px}
 .ifr-slab.ifr-b::before{content:'BoM'}
+.ct-h{font-family:var(--display);letter-spacing:.12em;font-size:14px;color:var(--gold);margin:4px 0 6px}
+.ct-box{width:min(92vw,330px);margin:6px auto 0;padding:8px 12px 10px;border:1px solid rgba(245,245,245,.18);border-radius:8px;background:rgba(5,7,11,.6);font-size:14px}
+.ct-row{display:flex;justify-content:space-between;gap:10px;padding:3px 0;border-bottom:1px solid rgba(245,245,245,.08)}
+.ct-row span{opacity:.75}.ct-row b{font-weight:600;color:var(--bone)}
+.ct-chart{display:block;width:100%;height:70px;margin-top:8px}
+.ct-axis{display:flex;justify-content:space-between;gap:6px;font-size:11px;opacity:.7;margin-top:2px}
+.ct-none{margin:8px 0 0;font-size:12px;opacity:.7;text-align:center}
+.mk-row{flex-wrap:wrap}.mk-info{cursor:pointer}
+.mk-det{flex-basis:100%;width:auto;margin:4px 0 0}
+.mk-info .mk-cote{color:var(--gold)}.mk-info .mk-more{font-size:11px;opacity:.5}
+.mk-info em{font-style:normal;font-weight:700}.mk-info em.dn{color:#5fd98a}.mk-info em.up{color:#ff8a6b}
 .st-bois{background:linear-gradient(#3a2614,#5a3a1e 70%,#7a4f27);border-color:#9a6a35;box-shadow:inset 0 -10px 0 #2b1a0c}
 .st-verre{background:linear-gradient(160deg,rgba(120,180,255,.28),rgba(20,40,80,.55));border-color:rgba(150,200,255,.7);box-shadow:inset 0 0 22px rgba(150,200,255,.35)}
 .st-podium{background:linear-gradient(rgba(4,7,14,.15),rgba(4,7,14,.05)),url(img/podium-bg.webp) center 80%/cover no-repeat #060a14;border:2px solid var(--gold);box-shadow:0 0 20px rgba(212,175,55,.25);align-items:flex-end;padding:50px 10px 70px;min-height:340px}
@@ -1895,7 +1906,37 @@ function openView(c){
     $('#cardView').hidden=true;MK.tab='trade';MK.give=c.id;goTab('market');
   };
   $('#cvSellRow').hidden=q<1;
+  mktShow(c);
   $('#cardView').hidden=false;
+}
+function mktShow(c){
+  var inf=$('#cvInfo'),el=$('#cvMkt');
+  if(!el){el=document.createElement('div');el.id='cvMkt';el.className='ct-box';inf.parentNode.insertBefore(el,inf.nextSibling)}
+  mktFill(el,c);
+}
+async function mktFill(el,c){
+  el.dataset.cid=c.id;
+  el.innerHTML='<p class="ct-none">Cote du marché…</p>';
+  var r;try{r=await SB.rpc('card_market',{p_card:c.id})}catch(e){r={error:e}}
+  if(el.dataset.cid!==c.id)return;
+  if(!r||r.error||!r.data){el.innerHTML='';return}
+  var d=r.data,base=(CFG.base_value&&CFG.base_value[c.r])||0,h=d.hist||[];
+  var rows='<div class="ct-row"><span>Dernière vente</span><b>'+(d.last!=null?d.last+' PTS':'—')+'</b></div>'+
+    '<div class="ct-row"><span>Moyenne (5 dernières)</span><b>'+(d.avg5!=null?d.avg5+' PTS':'—')+'</b></div>'+
+    '<div class="ct-row"><span>Moins cher en vente</span><b>'+(d.min!=null?d.min+' PTS':'aucune annonce')+(d.open>1?' · '+d.open+' annonces':'')+'</b></div>'+
+    (base?'<div class="ct-row"><span>Valeur de base</span><b>'+base+' PTS</b></div>':'');
+  var chart='';
+  if(h.length>=2){
+    var W=260,H=70,P=6,ps=h.map(function(x){return x.p}),mn=Math.min.apply(null,ps),mx=Math.max.apply(null,ps),rg=(mx-mn)||1;
+    var pts=h.map(function(x,i){return [P+i*(W-2*P)/(h.length-1),H-P-(x.p-mn)/rg*(H-2*P)]});
+    var line=pts.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1)}).join(' ');
+    var fd=function(t){var z=new Date(t);return z.getDate()+'/'+(z.getMonth()+1)};
+    chart='<svg class="ct-chart" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none"><polygon points="'+P+','+(H-P)+' '+line+' '+(W-P)+','+(H-P)+'" fill="rgba(212,175,55,.15)"/><polyline points="'+line+'" fill="none" stroke="#d4af37" stroke-width="2" vector-effect="non-scaling-stroke"/>'+
+      pts.map(function(p){return '<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="2.2" fill="#fff"/>'}).join('')+'</svg>'+
+      '<div class="ct-axis"><span>'+fd(h[0].t)+' · '+h[0].p+'</span><span>min '+mn+' · max '+mx+'</span><span>'+fd(h[h.length-1].t)+' · '+h[h.length-1].p+'</span></div>';
+  }else if(h.length===1){chart='<p class="ct-none">1 seule vente pour l’instant : la courbe apparaîtra à la 2ᵉ.</p>'}
+  else chart='<p class="ct-none">Aucune vente pour l’instant. La cote se construit avec les ventes du marché.</p>';
+  el.innerHTML='<div class="ct-h">COTE DU MARCHÉ</div>'+rows+chart;
 }
 $('#cvClose').addEventListener('click',function(){$('#cardView').hidden=true});
 $('#cardView').addEventListener('click',function(e){if(e.target===this)this.hidden=true});
@@ -2047,7 +2088,7 @@ function openWheel(){
 $('#wheelClose').addEventListener('click',function(){$('#wheelView').hidden=true});
 
 /* ----- Marché & échanges ----- */
-var MK={tab:'buy',give:'',q:'',r:-1,arm:0};
+var MKS={};var MK={tab:'buy',give:'',q:'',r:-1,arm:0};
 function miniHTML(c,w){return '<div class="mini r'+c.r+(c.v==='holo'?' vh':'')+'" style="--mw:'+(w||64)+'px"><div class="face front">'+frontHTML(cardD(c),1)+'</div></div>'}
 async function mkRender(){
   var tabs=$('#mkTabs');tabs.innerHTML='';
@@ -2059,6 +2100,7 @@ async function mkRender(){
   if(MK.tab==='trade')return tradeRender(body);
   var r=await SB.from('listings_v').select('*').order('price',{ascending:true}).limit(300);
   if(r.error){body.innerHTML='<p class="sum-best">Marché indisponible.</p>';return}
+  try{var ms=await SB.rpc('market_stats');MKS=(ms&&ms.data)||{}}catch(e){MKS={}}
   var all=r.data||[],list;
   if(MK.tab==='mine')list=all.filter(function(l){return l.seller===USER.id});
   else list=all.filter(function(l){return l.seller!==USER.id});
@@ -2087,7 +2129,12 @@ function mkList(list,body){
   rows.forEach(function(l){
     var c=CBYID[l.card_id],row=document.createElement('div');row.className='mk-row';
     var own=INV[c.id]||0;
-    row.innerHTML=miniHTML(c)+'<div class="mk-info"><b>'+esc(c.n)+'</b><span>'+rarN(c.r)+(MK.tab==='buy'?' · '+esc(l.seller_pseudo)+(own?' · tu en as '+own:' · NOUVELLE'):'')+'</span></div>';
+    var tot=String(SERCNT[c.s]||0).padStart(3,'0'),no=c.no?String(c.no).padStart(3,'0'):'',st=MKS[c.id],ref=st&&(st.avg5||st.last),cote='';
+    if(ref){var df=Math.round((l.price-ref)/ref*100);cote='<span class="mk-cote">Cote '+ref+' PTS'+(df<=-3?' · <em class="dn">'+df+' %</em>':df>=3?' · <em class="up">+'+df+' %</em>':'')+'</span>'}
+    else cote='<span class="mk-cote">Cote : pas encore de vente</span>';
+    row.innerHTML=miniHTML(c)+'<div class="mk-info"><b>'+esc(c.n)+'</b><span>'+rarN(c.r)+(MK.tab==='buy'?' · '+esc(l.seller_pseudo)+(own?' · tu en as '+own:' · NOUVELLE'):'')+'</span><span>'+(no?'N° '+no+'/'+tot:'')+(c.maxPrint?(no?' · ':'')+'tirage '+c.maxPrint:'')+'</span>'+cote+'<span class="mk-more">▾ voir la courbe</span></div>';
+    var det=document.createElement('div');det.className='ct-box mk-det';det.hidden=true;
+    row.querySelector('.mk-info').onclick=function(){det.hidden=!det.hidden;if(!det.hidden)mktFill(det,c)};
     var b=document.createElement('button');b.type='button';b.className='btn gold';
     if(MK.tab==='mine'){b.textContent='RETIRER · '+l.price;b.onclick=async function(){b.disabled=true;var r=await SB.rpc('cancel_listing',{p_id:l.id});if(r.error){toast(r.error.message);b.disabled=false;return}await loadAll();mkRender()}}
     else{b.textContent=l.price+' PTS';b.disabled=PTS<l.price;
@@ -2097,7 +2144,7 @@ function mkList(list,body){
         if(r.error){toast(r.error.message);mkRender();return}
         PTS=r.data;await loadAll();toast(c.n+' ajoutée à ta collection.');mkRender();
       };}
-    row.appendChild(b);box.appendChild(row);
+    row.appendChild(b);row.appendChild(det);box.appendChild(row);
   });
 }
 async function tradeRender(body){
