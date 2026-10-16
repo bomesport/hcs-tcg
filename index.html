@@ -595,6 +595,12 @@ button{font:inherit;color:inherit;cursor:pointer}
 .wt-p b,.wt-o b{color:var(--gold)}
 .wt-hv{color:#3ddc84!important;font-weight:700;letter-spacing:.06em}
 .wt-row.wt-have{border-color:#3ddc84!important}
+.tr-h{display:block;margin-top:6px;font-family:var(--display);letter-spacing:.14em;color:var(--gold);font-size:14px}
+.tr-chips{display:flex;flex-wrap:wrap;gap:6px;min-height:28px}
+.tr-chip{padding:5px 9px;border-radius:14px;border:1px solid var(--gold);background:rgba(212,175,55,.12);color:var(--bone);font-size:13px}
+.tr-none{opacity:.55;font-size:13px;font-style:italic}
+.tr-minis{display:flex;flex-direction:column;gap:3px;flex:none}
+.sl-p{color:var(--gold)}
 .au-row{flex-wrap:wrap}.au-row .mk-info{flex:1 1 55%;min-width:0}.au-row .au-act{flex:1 1 100%;justify-content:flex-end}
 .au-bid b{font-size:inherit!important;display:inline!important;letter-spacing:0!important;font-family:inherit!important;text-transform:none!important;color:var(--gold,#f5c542)}
 .au-row .au-act{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
@@ -2545,7 +2551,7 @@ var MKS={};var MK={tab:'buy',give:'',q:'',r:-1,arm:0,sort:'price',nw:false};
 function miniHTML(c,w){return '<div class="mini r'+c.r+(c.v==='holo'?' vh':'')+'" style="--mw:'+(w||64)+'px"><div class="face front">'+frontHTML(cardD(c),1)+'</div></div>'}
 async function mkRender(){
   var tabs=$('#mkTabs');tabs.innerHTML='';
-  [['buy','ACHETER'],['auc','ENCHÈRES'],['want','RECHERCHES'],['mine','MES ANNONCES'],['trade','ÉCHANGES']].forEach(function(t){
+  [['buy','ACHETER'],['auc','ENCHÈRES'],['sales','VENTES'],['want','RECHERCHES'],['mine','MES ANNONCES'],['trade','ÉCHANGES']].forEach(function(t){
     var b=document.createElement('button');b.type='button';b.className='serbtn'+(MK.tab===t[0]?' on':'');b.textContent=t[1];
     b.onclick=function(){MK.tab=t[0];mkRender()};tabs.appendChild(b);
   });
@@ -2553,6 +2559,7 @@ async function mkRender(){
   if(MK.tab==='trade')return tradeRender(body);
   if(MK.tab==='auc')return aucRender(body);
   if(MK.tab==='want')return wantRender(body);
+  if(MK.tab==='sales')return salesRender(body);
   var r=await SB.from('listings_v').select('*').order('price',{ascending:true}).limit(300);
   if(r.error){body.innerHTML='<p class="sum-best">Marché indisponible.</p>';return}
   try{var ms=await SB.rpc('market_stats');MKS=(ms&&ms.data)||{}}catch(e){MKS={}}
@@ -2684,33 +2691,50 @@ async function aucRender(body){
   };
   tick();AUCT=setInterval(tick,1000);
 }
+var TG=[],TW=[];
 async function tradeRender(body){
   var pr=await SB.from('profiles').select('id,pseudo').neq('id',USER.id).order('pseudo');
   var tr=await SB.from('trades_v').select('*').order('id',{ascending:false});
   var players=pr.data||[],trades=tr.data||[];
   var mine=DBCARDS.filter(function(c){return INV[c.id]}).sort(function(a,b){return a.n<b.n?-1:1});
   var wants=DBCARDS.filter(function(c){return c.active&&!isSec(c)&&CFG.unlocked.indexOf(c.s)>=0}).sort(function(a,b){return a.n<b.n?-1:1});
-  var h='<p class="sum-best">Échange 1 contre 1 : l’autre joueur doit accepter.</p><div class="shop-card tcol">'
+  if(MK.give){TG=[MK.give];TW=[]}
+  var h='<p class="sum-best">Propose un échange jusqu’à 5 cartes contre 5 cartes (par exemple 3 contre 1). L’autre joueur doit accepter.</p><div class="shop-card tcol">'
    +'<select id="trTo"><option value="">Avec quel joueur ?</option>'+players.map(function(p){return '<option value="'+p.id+'">'+esc(p.pseudo)+'</option>'}).join('')+'</select>'
-   +'<select id="trGive"><option value="">Ma carte à donner</option>'+mine.map(function(c){return '<option value="'+c.id+'"'+(MK.give===c.id?' selected':'')+'>'+esc(c.n)+' ('+rarN(c.r)+', x'+INV[c.id]+')</option>'}).join('')+'</select>'
-   +'<select id="trWant"><option value="">La carte que je veux</option>'+wants.map(function(c){return '<option value="'+c.id+'">'+esc(c.n)+' ('+rarN(c.r)+')'+(INV[c.id]?' · tu l’as':'')+'</option>'}).join('')+'</select>'
+   +'<b class="tr-h">JE DONNE</b><div id="trGl" class="tr-chips"></div><select id="trGive"></select>'
+   +'<b class="tr-h">JE VEUX</b><div id="trWl" class="tr-chips"></div><select id="trWant"></select>'
    +'<button class="btn gold" id="trGo" type="button">PROPOSER L’ÉCHANGE</button></div>';
   var inc=trades.filter(function(t){return t.to_user===USER.id}),out=trades.filter(function(t){return t.from_user===USER.id});
   h+='<h3 class="shop-h">OFFRES REÇUES ('+inc.length+')</h3><div id="trInc"></div><h3 class="shop-h">MES OFFRES ENVOYÉES ('+out.length+')</h3><div id="trOut"></div>';
   body.innerHTML=h;MK.give='';
+  function cnt(l,id){return l.filter(function(x){return x===id}).length}
+  function drawT(){
+    [['trGl','trGive',TG,function(c){return (INV[c.id]||0)>cnt(TG,c.id)},mine,'+ Ajouter une carte à donner'],['trWl','trWant',TW,function(){return true},wants,'+ Ajouter une carte que je veux']].forEach(function(z){
+      var box=$('#'+z[0]),sel=$('#'+z[1]),list=z[2];
+      box.innerHTML='';
+      list.forEach(function(id,i){var c=CBYID[id];if(!c)return;var ch=document.createElement('button');ch.type='button';ch.className='tr-chip r'+c.r;ch.textContent=c.n+' ✕';ch.onclick=function(){list.splice(i,1);drawT()};box.appendChild(ch)});
+      if(!list.length)box.innerHTML='<span class="tr-none">aucune carte</span>';
+      sel.hidden=list.length>=5;
+      sel.innerHTML='<option value="">'+z[5]+'</option>'+z[4].filter(z[3]).map(function(c){return '<option value="'+c.id+'">'+esc(c.n)+' ('+rarN(c.r)+(INV[c.id]?', x'+INV[c.id]:'')+')</option>'}).join('');
+      sel.onchange=function(){if(sel.value&&list.length<5){list.push(sel.value);drawT()}};
+    });
+  }
+  drawT();
   $('#trGo').onclick=async function(){
-    var to=$('#trTo').value,g=$('#trGive').value,w=$('#trWant').value;
-    if(!to||!g||!w){toast('Choisis un joueur et deux cartes.');return}
+    var to=$('#trTo').value;
+    if(!to||!TG.length||!TW.length){toast('Choisis un joueur, et au moins une carte de chaque côté.');return}
     this.disabled=true;
-    var r=await SB.rpc('propose_trade',{p_to:to,p_give:g,p_want:w});
+    var r=await SB.rpc('propose_trade2',{p_to:to,p_give:TG,p_want:TW});
     this.disabled=false;
     if(r.error){toast(r.error.message);return}
-    toast('Offre envoyée.');mkRender();
+    TG=[];TW=[];toast('Offre envoyée.');mkRender();
   };
   function line(t,mode){
     var d=document.createElement('div');d.className='mk-row';
-    var g=CBYID[t.give_card],w=CBYID[t.want_card];if(!g||!w)return d;
-    d.innerHTML=miniHTML(g,54)+'<div class="mk-info"><b>'+esc(g.n)+'</b><span>'+(mode==='in'?'De '+esc(t.from_pseudo)+' · contre ta carte '+esc(w.n):'Contre '+esc(w.n)+' · à '+esc(t.to_pseudo))+'</span></div>';
+    var gl=(t.give_cards||[t.give_card]).map(function(i){return CBYID[i]}).filter(Boolean),wl=(t.want_cards||[t.want_card]).map(function(i){return CBYID[i]}).filter(Boolean);
+    if(!gl.length||!wl.length)return d;
+    var nm=function(l){return l.map(function(c){return esc(c.n)}).join(' + ')};
+    d.innerHTML='<div class="tr-minis">'+gl.map(function(c){return miniHTML(c,44)}).join('')+'</div><div class="mk-info"><b>'+gl.length+' contre '+wl.length+'</b><span>'+(mode==='in'?esc(t.from_pseudo)+' te donne : '+nm(gl)+'<br>Il veut de toi : <b>'+nm(wl)+'</b>':'Tu donnes : '+nm(gl)+'<br>Tu veux : <b>'+nm(wl)+'</b> · à '+esc(t.to_pseudo))+'</span></div>';
     var box=document.createElement('div');box.className='cv-act';
     if(mode==='in'){
       var a=document.createElement('button');a.type='button';a.className='btn gold';a.textContent='OUI';
@@ -3274,6 +3298,26 @@ async function wantRender(body){
   // alertes vues
   if((WALERT||[]).some(function(x){return !x.seen})){try{await SB.rpc('ack_want_alerts');WALERT.forEach(function(x){x.seen=true});updPts()}catch(e){}}
   setTimeout(function(){tuto('want',TUTO_WANT)},400);
+}
+
+/* ----- Fil des ventes ----- */
+async function salesRender(body){
+  var r=await SB.from('sales_v').select('*').order('sold_at',{ascending:false}).limit(10);
+  if(r.error){body.innerHTML='<p class="sum-best">Ventes indisponibles : '+esc(r.error.message)+'</p>';return}
+  var rows=r.data||[];
+  body.innerHTML='<p class="sum-best">Les 10 dernières ventes. Les ventes à prix symbolique (sous la valeur de recyclage), souvent des échanges déguisés, sont masquées et ne comptent pas dans la cote.</p>';
+  var box=document.createElement('div');box.className='mk-list';body.appendChild(box);
+  if(!rows.length)box.innerHTML='<p class="sum-best">Aucune vente pour le moment.</p>';
+  rows.forEach(function(s){
+    var c=CBYID[s.card_id];if(!c)return;
+    var row=document.createElement('div');row.className='mk-row';
+    var ag=Math.max(0,Math.round((Date.now()-new Date(s.sold_at).getTime())/60000)),agt=ag<2?'à l’instant':ag<60?'il y a '+ag+' min':ag<1440?'il y a '+Math.round(ag/60)+' h':'il y a '+Math.round(ag/1440)+' j';
+    row.innerHTML=miniHTML(c)+'<div class="mk-info"><b>'+esc(s.buyer_pseudo)+' a acheté '+esc(c.n)+'</b><span>à '+esc(s.seller_pseudo)+' pour <b class="sl-p">'+s.price+' PTS</b>'+(s.auction?' · <em class="au-new">ENCHÈRE</em>':'')+'</span>'
+      +(s.serial&&c.maxPrint?'<span class="mk-ex'+(s.serial===1?' n1':'')+'">Exemplaire '+serTxt(s.serial,c.maxPrint)+(s.serial===1?' ★ PREMIER':'')+'</span>':'')
+      +'<span class="mk-ago">'+agt+'</span></div>';
+    row.style.cursor='pointer';row.onclick=function(){openView(c)};
+    box.appendChild(row);
+  });
 }
 
 $('#gateGo').addEventListener('click',function(){
