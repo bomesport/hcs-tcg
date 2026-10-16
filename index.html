@@ -523,7 +523,8 @@ button{font:inherit;color:inherit;cursor:pointer}
 .f-ovr{display:none!important}
 .costline.empty{color:#ff6b5a;font-size:20px;letter-spacing:.24em}
 #toShop{margin-top:2px}
-#intro{--pw:min(64vw,250px,calc((100svh - 372px) / 1.5385));--ph:calc(var(--pw) * 1.5385)}
+#intro{--pw:min(64vw,250px,calc((100svh - 480px) / 1.5385));--ph:calc(var(--pw) * 1.5385)}
+@media (max-height:900px){#intro:not(.empty) .proto,#intro:not(.empty) #hintB{display:none}}
 #intro.empty{--pw:min(44vw,165px,calc((100svh - 540px) / 1.5385));--ph:calc(var(--pw) * 1.5385)}
 #intro.empty #hintA,#intro.empty #hintB,#intro.empty .proto{display:none}
 #intro.empty .cta{padding:9px 14px;font-size:16px;min-height:0}
@@ -619,9 +620,10 @@ button{font:inherit;color:inherit;cursor:pointer}
 .mk-fr{flex:none}
 .ct-cote b{color:var(--gold);font-size:18px}
 .ct-cote span{color:var(--gold);letter-spacing:.12em}
-.f-holofx{position:absolute;inset:0;pointer-events:none;mix-blend-mode:color-dodge;opacity:.8;background:linear-gradient(115deg,transparent 12%,rgba(255,120,200,.75) 30%,rgba(255,220,100,.75) 40%,rgba(90,255,200,.7) 50%,rgba(100,160,255,.75) 60%,transparent 80%);background-size:320% 320%;animation:hsweep 3.4s linear infinite,hhue 7s linear infinite;z-index:3;border-radius:inherit}
+.f-holofx{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;opacity:.6;background:linear-gradient(115deg,transparent 12%,rgba(255,120,200,.75) 30%,rgba(255,220,100,.75) 40%,rgba(90,255,200,.7) 50%,rgba(100,160,255,.75) 60%,transparent 80%);background-size:320% 320%;animation:hsweep 3.4s linear infinite,hhue 7s linear infinite;z-index:3;border-radius:inherit}
 @keyframes hsweep{from{background-position:100% 30%}to{background-position:0% 70%}}
 @keyframes hhue{from{filter:hue-rotate(0)}to{filter:hue-rotate(360deg)}}
+.f-hvframe{position:absolute;inset:0;pointer-events:none;z-index:5;border-radius:inherit;border:calc(var(--cw)*.03) solid transparent;background:linear-gradient(120deg,#ff5fbf,#ffd75e,#5dffc8,#5f9cff,#c25fff,#ff5fbf) border-box;background-size:300% 300%;animation:hsweep 3s linear infinite;-webkit-mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) padding-box exclude,linear-gradient(#000 0 0)}
 .in.hv{box-shadow:inset 0 0 0 calc(var(--cw)*.014) rgba(255,255,255,.7),inset 0 0 calc(var(--cw)*.1) rgba(150,220,255,.55),0 0 14px rgba(140,200,255,.6)}
 .in.ng{box-shadow:inset 0 0 0 calc(var(--cw)*.014) #000,inset 0 0 0 calc(var(--cw)*.028) rgba(255,255,255,.55)}
 .f-hv{position:absolute;top:0;left:calc(var(--cw)*.06);z-index:4;white-space:nowrap;font-family:var(--display);font-size:calc(var(--cw)*.05);letter-spacing:.08em;padding:calc(var(--cw)*.02) calc(var(--cw)*.04) calc(var(--cw)*.045);clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%);background:linear-gradient(100deg,#ff7ac8,#ffd75e,#6dffd0,#6fa8ff,#ff7ac8);background-size:250% 100%;animation:hsweep2 4s linear infinite;color:#12121c}
@@ -629,6 +631,33 @@ button{font:inherit;color:inherit;cursor:pointer}
 .f-hv.neg{background:#000;color:#fff;box-shadow:none;animation:none}
 .f-hv.sg{background:linear-gradient(180deg,#f8e08a,#b8860b);animation:none}
 .mini .f-hv{display:block;font-size:calc(var(--cw)*.075)}
+.pkx{position:absolute;inset:0;overflow:hidden;color:#fff;font-family:var(--display)}
+.pkx1{background:radial-gradient(ellipse 80% 55% at 50% 38%,#20232b 0%,#0a0b0f 62%,#050507 100%)}
+.pkx2{background:radial-gradient(ellipse 85% 55% at 50% 35%,#16386e 0%,#0a1a38 55%,#04070f 100%)}
+.pkx-fr{position:absolute;inset:3.2%;border:calc(var(--pw)*.012) solid #d9b25a;border-radius:calc(var(--pw)*.04);box-shadow:0 0 calc(var(--pw)*.03) rgba(217,178,90,.45)}
+.pkx-fr2{position:absolute;inset:6%;border:1px solid rgba(217,178,90,.5);border-radius:calc(var(--pw)*.025)}
+.pkx2 .pkx-fr{border-color:#53b3ff;box-shadow:0 0 calc(var(--pw)*.05) rgba(83,179,255,.8),inset 0 0 calc(var(--pw)*.04) rgba(83,179,255,.4)}
+.pkx2 .pkx-fr2{border-color:rgba(217,178,90,.8)}
+.pkx-st{position:absolute;left:0;right:0;text-align:center;font-style:normal;font-size:calc(var(--pw)*.035);letter-spacing:.3em;text-indent:.3em;color:#d9b25a}
+.pkx-st.t{top:calc(var(--ph)*.058)}.pkx-st.b{bottom:calc(var(--ph)*.058)}
+.pkx-glow{position:absolute;left:50%;top:calc(var(--ph)*.08);width:calc(var(--pw)*1.1);aspect-ratio:1;margin-left:calc(var(--pw)*-.55);border-radius:50%;background:radial-gradient(closest-side,rgba(130,170,255,.35),transparent 70%)}
+.pkx2 .pkx-glow{background:radial-gradient(closest-side,rgba(83,179,255,.55),transparent 70%)}
+.pkx-lines{position:absolute;inset:0;background:repeating-linear-gradient(118deg,transparent 0 calc(var(--pw)*.07),rgba(83,179,255,.14) calc(var(--pw)*.07) calc(var(--pw)*.075)),linear-gradient(180deg,transparent 55%,rgba(217,178,90,.12))}
+.pkx-hcs{position:absolute;left:50%;top:calc(var(--ph)*.10);width:calc(var(--pw)*.58);transform:translateX(-50%);filter:drop-shadow(0 calc(var(--pw)*.02) calc(var(--pw)*.04) rgba(0,0,0,.6))}
+.pkx2 .pkx-hcs{width:calc(var(--pw)*.42);top:calc(var(--ph)*.085)}
+.pkx-title{position:absolute;left:0;right:0;top:calc(var(--ph)*.38);display:grid;justify-items:center;line-height:.95}
+.pkx-title b{font-weight:400;font-size:calc(var(--pw)*.2);letter-spacing:.07em;text-indent:.07em;text-shadow:0 calc(var(--pw)*.01) calc(var(--pw)*.03) rgba(0,0,0,.7)}
+.pkx-title b.g{color:#e8c46a}
+.pkx-tcg{position:absolute;left:0;right:0;top:calc(var(--ph)*.5);display:grid;justify-items:center;gap:calc(var(--pw)*.01)}
+.pkx2 .pkx-tcg{top:calc(var(--ph)*.6)}
+.pkx-tcg b{font-weight:400;font-size:calc(var(--pw)*.27);letter-spacing:.1em;text-indent:.1em;line-height:1;text-shadow:0 calc(var(--pw)*.012) calc(var(--pw)*.035) rgba(0,0,0,.75)}
+.pkx2 .pkx-tcg b{font-size:calc(var(--pw)*.17)}
+.pkx-tcg span{display:flex;align-items:center;gap:calc(var(--pw)*.03)}
+.pkx-tcg i{font-family:var(--serif);font-size:calc(var(--pw)*.06);color:rgba(255,255,255,.75)}
+.pkx-tcg img{height:calc(var(--pw)*.13);width:auto}
+.pkx-plate{position:absolute;left:14%;right:14%;bottom:calc(var(--ph)*.085);text-align:center;padding:calc(var(--pw)*.02) 0 calc(var(--pw)*.025);border:calc(var(--pw)*.008) solid #d9b25a;border-radius:calc(var(--pw)*.02);background:linear-gradient(180deg,rgba(0,0,0,.65),rgba(25,20,5,.75))}
+.pkx-plate b{display:block;font-weight:400;font-size:calc(var(--pw)*.085);letter-spacing:.2em;text-indent:.2em;color:#e8c46a;line-height:1.15}
+.pkx-plate small{display:block;font-size:calc(var(--pw)*.034);letter-spacing:.2em;text-indent:.2em;color:rgba(255,255,255,.65)}
 .au-row{flex-wrap:wrap}.au-row .mk-info{flex:1 1 55%;min-width:0}.au-row .au-act{flex:1 1 100%;justify-content:flex-end}
 .au-bid b{font-size:inherit!important;display:inline!important;letter-spacing:0!important;font-family:inherit!important;text-transform:none!important;color:var(--gold,#f5c542)}
 .au-row .au-act{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
@@ -2178,7 +2207,7 @@ function cardD(c){
       var fs=Math.min(.06,.74/Math.max(8,c.tm.length)).toFixed(4);
       ex+='<div class="f-team" style="--tcol:'+c.tc+';--tf:'+fs+'"><span>'+esc(c.tm)+'</span></div>';
     }
-    if(d.v==='holo'){h=h.replace('class="in','class="in hv');ex+='<div class="f-holofx"></div><div class="f-hv"><span>✦ HOLO</span></div>'}
+    if(d.v==='holo'){h=h.replace('class="in','class="in hv');ex+='<div class="f-holofx"></div><div class="f-hvframe"></div><div class="f-hv"><span>✦ HOLO</span></div>'}
     else if(d.v==='neg'){h=h.replace('class="in','class="in ng');ex+='<div class="f-hv neg"><span>◐ NÉGATIF</span></div>'}
     else if(d.v==='sign'){ex+='<div class="f-hv sg"><span>✒ SIGNÉE</span></div>'}
     if(/^N° 0?1\//.test(d.serial||'')){h=h.replace('class="in','class="in no1');ex+='<div class="f-no1"><span>★ N° 1</span></div>'}
@@ -3371,6 +3400,10 @@ async function topRender(body){
   });
   if(!rows.length)box.innerHTML='<p class="sum-best">Pas encore de cotes.</p>';
 }
+
+/* ----- Boosters inspirés du dos des cartes de chaque série ----- */
+FOILTXT0='<div class="pkx pkx1"><div class="pkx-fr"></div><div class="pkx-fr2"></div><i class="pkx-st t">★ ★ ★</i><i class="pkx-st b">★ ★ ★</i><div class="pkx-glow"></div><img class="pkx-hcs" src="img/hcs.png" alt=""><div class="pkx-tcg"><b>TCG</b><span><i>by</i><img src="img/bom-white.png" alt=""></span></div><div class="pkx-plate"><b>SÉRIE 1</b><small>5 CARTES · 100 PTS</small></div></div>';
+FOILTXT2='<div class="pkx pkx2"><div class="pkx-fr"></div><div class="pkx-fr2"></div><i class="pkx-st t">◆ ◆ ◆</i><i class="pkx-st b">◆ ◆ ◆</i><div class="pkx-lines"></div><div class="pkx-glow"></div><img class="pkx-hcs" src="img/hcs.png" alt=""><div class="pkx-title"><b>ICONIC</b><b class="g">DUOS</b></div><div class="pkx-tcg"><b>TCG</b><span><i>by</i><img src="img/bom-white.png" alt=""></span></div><div class="pkx-plate"><b>SÉRIE 2</b><small>5 CARTES · 100 PTS</small></div></div>';
 
 $('#gateGo').addEventListener('click',function(){
   unlockAudio();$('#gate').hidden=true;SND.click();
