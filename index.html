@@ -3309,7 +3309,7 @@ async function wantRender(body){
     if(own){bt.className='btn';bt.textContent='ANNULER';bt.onclick=async function(){bt.disabled=true;var rr=await SB.rpc('cancel_want',{p_id:w.id});if(rr.error){toast(rr.error.message);bt.disabled=false;return}wantRender(body)}}
     else{bt.className='btn'+(w.moi_interesse?'':' gold');bt.textContent=w.moi_interesse?'✓ INTÉRESSÉ':'INTÉRESSÉ';
       bt.onclick=async function(){bt.disabled=true;var rr=await SB.rpc('toggle_interest',{p_id:w.id});if(rr.error){toast(rr.error.message);bt.disabled=false;return}
-        toast(rr.data?esc(w.pseudo)+' est prévenu(e) !':'Intérêt retiré.');wantRender(body)}}
+        toast(rr.data?w.pseudo+' est prévenu(e) !':'Intérêt retiré.');wantRender(body)}}
     act.appendChild(bt);row.appendChild(act);box.appendChild(row);
   });
   // alertes vues
