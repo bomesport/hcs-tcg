@@ -601,6 +601,22 @@ button{font:inherit;color:inherit;cursor:pointer}
 .tr-none{opacity:.55;font-size:13px;font-style:italic}
 .tr-minis{display:flex;flex-direction:column;gap:3px;flex:none}
 .sl-p{color:var(--gold)}
+.mk-ticker{display:flex;align-items:center;gap:8px;margin:0 0 8px;border:1px solid rgba(212,175,55,.5);border-radius:8px;background:rgba(5,7,11,.72);overflow:hidden}
+.mk-ticker[hidden]{display:none}
+.tk-l{flex:none;font-style:normal;font-family:var(--display);letter-spacing:.14em;font-size:13px;padding:7px 10px;background:var(--gold);color:#1a1405}
+.tk-w{overflow:hidden;flex:1;white-space:nowrap}
+.tk-t{display:inline-block;animation:tkmove 40s linear infinite}
+.tk-w:hover .tk-t{animation-play-state:paused}
+.tk-i{display:inline-block;font-size:13px;margin-right:34px}
+.tk-i em{font-style:normal;color:var(--gold);font-weight:700}
+.tk-i u{text-decoration:none;color:#fff}
+@keyframes tkmove{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.top-n{flex:none;width:30px;text-align:center;font-family:var(--display);font-size:22px;color:var(--gold)}
+.top1 .top-n,.top2 .top-n,.top3 .top-n{font-size:28px;text-shadow:0 0 10px rgba(245,213,107,.7)}
+.top1{border-color:#f5d56b!important;box-shadow:0 0 14px rgba(245,213,107,.35)}
+.top-cote{font-family:var(--display);letter-spacing:.1em;font-size:13px;color:rgba(245,245,245,.7)}
+.top-cote b{color:var(--gold);font-size:20px;font-weight:400}
+.mk-fr{flex:none}
 .au-row{flex-wrap:wrap}.au-row .mk-info{flex:1 1 55%;min-width:0}.au-row .au-act{flex:1 1 100%;justify-content:flex-end}
 .au-bid b{font-size:inherit!important;display:inline!important;letter-spacing:0!important;font-family:inherit!important;text-transform:none!important;color:var(--gold,#f5c542)}
 .au-row .au-act{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
@@ -2548,10 +2564,11 @@ $('#wheelClose').addEventListener('click',function(){$('#wheelView').hidden=true
 
 /* ----- Marché & échanges ----- */
 var MKS={};var MK={tab:'buy',give:'',q:'',r:-1,arm:0,sort:'price',nw:false};
-function miniHTML(c,w){return '<div class="mini r'+c.r+(c.v==='holo'?' vh':'')+'" style="--mw:'+(w||64)+'px"><div class="face front">'+frontHTML(cardD(c),1)+'</div></div>'}
+function miniHTML(c,w,fr){var h='<div class="mini r'+c.r+(c.v==='holo'?' vh':'')+'" style="--mw:'+(w||64)+'px"><div class="face front">'+frontHTML(cardD(c),1)+'</div></div>';return fr?'<div class="slotw mk-fr fr-'+fr+'">'+h+'</div>':h}
 async function mkRender(){
   var tabs=$('#mkTabs');tabs.innerHTML='';
-  [['buy','ACHETER'],['auc','ENCHÈRES'],['sales','VENTES'],['want','RECHERCHES'],['mine','MES ANNONCES'],['trade','ÉCHANGES']].forEach(function(t){
+  salesTicker(tabs);
+  [['buy','ACHETER'],['auc','ENCHÈRES'],['top','COTES'],['want','RECHERCHES'],['mine','MES ANNONCES'],['trade','ÉCHANGES']].forEach(function(t){
     var b=document.createElement('button');b.type='button';b.className='serbtn'+(MK.tab===t[0]?' on':'');b.textContent=t[1];
     b.onclick=function(){MK.tab=t[0];mkRender()};tabs.appendChild(b);
   });
@@ -2559,7 +2576,7 @@ async function mkRender(){
   if(MK.tab==='trade')return tradeRender(body);
   if(MK.tab==='auc')return aucRender(body);
   if(MK.tab==='want')return wantRender(body);
-  if(MK.tab==='sales')return salesRender(body);
+  if(MK.tab==='top')return topRender(body);
   var r=await SB.from('listings_v').select('*').order('price',{ascending:true}).limit(300);
   if(r.error){body.innerHTML='<p class="sum-best">Marché indisponible.</p>';return}
   try{var ms=await SB.rpc('market_stats');MKS=(ms&&ms.data)||{}}catch(e){MKS={}}
@@ -2604,7 +2621,7 @@ function mkList(list,body){
     if(ref&&l.case_kind)ref=Math.round(ref*(1+caseB(l.case_kind)));
     if(ref){var df=Math.round((l.price-ref)/ref*100);cote='<span class="mk-cote">Cote '+ref+' PTS'+(df<=-3?' · <em class="dn">'+df+' %</em>':df>=3?' · <em class="up">+'+df+' %</em>':'')+'</span>'}
     else cote='<span class="mk-cote">Cote : pas encore de vente</span>';
-    row.innerHTML=miniHTML(c)+'<div class="mk-info"><b>'+esc(c.n)+'</b><span>'+rarN(c.r)+(MK.tab==='buy'?' · '+esc(l.seller_pseudo)+(own?' · tu en as '+own:''):'')+'</span>'+(l.serial&&c.maxPrint?'<span class="mk-ex'+(l.serial===1?' n1':'')+'">Exemplaire '+serTxt(l.serial,c.maxPrint)+(l.serial===1?' ★ PREMIER':'')+'</span>':'')+(l.dropper_pseudo?'<span class="mk-drop">Drop · '+esc(l.dropper_pseudo)+'</span>':'')+(l.case_kind?'<span class="mk-case">🛡 '+esc(caseL(l.case_kind))+' · +'+Math.round(100*caseB(l.case_kind))+' % de valeur</span>':'')+'<span>'+(no?'N° '+no+'/'+tot:'')+(c.maxPrint?(no?' · ':'')+'tirage '+c.maxPrint:'')+'</span>'+cote+'<span class="mk-more">▾ voir la courbe</span></div>';
+    row.innerHTML=miniHTML(c,64,l.case_kind)+'<div class="mk-info"><b>'+esc(c.n)+'</b><span>'+rarN(c.r)+(MK.tab==='buy'?' · '+esc(l.seller_pseudo)+(own?' · tu en as '+own:''):'')+'</span>'+(l.serial&&c.maxPrint?'<span class="mk-ex'+(l.serial===1?' n1':'')+'">Exemplaire '+serTxt(l.serial,c.maxPrint)+(l.serial===1?' ★ PREMIER':'')+'</span>':'')+(l.dropper_pseudo?'<span class="mk-drop">Drop · '+esc(l.dropper_pseudo)+'</span>':'')+(l.case_kind?'<span class="mk-case">🛡 '+esc(caseL(l.case_kind))+' · +'+Math.round(100*caseB(l.case_kind))+' % de valeur</span>':'')+'<span>'+(no?'N° '+no+'/'+tot:'')+(c.maxPrint?(no?' · ':'')+'tirage '+c.maxPrint:'')+'</span>'+cote+'<span class="mk-more">▾ voir la courbe</span></div>';
     if(MK.tab==='buy'&&!own){row.classList.add('mk-new');row.insertAdjacentHTML('afterbegin','<i class="mk-newb">NOUVELLE</i>')}
     if(l.created_at){var ag=Math.max(0,Math.round((Date.now()-new Date(l.created_at).getTime())/60000)),agt=ag<2?'à l’instant':ag<60?'il y a '+ag+' min':ag<1440?'il y a '+Math.round(ag/60)+' h':'il y a '+Math.round(ag/1440)+' j';row.querySelector('.mk-info').insertAdjacentHTML('beforeend','<span class="mk-ago">'+agt+'</span>')}
     var det=document.createElement('div');det.className='ct-box mk-det';det.hidden=true;
@@ -2648,7 +2665,7 @@ async function aucRender(body){
     var own=a.seller===USER.id,lead=a.bidder===USER.id,row=document.createElement('div');
     row.className='mk-row au-row'+(lead?' au-lead':'')+(a.case_kind?' mk-enc':'');
     var mine=INV[c.id]||0;
-    row.innerHTML=miniHTML(c)+'<div class="mk-info"><b>'+esc(c.n)+'</b><span>'+rarN(c.r)+' · '+esc(a.seller_pseudo)+(!own&&!mine?' · <em class="au-new">MANQUANTE</em>':'')+'</span>'
+    row.innerHTML=miniHTML(c,64,a.case_kind)+'<div class="mk-info"><b>'+esc(c.n)+'</b><span>'+rarN(c.r)+' · '+esc(a.seller_pseudo)+(!own&&!mine?' · <em class="au-new">MANQUANTE</em>':'')+'</span>'
       +(a.serial&&c.maxPrint?'<span class="mk-ex'+(a.serial===1?' n1':'')+'">Exemplaire '+serTxt(a.serial,c.maxPrint)+(a.serial===1?' ★ PREMIER':'')+'</span>':'')
       +(a.dropper_pseudo?'<span class="mk-drop">Drop · '+esc(a.dropper_pseudo)+'</span>':'')
       +(a.case_kind?'<span class="mk-case">🛡 '+esc(caseL(a.case_kind))+' · +'+Math.round(100*caseB(a.case_kind))+' % de valeur</span>':'')
@@ -3300,24 +3317,44 @@ async function wantRender(body){
   setTimeout(function(){tuto('want',TUTO_WANT)},400);
 }
 
-/* ----- Fil des ventes ----- */
-async function salesRender(body){
-  var r=await SB.from('sales_v').select('*').order('sold_at',{ascending:false}).limit(10);
-  if(r.error){body.innerHTML='<p class="sum-best">Ventes indisponibles : '+esc(r.error.message)+'</p>';return}
+/* ----- Bandeau des dernières ventes + cotes ----- */
+var SALES_C=null,SALES_T=0;
+async function salesTicker(tabs){
+  var tk=$('#mkTicker');
+  if(!tk){tk=document.createElement('div');tk.id='mkTicker';tk.className='mk-ticker';tabs.parentNode.insertBefore(tk,tabs)}
+  function paint(){
+    var rows=(SALES_C||[]).filter(function(s){return CBYID[s.card_id]});
+    if(!rows.length){tk.hidden=true;return}
+    tk.hidden=false;
+    var it=rows.map(function(s){var c=CBYID[s.card_id];return '<span class="tk-i" data-c="'+esc(c.id)+'"><b>'+esc(s.buyer_pseudo)+'</b> a acheté <u>'+esc(c.n)+'</u>'+(s.serial&&c.maxPrint?' '+serTxt(s.serial,c.maxPrint)+(s.serial===1?' ★':''):'')+' à '+esc(s.seller_pseudo)+' · <em>'+s.price+' PTS</em>'+(s.auction?' · enchère':'')+'</span>'}).join('');
+    tk.innerHTML='<i class="tk-l">VENTES</i><div class="tk-w"><div class="tk-t">'+it+it+'</div></div>';
+    tk.querySelector('.tk-t').style.animationDuration=Math.max(24,rows.length*7)+'s';
+  }
+  paint();
+  if(SALES_C&&Date.now()-SALES_T<30000)return;
+  try{var r=await SB.from('sales_v').select('*').order('sold_at',{ascending:false}).limit(10);if(!r.error){SALES_C=r.data||[];SALES_T=Date.now();paint()}}catch(e){}
+}
+async function topRender(body){
+  var r=await SB.rpc('market_top',{p_limit:30});
+  if(r.error){body.innerHTML='<p class="sum-best">Cotes indisponibles : '+esc(r.error.message)+'</p>';return}
   var rows=r.data||[];
-  body.innerHTML='<p class="sum-best">Les 10 dernières ventes. Les ventes à prix symbolique (sous la valeur de recyclage), souvent des échanges déguisés, sont masquées et ne comptent pas dans la cote.</p>';
+  body.innerHTML='<p class="sum-best">Les cartes les plus chères. La cote mélange les derniers prix de vente réels (les ventes à prix symbolique sont ignorées), les prix demandés sur le marché, la rareté de base et la part du tirage déjà sortie. Les exemplaires N°1 ont leur prix à part.</p>';
   var box=document.createElement('div');box.className='mk-list';body.appendChild(box);
-  if(!rows.length)box.innerHTML='<p class="sum-best">Aucune vente pour le moment.</p>';
-  rows.forEach(function(s){
-    var c=CBYID[s.card_id];if(!c)return;
-    var row=document.createElement('div');row.className='mk-row';
-    var ag=Math.max(0,Math.round((Date.now()-new Date(s.sold_at).getTime())/60000)),agt=ag<2?'à l’instant':ag<60?'il y a '+ag+' min':ag<1440?'il y a '+Math.round(ag/60)+' h':'il y a '+Math.round(ag/1440)+' j';
-    row.innerHTML=miniHTML(c)+'<div class="mk-info"><b>'+esc(s.buyer_pseudo)+' a acheté '+esc(c.n)+'</b><span>à '+esc(s.seller_pseudo)+' pour <b class="sl-p">'+s.price+' PTS</b>'+(s.auction?' · <em class="au-new">ENCHÈRE</em>':'')+'</span>'
-      +(s.serial&&c.maxPrint?'<span class="mk-ex'+(s.serial===1?' n1':'')+'">Exemplaire '+serTxt(s.serial,c.maxPrint)+(s.serial===1?' ★ PREMIER':'')+'</span>':'')
-      +'<span class="mk-ago">'+agt+'</span></div>';
+  rows.forEach(function(t,i){
+    var c=CBYID[t.card_id];if(!c)return;
+    var row=document.createElement('div'),have=INV[c.id]||0;row.className='mk-row top-row'+(i<3?' top'+(i+1):'');
+    var det=[];
+    if(t.last)det.push('Dernière vente '+t.last+' PTS'+(t.ventes>1?' (moy. '+t.avg3+')':''));else det.push('Pas encore de vente');
+    if(t.en_vente)det.push('Moins cher en vente '+t.en_vente+' PTS ('+t.annonces+' annonce'+(t.annonces>1?'s':'')+')');
+    if(t.max_print>0)det.push('Tirage '+t.printed+'/'+t.max_print+' sortis');
+    row.innerHTML='<div class="top-n">'+(i+1)+'</div>'+miniHTML(c)+'<div class="mk-info"><b>'+esc(c.n)+'</b><span>'+rarN(c.r)+' · '+esc(serName(c.s))+(have?' · <em class="au-you">TU L’AS'+(have>1?' x'+have:'')+'</em>':'')+'</span>'
+      +'<span class="top-cote">COTE <b>'+t.cote+' PTS</b></span>'
+      +'<span class="mk-drop">'+det.map(esc).join(' · ')+'</span>'
+      +(t.n1_vendu||t.n1_en_vente?'<span class="mk-ex n1">★ N°1 : '+(t.n1_vendu?'vendu '+t.n1_vendu+' PTS':'')+(t.n1_vendu&&t.n1_en_vente?' · ':'')+(t.n1_en_vente?'en vente '+t.n1_en_vente+' PTS':'')+'</span>':'')+'</div>';
     row.style.cursor='pointer';row.onclick=function(){openView(c)};
     box.appendChild(row);
   });
+  if(!rows.length)box.innerHTML='<p class="sum-best">Pas encore de cotes.</p>';
 }
 
 $('#gateGo').addEventListener('click',function(){
