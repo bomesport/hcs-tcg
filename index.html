@@ -663,6 +663,16 @@ button{font:inherit;color:inherit;cursor:pointer}
 .pkx-tcg span{display:flex;align-items:center;gap:calc(var(--pw)*.03)}
 .pkx-tcg i{font-family:var(--serif);font-size:calc(var(--pw)*.07);color:rgba(255,255,255,.9)}
 .pkx-tcg img{height:calc(var(--pw)*.15);width:auto;filter:drop-shadow(0 0 calc(var(--pw)*.02) rgba(0,0,0,.8))}
+.pkx3{background:radial-gradient(ellipse 85% 55% at 50% 35%,#4a3208 0%,#1a1204 55%,#050402 100%)}
+.pkx3 .pkx-fr{border-color:#f5c542;box-shadow:0 0 calc(var(--pw)*.06) rgba(245,197,66,.85),inset 0 0 calc(var(--pw)*.05) rgba(245,197,66,.45)}
+.pkx3 .pkx-fr2{border-color:rgba(255,255,255,.55)}
+.pkx3 .pkx-glow{background:radial-gradient(closest-side,rgba(245,197,66,.6),transparent 70%)}
+.pkx3 .pkx-lines{background:repeating-linear-gradient(118deg,transparent 0 calc(var(--pw)*.07),rgba(245,197,66,.16) calc(var(--pw)*.07) calc(var(--pw)*.075)),linear-gradient(180deg,transparent 55%,rgba(245,197,66,.14))}
+.pkx3 .pkx-hcs{width:calc(var(--pw)*.74);top:calc(var(--ph)*.19)}
+#serSel .serbtn[data-s="3"]{border-color:#f5c542!important;color:#f5c542!important;background:linear-gradient(180deg,rgba(245,197,66,.22),rgba(60,40,0,.55))!important;box-shadow:0 0 12px rgba(245,197,66,.5)!important}
+.serbtn[data-s="3"].on{box-shadow:0 0 16px rgba(245,197,66,.9)}
+.pkx3 .pkx-tcg{top:calc(var(--ph)*.62);display:flex;justify-content:center;align-items:center;gap:calc(var(--pw)*.04)}
+.pkx3 .pkx-tcg b{font-size:calc(var(--pw)*.13)}
 .pkx-plate{position:absolute;left:14%;right:14%;bottom:calc(var(--ph)*.085);text-align:center;padding:calc(var(--pw)*.02) 0 calc(var(--pw)*.025);border:calc(var(--pw)*.008) solid #d9b25a;border-radius:calc(var(--pw)*.02);background:linear-gradient(180deg,rgba(0,0,0,.65),rgba(25,20,5,.75))}
 .pkx-plate b{display:block;font-weight:700;font-size:calc(var(--pw)*.09);letter-spacing:.2em;text-indent:.2em;color:#e8c46a;line-height:1.15}
 .pkx-plate small{display:block;font-size:calc(var(--pw)*.044);letter-spacing:.16em;text-indent:.16em;color:rgba(255,255,255,.88)}
@@ -1241,7 +1251,7 @@ function tween(a,b,dur,fn,done){
 /* ---------- Booster ---------- */
 var FOILTXT0='<div class="pk-glow"></div><img class="pk-hcs" src="img/hcs.png" alt=""><div class="pk-rib"><b>TCG</b><i>by</i><img src="img/bom-white.png" alt=""></div><div class="pk-sub">5 CARTES · 100 PTS</div><div class="pk-ser">HALO CHAMPIONSHIP SERIES</div>';
 var FOILTXT2='<div class="pk-glow"></div><div class="pk-amp">&amp;</div><img class="pk-hcs" src="img/hcs.png" alt=""><div class="pk-rib"><b>ICONIC</b><i>·</i><b>DUOS</b></div><div class="pk-sub">SÉRIE 2 · 5 CARTES</div><div class="pk-ser">LES DUOS MYTHIQUES DE LA BoM</div>';
-function foilTxt(){return SSEL===2?FOILTXT2:FOILTXT0}
+var FOILTXT3='';function foilTxt(){return SSEL===3?FOILTXT3:SSEL===2?FOILTXT2:FOILTXT0}
 function backTxt(){
   var rows=RAR.slice().reverse().map(function(r){return '<div class="bk-row"><i style="background:'+r.col+'"></i>'+r.n+'</div>'}).join('');
   return '<div class="bk-top">HCS TCG</div><div class="bk-list">'+rows+'</div><div class="bars"></div><div class="bk-small">BOOSTER 5 CARTES</div><img class="bk-bom" src="img/bom-black.png" alt="">';
@@ -1297,7 +1307,7 @@ function buildPack(){
     '<div class="face3 f3f clipme"><div class="foil">'+foilTxt()+'</div></div></div></div>'+
     '<div class="pack" id="pack" hidden></div>'+
     '<div class="pk-hint" id="pkhint"><span>GLISSE ›››</span></div></div></div>';
-  zone.classList.toggle('ser2',SSEL===2);
+  zone.classList.toggle('ser2',SSEL===2);zone.classList.toggle('ser3',SSEL===3);
   var sil=clipSil();
   zone.querySelectorAll('.clipme').forEach(function(el){el.style.clipPath=sil;el.style.webkitClipPath=sil});
   rs={ry:0,rx:0,vry:0,vrx:0,gy:0,gx:0,sw:0,settled:true,drag:null,tearing:false,charge:0,full:false,flat:'',fromBottom:false,
@@ -2010,7 +2020,7 @@ async function loadAll(){
   var s=await SB.rpc('stock_by_series');
   if(!s.error&&s.data)STOCKS=s.data;
   else{var s1=await SB.rpc('stock_count');if(!s1.error)STOCKS={1:s1.data||0}}
-  if(!(STOCKS[SSEL]>=0)||CFG.unlocked.indexOf(SSEL)<0)SSEL=CFG.unlocked[0]||1;
+  if(!(STOCKS[SSEL]>=0)||(CFG.unlocked.indexOf(SSEL)<0&&!(SSEL===3&&STOCKS[3]>0)))SSEL=CFG.unlocked[0]||1;
   updPts();
 }
 async function startSession(user){
@@ -2053,17 +2063,18 @@ function markNew(ps){
 }
 function openPacks(n){return SB.rpc('open_sealed',CFG.unlocked.length>1?{p_n:n,p_series:SSEL}:{p_n:n})}
 function decStock(n){STOCKS[SSEL]=Math.max(0,(STOCKS[SSEL]||0)-n);STOCK=STOCKS[SSEL]}
-function serName(n){var x=(CFG.series||{})[n];return x?x.name:'SÉRIE '+n}
+function serName(n){if(n===3)return 'BoM FIGHT';var x=(CFG.series||{})[n];return x?x.name:'SÉRIE '+n}
 function serBar(box){
   if(!box)return;
   box.innerHTML='';
-  if(!USER||CFG.unlocked.length<2){box.hidden=true;return}
+  var fp=(STOCKS[3]||0)>0;
+  if(!USER||(CFG.unlocked.length<2&&!fp)){box.hidden=true;return}
   box.hidden=false;
-  CFG.unlocked.slice().sort().forEach(function(n){
+  CFG.unlocked.slice().sort().concat(fp?[3]:[]).forEach(function(n){
     var b=document.createElement('button');b.type='button';b.className='serbtn'+(SSEL===n?' on':'');
     b.setAttribute('data-s',n);
     var tt=DBCARDS.filter(function(c){return c.active&&c.s===n&&!isHid(c)}),oo=tt.filter(function(c){return INV[c.id]}).length;
-    b.innerHTML='<b>'+esc(serName(n))+'</b><small>'+((STOCKS[n]||0)>0?(STOCKS[n]+' booster'+(STOCKS[n]>1?'s':'')):'ÉPUISÉ')+'</small><small>'+oo+'/'+tt.length+' cartes</small>';
+    b.innerHTML='<b>'+esc(serName(n))+'</b><small>'+((STOCKS[n]||0)>0?(STOCKS[n]+' booster'+(STOCKS[n]>1?'s':'')):'ÉPUISÉ')+'</small>'+(n===3?'<small>offert · code promo</small>':'<small>'+oo+'/'+tt.length+' cartes</small>');
     b.onclick=function(){
       if(SSEL===n)return;
       SSEL=n;updPts();
@@ -2510,6 +2521,7 @@ function plRender(){
 /* ----- Boutique, bonus, roue ----- */
 var armKind='';
 async function buyKind(kind){
+  if(SSEL===3){toast('Le booster BoM FIGHT n’est pas en vente.');return}
   var r=await SB.rpc('buy_packs',CFG.unlocked.length>1?{p_kind:kind,p_series:SSEL}:{p_kind:kind});
   if(r.error){toast(r.error.message);return}
   PTS=r.data;await loadAll();
@@ -2884,8 +2896,9 @@ async function redeemCode(){
   if(d.pts)t.push('+'+d.pts+' PTS');
   if(d.boosters)t.push('+'+d.boosters+' booster'+(d.boosters>1?'s':''));
   if(d.card&&CBYID[d.card])t.push(CBYID[d.card].n);
-  pop('CODE VALIDÉ',t.join(' · ')||'merci !',4000);
-  await loadAll();checkAch();refreshViews();
+  var fc=d.card&&CBYID[d.card]&&CBYID[d.card].v==='fight';
+  if(fc){SSEL=3;pop('BOOSTER BoM FIGHT','Ton booster t’attend dans l’onglet OUVRIR',5000)}else pop('CODE VALIDÉ',t.join(' · ')||'merci !',4000);
+  await loadAll();checkAch();if(fc){goTab('intro')}else refreshViews();
 }
 
 /* ----- Flux des gros drops (24 h) ----- */
@@ -3425,6 +3438,7 @@ async function topRender(body){
 /* ----- Boosters inspirés du dos des cartes de chaque série ----- */
 FOILTXT0='<div class="pkx pkx1"><div class="pkx-fr"></div><div class="pkx-fr2"></div><i class="pkx-st t">★ ★ ★</i><i class="pkx-st b">★ ★ ★</i><div class="pkx-glow"></div><img class="pkx-hcs" src="img/hcs.png" alt=""><div class="pkx-tcg"><b>TCG</b><span><i>by</i><img src="img/bom-white.png" alt=""></span></div><div class="pkx-plate"><b>SÉRIE 1</b><small>5 CARTES · 100 PTS</small></div></div>';
 FOILTXT2='<div class="pkx pkx2"><div class="pkx-fr"></div><div class="pkx-fr2"></div><i class="pkx-st t">◆ ◆ ◆</i><i class="pkx-st b">◆ ◆ ◆</i><div class="pkx-lines"></div><div class="pkx-glow"></div><img class="pkx-hcs" src="img/hcs.png" alt=""><div class="pkx-title"><b>ICONIC</b><b class="g">DUOS</b></div><div class="pkx-tcg"><b>TCG</b><span><i>by</i><img src="img/bom-white.png" alt=""></span></div><div class="pkx-plate"><b>SÉRIE 2</b><small>5 CARTES · 100 PTS</small></div></div>';
+FOILTXT3='<div class="pkx pkx3"><div class="pkx-fr"></div><div class="pkx-fr2"></div><i class="pkx-st t">♛ ♛ ♛</i><i class="pkx-st b">♛ ♛ ♛</i><div class="pkx-lines"></div><div class="pkx-glow"></div><img class="pkx-hcs" src="img/fight-logo.png" alt=""><div class="pkx-tcg"><b>TCG</b><span><i>by</i><img src="img/bom-white.png" alt=""></span></div><div class="pkx-plate"><b>BoM FIGHT</b><small>CHAMPION + 4 CARTES</small></div></div>';
 
 $('#gateGo').addEventListener('click',function(){
   unlockAudio();$('#gate').hidden=true;SND.click();
