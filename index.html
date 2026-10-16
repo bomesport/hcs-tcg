@@ -619,6 +619,16 @@ button{font:inherit;color:inherit;cursor:pointer}
 .mk-fr{flex:none}
 .ct-cote b{color:var(--gold);font-size:18px}
 .ct-cote span{color:var(--gold);letter-spacing:.12em}
+.f-holofx{position:absolute;inset:0;pointer-events:none;mix-blend-mode:color-dodge;opacity:.8;background:linear-gradient(115deg,transparent 12%,rgba(255,120,200,.75) 30%,rgba(255,220,100,.75) 40%,rgba(90,255,200,.7) 50%,rgba(100,160,255,.75) 60%,transparent 80%);background-size:320% 320%;animation:hsweep 3.4s linear infinite,hhue 7s linear infinite;z-index:3;border-radius:inherit}
+@keyframes hsweep{from{background-position:100% 30%}to{background-position:0% 70%}}
+@keyframes hhue{from{filter:hue-rotate(0)}to{filter:hue-rotate(360deg)}}
+.in.hv{box-shadow:inset 0 0 0 calc(var(--cw)*.014) rgba(255,255,255,.7),inset 0 0 calc(var(--cw)*.1) rgba(150,220,255,.55),0 0 14px rgba(140,200,255,.6)}
+.in.ng{box-shadow:inset 0 0 0 calc(var(--cw)*.014) #000,inset 0 0 0 calc(var(--cw)*.028) rgba(255,255,255,.55)}
+.f-hv{position:absolute;top:0;left:calc(var(--cw)*.06);z-index:4;white-space:nowrap;font-family:var(--display);font-size:calc(var(--cw)*.05);letter-spacing:.08em;padding:calc(var(--cw)*.02) calc(var(--cw)*.04) calc(var(--cw)*.045);clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%);background:linear-gradient(100deg,#ff7ac8,#ffd75e,#6dffd0,#6fa8ff,#ff7ac8);background-size:250% 100%;animation:hsweep2 4s linear infinite;color:#12121c}
+@keyframes hsweep2{from{background-position:0 0}to{background-position:250% 0}}
+.f-hv.neg{background:#000;color:#fff;box-shadow:none;animation:none}
+.f-hv.sg{background:linear-gradient(180deg,#f8e08a,#b8860b);animation:none}
+.mini .f-hv{display:block;font-size:calc(var(--cw)*.075)}
 .au-row{flex-wrap:wrap}.au-row .mk-info{flex:1 1 55%;min-width:0}.au-row .au-act{flex:1 1 100%;justify-content:flex-end}
 .au-bid b{font-size:inherit!important;display:inline!important;letter-spacing:0!important;font-family:inherit!important;text-transform:none!important;color:var(--gold,#f5c542)}
 .au-row .au-act{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
@@ -2168,6 +2178,9 @@ function cardD(c){
       var fs=Math.min(.06,.74/Math.max(8,c.tm.length)).toFixed(4);
       ex+='<div class="f-team" style="--tcol:'+c.tc+';--tf:'+fs+'"><span>'+esc(c.tm)+'</span></div>';
     }
+    if(d.v==='holo'){h=h.replace('class="in','class="in hv');ex+='<div class="f-holofx"></div><div class="f-hv"><span>✦ HOLO</span></div>'}
+    else if(d.v==='neg'){h=h.replace('class="in','class="in ng');ex+='<div class="f-hv neg"><span>◐ NÉGATIF</span></div>'}
+    else if(d.v==='sign'){ex+='<div class="f-hv sg"><span>✒ SIGNÉE</span></div>'}
     if(/^N° 0?1\//.test(d.serial||'')){h=h.replace('class="in','class="in no1');ex+='<div class="f-no1"><span>★ N° 1</span></div>'}
     if(!ex)return h;
     var i=h.indexOf('</div><div class="holo">');
