@@ -383,6 +383,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .shop-card b{font-family:var(--display);font-weight:400;letter-spacing:.1em;font-size:18px}
 .shop-card span{font-size:13px;color:rgba(245,245,245,.7);font-style:italic}
 .shop-card.tcol{flex-direction:column;align-items:stretch}
+.shop-card.tcol input{width:100%;box-sizing:border-box;padding:12px 14px;font-size:16px;border-radius:8px;border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.45);color:#fff}
 .shop-card select,.lib-bar input,#cvPrice{height:42px;background:rgba(5,7,11,.7);color:var(--bone);border:1px solid rgba(245,245,245,.3);border-radius:4px;padding:0 10px;font:inherit;user-select:text;-webkit-user-select:text;min-width:0}
 .lib-bar input{flex:1}
 #cvPrice{width:110px}
@@ -558,6 +559,12 @@ button{font:inherit;color:inherit;cursor:pointer}
 
 #intro{padding-bottom:38px}
 .f-foot .ser{font-size:1.5em;font-weight:700;color:#f5d56b;text-shadow:0 0 8px rgba(245,213,107,.5)}
+.in.fgt{box-shadow:inset 0 0 0 calc(var(--cw)*.022) #e8b923,inset 0 0 0 calc(var(--cw)*.034) #1a0d00,inset 0 0 calc(var(--cw)*.12) rgba(232,185,35,.55)}
+.in.fgt .f-type{visibility:hidden}
+.f-fight{position:absolute;top:calc(var(--cw)*.045);left:0;right:0;z-index:4;display:flex;flex-direction:column;align-items:center;pointer-events:none}
+.f-fight img{width:calc(var(--cw)*.46);height:auto;filter:drop-shadow(0 calc(var(--cw)*.01) calc(var(--cw)*.02) rgba(0,0,0,.9))}
+.f-fight b{margin-top:calc(var(--cw)*-.01);font-family:var(--display);font-weight:400;font-size:calc(var(--cw)*.05);letter-spacing:.1em;color:#1a0d00;background:linear-gradient(100deg,#f8e08a,#e8b923,#f8e08a);background-size:250% 100%;animation:hsweep2 4s linear infinite;padding:calc(var(--cw)*.012) calc(var(--cw)*.04);clip-path:polygon(4% 0,96% 0,100% 50%,96% 100%,4% 100%,0 50%);white-space:nowrap}
+.mini .f-fight b{font-size:calc(var(--cw)*.07)}
 .in.no1{box-shadow:inset 0 0 0 calc(var(--cw)*.014) #f5d56b,inset 0 0 calc(var(--cw)*.08) rgba(245,213,107,.5)}
 .f-no1{position:absolute;top:0;right:calc(var(--cw)*.06);background:linear-gradient(180deg,#f8e08a,#b8860b);color:#1a1405;font-family:var(--display);font-size:calc(var(--cw)*.05);letter-spacing:.08em;padding:calc(var(--cw)*.02) calc(var(--cw)*.04) calc(var(--cw)*.045);clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%);z-index:4;white-space:nowrap}
 .mini .f-no1{display:none}
@@ -1461,7 +1468,7 @@ function imgSrc(d){
 }
 var TCOL={'Shopify Rebellion':'#95bf47','Cloud9':'#1aa5e3','FaZe Clan':'#e43d30','Complexity':'#c8102e'},TPAL=['#3a7bd5','#c0392b','#8e44ad','#16a085','#d35400','#2c82c9','#b8860b','#e84393'];
 function teamCol(d){var m=/·\s*(.+)$/.exec(d.f||''),t=m?m[1].trim():'';if(TCOL[t])return TCOL[t];var h=0,k;for(k=0;k<t.length;k++)h=(h*31+t.charCodeAt(k))>>>0;return TPAL[h%TPAL.length]}
-function isBoM(d){return ['joueur-stanzzee','joueur-claw-2014','joueur-brainiak','joueur-brainiak-2014','joueur-yoshi-2014','joueur-benz-valencia','joueur-nutsinette-2014','joueur-benz-2014'].indexOf(d.id)<0&&(/^(joueur|leg|myth)-/.test(d.id||'')||d.t==='bom')}
+function isBoM(d){return ['joueur-stanzzee','joueur-claw-2014','joueur-brainiak','joueur-brainiak-2014','joueur-yoshi-2014','joueur-benz-valencia','joueur-nutsinette-2014','joueur-benz-2014','leg-hurrikane-prime','leg-killza-prime','moment-rfh-2014','moment-rfh-2015'].indexOf(d.id)<0&&(/^(joueur|leg|myth)-/.test(d.id||'')||d.t==='bom')}
 var THUMB_OK=false;
 function frontHTML(d,sm){
   var src=imgSrc(d);if(sm&&THUMB_OK&&/^img\/[^\/]+\.webp$/.test(src))src=src.replace('img/','img/t/');
@@ -2028,6 +2035,7 @@ function medalList(ids){
     return null}).filter(Boolean);
 }
 function isSec(c){return !!c&&String(c.id).indexOf('sec-')===0}
+function isHid(c){return !!c&&(String(c.id).indexOf('sec-')===0||c.v==='fight')}
 function serTxt(n,mp){return n>0?'N° '+String(n).padStart(2,'0')+'/'+mp:''}
 function mkPull(c,ser){
   var serial=c.maxPrint>0?(ser===undefined?'N° '+String(1+Math.floor(Math.random()*c.maxPrint)).padStart(2,'0')+'/'+c.maxPrint:serTxt(ser,c.maxPrint)):'';
@@ -2054,7 +2062,7 @@ function serBar(box){
   CFG.unlocked.slice().sort().forEach(function(n){
     var b=document.createElement('button');b.type='button';b.className='serbtn'+(SSEL===n?' on':'');
     b.setAttribute('data-s',n);
-    var tt=DBCARDS.filter(function(c){return c.active&&c.s===n&&!isSec(c)}),oo=tt.filter(function(c){return INV[c.id]}).length;
+    var tt=DBCARDS.filter(function(c){return c.active&&c.s===n&&!isHid(c)}),oo=tt.filter(function(c){return INV[c.id]}).length;
     b.innerHTML='<b>'+esc(serName(n))+'</b><small>'+((STOCKS[n]||0)>0?(STOCKS[n]+' booster'+(STOCKS[n]>1?'s':'')):'ÉPUISÉ')+'</small><small>'+oo+'/'+tt.length+' cartes</small>';
     b.onclick=function(){
       if(SSEL===n)return;
@@ -2211,13 +2219,14 @@ function cardD(c){
     if(d.v==='holo'){h=h.replace('class="in','class="in hv');ex+='<div class="f-holofx"></div><div class="f-hvframe"></div><div class="f-hv"><span>✦ HOLO</span></div>'}
     else if(d.v==='neg'){h=h.replace('class="in','class="in ng');ex+='<div class="f-hv neg"><span>◐ NÉGATIF</span></div>'}
     else if(d.v==='sign'){ex+='<div class="f-hv sg"><span>✒ SIGNÉE</span></div>'}
+    else if(d.v==='fight'){h=h.replace('class="in','class="in fgt');h=h.replace('◆ '+RAR[d.r].n,'◆ BoM FIGHT');ex+='<div class="f-fight"><img src="img/fight-logo.png" alt=""><b>'+esc((c&&c.ti)||'CHAMPION')+'</b></div>'}
     if(/^N° 0?1\//.test(d.serial||'')){h=h.replace('class="in','class="in no1');ex+='<div class="f-no1"><span>★ N° 1</span></div>'}
     if(!ex)return h;
     var i=h.indexOf('</div><div class="holo">');
     return i<0?h:h.slice(0,i)+ex+h.slice(i);
   };
 })();
-var NONBOM=['joueur-stanzzee','joueur-claw-2014','joueur-brainiak','joueur-brainiak-2014','joueur-yoshi-2014','joueur-benz-valencia','joueur-nutsinette-2014','joueur-benz-2014'];
+var NONBOM=['joueur-stanzzee','joueur-claw-2014','joueur-brainiak','joueur-brainiak-2014','joueur-yoshi-2014','joueur-benz-valencia','joueur-nutsinette-2014','joueur-benz-2014','leg-hurrikane-prime','leg-killza-prime','moment-rfh-2014','moment-rfh-2015'];
 function isBomId(id){return NONBOM.indexOf(id)<0&&/^(joueur|leg|myth)-/.test(id)}
 function libRender(){
   profTabs($('#libProf'),'lib');
@@ -2237,19 +2246,19 @@ function libRender(){
     $('#libDup').onchange=function(){LIB.d=this.checked;libRender()};
     $('#libOrd').onchange=function(){LIB.o=this.value;libRender()};
   }
-  var list=DBCARDS.filter(function(c){return c.active&&c.s===LIB.s&&(!isSec(c)||INV[c.id])});
+  var list=DBCARDS.filter(function(c){return c.active&&c.s===LIB.s&&(!isHid(c)||INV[c.id])});
   var own=list.filter(function(c){return INV[c.id]}).length;
   var ms=$('#libMissSum');
   if(!ms){ms=document.createElement('div');ms.id='libMissSum';ms.className='ms-wrap';bar.parentNode.insertBefore(ms,bar.nextSibling)}
   ms.innerHTML=[4,3,2,1,0].map(function(r){
-    var t=list.filter(function(c){return c.r===r&&!isSec(c)}),o=t.filter(function(c){return INV[c.id]}).length;
+    var t=list.filter(function(c){return c.r===r&&!isHid(c)}),o=t.filter(function(c){return INV[c.id]}).length;
     if(!t.length)return '';
     return '<span class="ms-chip r'+r+(o===t.length?' done':'')+(LIB.r===r?' on':'')+'" data-r="'+r+'">'+RAR[r].n+' '+o+'/'+t.length+'</span>';
   }).join('');
   Array.prototype.forEach.call(ms.querySelectorAll('.ms-chip'),function(ch){ch.onclick=function(){var r=+ch.getAttribute('data-r');LIB.r=LIB.r===r?-1:r;$('#libRar').value=String(LIB.r);libRender()}});
   var rr=$('#libRare');if(!rr){rr=document.createElement('div');rr.id='libRare';rr.className='lib-rare';ms.parentNode.insertBefore(rr,ms.nextSibling)}
   rr.innerHTML=rareTxt();rr.hidden=!rr.innerHTML;
-  var allOwn=Object.keys(INV).length,allTot=DBCARDS.filter(function(c){return c.active&&!isSec(c)&&CFG.unlocked.indexOf(c.s)>=0}).length;
+  var allOwn=Object.keys(INV).length,allTot=DBCARDS.filter(function(c){return c.active&&!isHid(c)&&CFG.unlocked.indexOf(c.s)>=0}).length;
   $('#libCount').textContent=own+'/'+list.length+' · TOTAL '+allOwn+'/'+allTot;
   var dups=0,gain=0;
   DBCARDS.forEach(function(c){var q=INV[c.id]||0;if(q>1){dups+=q-1;gain+=(q-1)*CFG.recycle[c.r]}});
@@ -2318,6 +2327,7 @@ function openView(c){
   $('#cvSell').onclick=async function(){
     var pr=Math.floor(+pi.value);
     if(!(pr>=1)){toast('Prix invalide.');return}
+    if(pr<CFG.recycle[c.r]){toast('Prix minimum : '+CFG.recycle[c.r]+' PTS (valeur de recyclage).');return}
     this.disabled=true;
     var la={p_card:c.id,p_price:pr};if(ser)la.p_serial=+ser.value;
     var r=await SB.rpc('list_card',la);
@@ -2365,6 +2375,7 @@ function openView(c){
     $('#cvAucGo').onclick=async function(){
       var pr=Math.floor(+$('#cvAucP').value),hh=+$('#cvAucH').value;
       if(!(pr>=1)){toast('Prix de départ invalide.');return}
+      if(pr<CFG.recycle[c.r]){toast('Prix minimum : '+CFG.recycle[c.r]+' PTS (valeur de recyclage).');return}
       var g=this;
       if(g.getAttribute('data-arm')!=='1'){g.setAttribute('data-arm','1');g.textContent='CONFIRMER ? ('+hh+' h)';setTimeout(function(){if(g.isConnected){g.setAttribute('data-arm','0');g.textContent='LANCER UNE ENCHÈRE'}},3500);return}
       g.disabled=true;
@@ -2759,12 +2770,14 @@ async function tradeRender(body){
   var tr=await SB.from('trades_v').select('*').order('id',{ascending:false});
   var players=pr.data||[],trades=tr.data||[];
   var mine=DBCARDS.filter(function(c){return INV[c.id]}).sort(function(a,b){return a.n<b.n?-1:1});
-  var wants=DBCARDS.filter(function(c){return c.active&&!isSec(c)&&CFG.unlocked.indexOf(c.s)>=0}).sort(function(a,b){return a.n<b.n?-1:1});
+  var wants=DBCARDS.filter(function(c){return c.active&&!isHid(c)&&CFG.unlocked.indexOf(c.s)>=0}).sort(function(a,b){return a.n<b.n?-1:1});
   if(MK.give){TG=[MK.give];TW=[]}
-  var h='<p class="sum-best">Propose un échange jusqu’à 5 cartes contre 5 cartes (par exemple 3 contre 1). L’autre joueur doit accepter.</p><div class="shop-card tcol">'
+  var h='<p class="sum-best">Propose un échange jusqu’à 5 cartes contre 5 cartes (par exemple 3 contre 1), avec des PTS en plus si tu veux (ex. : une carte contre 500 PTS). Les PTS reçus subissent la commission de 5 %. L’autre joueur doit accepter.</p><div class="shop-card tcol">'
    +'<select id="trTo"><option value="">Avec quel joueur ?</option>'+players.map(function(p){return '<option value="'+p.id+'">'+esc(p.pseudo)+'</option>'}).join('')+'</select>'
    +'<b class="tr-h">JE DONNE</b><div id="trGl" class="tr-chips"></div><select id="trGive"></select>'
+   +'<input id="trPf" type="number" min="0" inputmode="numeric" placeholder="+ PTS que j’ajoute (optionnel)">'
    +'<b class="tr-h">JE VEUX</b><div id="trWl" class="tr-chips"></div><select id="trWant"></select>'
+   +'<input id="trPt" type="number" min="0" inputmode="numeric" placeholder="+ PTS que je demande (optionnel)">'
    +'<button class="btn gold" id="trGo" type="button">PROPOSER L’ÉCHANGE</button></div>';
   var inc=trades.filter(function(t){return t.to_user===USER.id}),out=trades.filter(function(t){return t.from_user===USER.id});
   h+='<h3 class="shop-h">OFFRES REÇUES ('+inc.length+')</h3><div id="trInc"></div><h3 class="shop-h">MES OFFRES ENVOYÉES ('+out.length+')</h3><div id="trOut"></div>';
@@ -2784,9 +2797,14 @@ async function tradeRender(body){
   drawT();
   $('#trGo').onclick=async function(){
     var to=$('#trTo').value;
-    if(!to||!TG.length||!TW.length){toast('Choisis un joueur, et au moins une carte de chaque côté.');return}
+    var pf=Math.max(0,Math.floor(+$('#trPf').value||0)),pt=Math.max(0,Math.floor(+$('#trPt').value||0));
+    if(!to){toast('Choisis un joueur.');return}
+    if(!TG.length&&!pf){toast('Donne au moins une carte ou des PTS.');return}
+    if(!TW.length&&!pt){toast('Demande au moins une carte ou des PTS.');return}
+    if(pf&&pt){toast('Ajoute des PTS d’un seul côté.');return}
+    if(pf>PTS){toast('Tu n’as pas assez de PTS.');return}
     this.disabled=true;
-    var r=await SB.rpc('propose_trade2',{p_to:to,p_give:TG,p_want:TW});
+    var r=await SB.rpc('propose_trade2',{p_to:to,p_give:TG,p_want:TW,p_pts_from:pf,p_pts_to:pt});
     this.disabled=false;
     if(r.error){toast(r.error.message);return}
     TG=[];TW=[];toast('Offre envoyée.');mkRender();
@@ -2794,9 +2812,11 @@ async function tradeRender(body){
   function line(t,mode){
     var d=document.createElement('div');d.className='mk-row';
     var gl=(t.give_cards||[t.give_card]).map(function(i){return CBYID[i]}).filter(Boolean),wl=(t.want_cards||[t.want_card]).map(function(i){return CBYID[i]}).filter(Boolean);
-    if(!gl.length||!wl.length)return d;
-    var nm=function(l){return l.map(function(c){return esc(c.n)}).join(' + ')};
-    d.innerHTML='<div class="tr-minis">'+gl.map(function(c){return miniHTML(c,44)}).join('')+'</div><div class="mk-info"><b>'+gl.length+' contre '+wl.length+'</b><span>'+(mode==='in'?esc(t.from_pseudo)+' te donne : '+nm(gl)+'<br>Il veut de toi : <b>'+nm(wl)+'</b>':'Tu donnes : '+nm(gl)+'<br>Tu veux : <b>'+nm(wl)+'</b> · à '+esc(t.to_pseudo))+'</span></div>';
+    var pf=t.pts_from||0,pt=t.pts_to||0;
+    if(!t.give_cards&&!t.give_card)gl=[];if(!t.want_cards&&!t.want_card)wl=[];
+    if(!gl.length&&!wl.length&&!pf&&!pt)return d;
+    var nm=function(l,p){var a=l.map(function(c){return esc(c.n)});if(p)a.push(p+' PTS');return a.join(' + ')};
+    d.innerHTML='<div class="tr-minis">'+gl.map(function(c){return miniHTML(c,44)}).join('')+'</div><div class="mk-info"><b>'+(gl.length?gl.length+(pf?' + PTS':''):'PTS')+' contre '+(wl.length?wl.length+(pt?' + PTS':''):'PTS')+'</b><span>'+(mode==='in'?esc(t.from_pseudo)+' te donne : '+nm(gl,pf)+'<br>Il veut de toi : <b>'+nm(wl,pt)+'</b>':'Tu donnes : '+nm(gl,pf)+'<br>Tu veux : <b>'+nm(wl,pt)+'</b> · à '+esc(t.to_pseudo))+'</span></div>';
     var box=document.createElement('div');box.className='cv-act';
     if(mode==='in'){
       var a=document.createElement('button');a.type='button';a.className='btn gold';a.textContent='OUI';
@@ -2829,9 +2849,9 @@ async function initCaps(){
     var r=await fetch('cards.json',{cache:'no-cache'}),j=await r.json();
     DBCARDS=j.cards||[];
     var cnt={};
-    DBCARDS.forEach(function(c){CBYID[c.id]=c;if(c.active&&!isSec(c)){cnt[c.s]=(cnt[c.s]||0)+1;c.no=String(cnt[c.s]).padStart(3,'0')}});
+    DBCARDS.forEach(function(c){CBYID[c.id]=c;if(c.active&&!isHid(c)){cnt[c.s]=(cnt[c.s]||0)+1;c.no=String(cnt[c.s]).padStart(3,'0')}});
     SERCNT=cnt;
-    var sk={};DBCARDS.forEach(function(c){if(c.active&&isSec(c)){sk[c.s]=(sk[c.s]||0)+1;c.no=String(cnt[c.s]+sk[c.s]).padStart(3,'0')}});
+    var sk={};DBCARDS.forEach(function(c){if(c.active&&isHid(c)){sk[c.s]=(sk[c.s]||0)+1;c.no=String(cnt[c.s]+sk[c.s]).padStart(3,'0')}});
   }catch(e){auErr('Impossible de charger les cartes.')}
   updMid();
   if(!window.supabase){auErr('Connexion au serveur impossible.');return}
@@ -2884,7 +2904,7 @@ function feedShow(){
   var okStage=['intro','summary','lib','rank','market','shop','profile'].indexOf(stage)>=0;
   if(!USER||!FEED.length||!okStage){el.hidden=true;return}
   var f=FEED[feedI%FEED.length],c=CBYID[f.card_id];
-  el.innerHTML=(f.god?'GOD PACK · ':'')+esc(f.pseudo)+' a sorti <b>'+esc(c?c.n:f.card_id)+'</b> · '+(isSec(c)?'SECRET':RAR[f.rarity]?RAR[f.rarity].n:'');
+  el.innerHTML=(f.god?'GOD PACK · ':'')+esc(f.pseudo)+' a sorti <b>'+esc(c?c.n:f.card_id)+'</b> · '+(isSec(c)?'SECRET':c&&c.v==='fight'?'BoM FIGHT':RAR[f.rarity]?RAR[f.rarity].n:'');
   el.hidden=false;
 }
 
@@ -2935,7 +2955,7 @@ async function objRender(l){
 function dceToday(){return new Date().toISOString().slice(0,10)}
 function dceOpen(ch){var t=dceToday();return !(ch.from&&t<ch.from)&&!(ch.to&&t>ch.to)}
 function dceCardOK(c,rq){
-  if(!c.active||isSec(c)||c.v==='sign'||String(c.id).indexOf('signed')>=0)return false;
+  if(!c.active||isSec(c)||c.v==='sign'||c.v==='fight'||String(c.id).indexOf('signed')>=0)return false;
   if(rq.rmin!=null&&c.r<rq.rmin)return false;if(rq.rmax!=null&&c.r>rq.rmax)return false;
   if(rq.series!=null&&c.s!==rq.series)return false;
   if(rq.grp&&!(rq.grp==='BoM'&&/^joueur-/.test(c.id)&&NONBOM.indexOf(c.id)<0))return false;
@@ -3095,7 +3115,7 @@ function pfRender(){
   var h=document.createElement('h2');h.className='pf-name';h.textContent=d.pseudo;el.appendChild(h);
   var lv=document.createElement('div');lv.innerHTML=xpBar(d.xp||0);el.appendChild(lv);
   var ch=document.createElement('div');ch.className='pf-chips';
-  var tot=DBCARDS.filter(function(c){return c.active&&!isSec(c)&&CFG.unlocked.indexOf(c.s)>=0}).length;
+  var tot=DBCARDS.filter(function(c){return c.active&&!isHid(c)&&CFG.unlocked.indexOf(c.s)>=0}).length;
   ch.innerHTML=(me?'<span>VALEUR <b>'+d.val+'</b></span><span>CARTES <b>'+st.uniq+'/'+tot+'</b></span>':'')+'<span>BOOSTERS <b>'+st.opened+'</b></span><span>OBJECTIFS <b>'+d.achv+'</b></span>'+(st.gods?'<span>GOD PACKS <b>'+st.gods+'</b></span>':'');
   el.appendChild(ch);
   var ml=medalList(d.medals);
@@ -3299,7 +3319,7 @@ function wantPicker(box,onPick){
   var q=box.querySelector('#wQ'),res=box.querySelector('#wRes');
   q.oninput=function(){
     var s=slug(q.value);res.innerHTML='';if(s.length<2)return;
-    DBCARDS.filter(function(c){return c.active&&!isSec(c)&&CFG.unlocked.indexOf(c.s)>=0&&slug(c.n).indexOf(s)>=0}).sort(function(x,y){return (y.r-x.r)||(x.n<y.n?-1:1)}).slice(0,8).forEach(function(c){
+    DBCARDS.filter(function(c){return c.active&&!isHid(c)&&CFG.unlocked.indexOf(c.s)>=0&&slug(c.n).indexOf(s)>=0}).sort(function(x,y){return (y.r-x.r)||(x.n<y.n?-1:1)}).slice(0,8).forEach(function(c){
       var b=document.createElement('button');b.type='button';b.className='wt-opt';b.innerHTML='<b>'+esc(c.n)+'</b><span>'+rarN(c.r)+' · '+esc(serName(c.s))+'</span>';
       b.onclick=function(){res.innerHTML='';onPick(c)};res.appendChild(b);
     });
