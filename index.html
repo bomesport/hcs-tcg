@@ -553,6 +553,48 @@ button{font:inherit;color:inherit;cursor:pointer}
 .serbtn[data-s="4"]{--sc:#8e44ad}
 .serbtn[data-s].on{background:linear-gradient(160deg,var(--sc),rgba(5,7,11,.7));color:#fff;box-shadow:0 0 16px var(--sc)}
 #intro{background:radial-gradient(ellipse 75% 50% at 50% 40%,rgba(70,125,220,.30),rgba(5,7,11,0) 72%),radial-gradient(ellipse 110% 90% at 50% 45%,rgba(5,7,11,0) 45%,rgba(5,7,11,.62) 100%)}
+
+#intro{padding-bottom:38px}
+.f-foot .ser{font-size:1.5em;font-weight:700;color:#f5d56b;text-shadow:0 0 8px rgba(245,213,107,.5)}
+.in.no1{box-shadow:inset 0 0 0 calc(var(--cw)*.014) #f5d56b,inset 0 0 calc(var(--cw)*.08) rgba(245,213,107,.5)}
+.f-no1{position:absolute;top:0;right:calc(var(--cw)*.06);background:linear-gradient(180deg,#f8e08a,#b8860b);color:#1a1405;font-family:var(--display);font-size:calc(var(--cw)*.05);letter-spacing:.08em;padding:calc(var(--cw)*.02) calc(var(--cw)*.04) calc(var(--cw)*.045);clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%);z-index:4;white-space:nowrap}
+.mini .f-no1{display:none}
+.mini.has1{outline:2px solid #f5d56b;outline-offset:-2px;box-shadow:0 0 12px rgba(245,213,107,.5)}
+.mini.has1::after{content:'★ N°1';position:absolute;left:3px;top:3px;z-index:4;background:#f5d56b;color:#1a1405;font-size:10px;font-weight:700;padding:1px 5px;border-radius:3px;letter-spacing:.04em}
+.mk-ex.n1{color:#fff3b0!important;text-shadow:0 0 8px rgba(245,213,107,.9)}
+.cv-serlist .n1 b{color:#fff3b0;text-shadow:0 0 8px rgba(245,213,107,.9)}
+.dce-how{display:flex;gap:8px;margin:8px 0}
+.dce-how>div{flex:1;text-align:center;padding:10px 6px;border:1px solid rgba(212,175,55,.5);border-radius:8px;background:rgba(212,175,55,.08);display:flex;flex-direction:column;gap:2px}
+.dce-how i{font-style:normal;font-family:var(--display);font-size:26px;color:var(--gold);line-height:1}
+.dce-how b{font-family:var(--display);letter-spacing:.14em;font-size:16px}
+.dce-how span{font-size:12px;opacity:.85}
+.dce-warn{margin:8px 0 10px;padding:10px 12px;border:2px solid #ff6b5a;border-radius:8px;background:rgba(255,107,90,.12);font-size:14px;line-height:1.45;text-align:left}
+.dce-warn b{color:#ff8a7a}
+.dce-tm{flex-basis:100%;display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:10px 2px 0;padding:6px 4px 3px;border-bottom:2px solid rgba(212,175,55,.45);font-family:var(--display);letter-spacing:.14em;color:var(--gold)}
+.dce-tm small{font-family:inherit;font-size:12px;letter-spacing:.06em;color:rgba(245,245,245,.7)}
+.dce-tm.ok{border-bottom-color:#3ddc84}.dce-tm.ok small{color:#3ddc84}
+#tuto{position:fixed;inset:0;z-index:300;background:rgba(5,7,11,.88);display:grid;place-items:center;padding:20px;backdrop-filter:blur(3px)}
+.tt-card{width:min(92vw,380px);text-align:center;padding:26px 22px 20px;border-radius:16px;border:2px solid var(--gold);background:radial-gradient(ellipse at 50% 0%,rgba(212,175,55,.28),rgba(5,7,11,.97) 70%);box-shadow:0 0 50px rgba(212,175,55,.45);animation:ttin .35s ease both}
+.tt-card.warn{border-color:#ff6b5a;box-shadow:0 0 50px rgba(255,107,90,.5);background:radial-gradient(ellipse at 50% 0%,rgba(255,107,90,.3),rgba(5,7,11,.97) 70%)}
+@keyframes ttin{from{opacity:0;transform:translateY(24px) scale(.94)}to{opacity:1;transform:none}}
+.tt-ic{font-size:64px;line-height:1.1;margin-bottom:6px;filter:drop-shadow(0 0 14px rgba(212,175,55,.6))}
+.tt-card h3{font-family:var(--display);letter-spacing:.14em;font-size:24px;color:var(--gold);margin:4px 0 8px}
+.tt-card.warn h3{color:#ff8a7a}
+.tt-card p{font-size:15px;line-height:1.5;margin:0 0 14px}
+.tt-dots{display:flex;gap:6px;justify-content:center;margin-bottom:14px}
+.tt-dots i{width:8px;height:8px;border-radius:50%;background:rgba(245,245,245,.3)}
+.tt-dots i.on{background:var(--gold);transform:scale(1.3)}
+.tt-act{display:flex;gap:10px;justify-content:center}
+.wt-form{display:grid;gap:10px;padding:12px;margin:8px 0;border:1px solid rgba(212,175,55,.5);border-radius:10px;background:rgba(5,7,11,.7)}
+.wt-form[hidden]{display:none}
+.wt-form label{display:grid;gap:4px;font-size:13px;text-align:left}
+.wt-res{display:grid;gap:4px;margin-top:4px}
+.wt-opt{display:flex;justify-content:space-between;gap:8px;padding:8px 10px;border:1px solid rgba(245,245,245,.25);border-radius:6px;background:rgba(245,245,245,.05);color:var(--bone);text-align:left}
+.wt-opt span{opacity:.7;font-size:12px}
+.wt-sel{padding:8px 10px;border-radius:6px;background:rgba(212,175,55,.12);text-align:left;font-size:14px}
+.wt-p b,.wt-o b{color:var(--gold)}
+.wt-hv{color:#3ddc84!important;font-weight:700;letter-spacing:.06em}
+.wt-row.wt-have{border-color:#3ddc84!important}
 .au-row{flex-wrap:wrap}.au-row .mk-info{flex:1 1 55%;min-width:0}.au-row .au-act{flex:1 1 100%;justify-content:flex-end}
 .au-bid b{font-size:inherit!important;display:inline!important;letter-spacing:0!important;font-family:inherit!important;text-transform:none!important;color:var(--gold,#f5c542)}
 .au-row .au-act{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
@@ -1815,6 +1857,7 @@ function updPts(){
   var gb=$('#giftBar');if(!gb){gb=document.createElement('button');gb.id='giftBar';gb.type='button';gb.onclick=function(){goTab('obj')};b.parentNode.insertBefore(gb,$('#costLine'))}
   giftSync();
   b.textContent='ACHETER 1 BOOSTER'+(CFG.unlocked.length>1?' '+serName(SSEL):'')+' · '+priceFor().booster+' PTS';b.disabled=PTS<priceFor().booster;
+  var mkb=document.querySelector('#nav [data-tab=market]');if(mkb)mkb.classList.toggle('dot',!!USER&&(WALERT||[]).some(function(x){return !x.seen}));
   var sh=document.querySelector('#nav [data-tab=obj]');if(sh)sh.classList.toggle('dot',!!USER&&(dailyReady()||wheelReady()||hourPending()>=CFG.hourly.rate));
   qkSync();
 }
@@ -1887,6 +1930,10 @@ async function loadAll(){
   INV={};(u.data||[]).forEach(function(r){if(r.qty>0)INV[r.card_id]=r.qty});
   try{var cp=await SB.rpc('my_copies');COPIES={};if(!cp.error)(cp.data||[]).forEach(function(r){(COPIES[r.card_id]=COPIES[r.card_id]||[]).push({s:r.serial,k:r.case_kind||'',d:r.dropper_pseudo||''})})}catch(e){}
   try{var rl=await SB.rpc('rare_left');RARE=rl.error?[]:(rl.data||[])}catch(e){}
+  try{var wa=await SB.rpc('my_want_alerts');WALERT=wa.error?[]:(wa.data||[])}catch(e){}
+  try{var uw=WALERT.filter(function(x){return !x.seen});
+    if(uw.length&&!WNOTIF&&stage!=='market'){WNOTIF=1;var cw=CBYID[uw[0].card_id];pop('🔔 '+uw.length+' INTÉRESSÉ'+(uw.length>1?'S':''),uw[0].pseudo+' a ce que tu cherches'+(cw?' : '+cw.n:'')+'. Va dans MARCHÉ › RECHERCHES.',5200)}}catch(e){}
+  try{updPts()}catch(e){}
   try{var cq=await SB.rpc('my_cases');CASEQ={};if(!cq.error)(cq.data||[]).forEach(function(r){CASEQ[r.kind]=r.qty})}catch(e){}
   var s=await SB.rpc('stock_by_series');
   if(!s.error&&s.data)STOCKS=s.data;
@@ -2090,13 +2137,16 @@ function cardD(c){
 (function(){
   var o=frontHTML;
   frontHTML=function(d,sm){
-    var h=o(d,sm),c=CBYID[d.id];
-    if(!c||!c.tm)return h;
-    h=h.replace(/--tc:#[0-9a-fA-F]{6}/,'--tc:'+c.tc);
-    var fs=Math.min(.06,.74/Math.max(8,c.tm.length)).toFixed(4);
-    var st='<div class="f-team" style="--tcol:'+c.tc+';--tf:'+fs+'"><span>'+esc(c.tm)+'</span></div>';
+    var h=o(d,sm),c=CBYID[d.id],ex='';
+    if(c&&c.tm){
+      h=h.replace(/--tc:#[0-9a-fA-F]{6}/,'--tc:'+c.tc);
+      var fs=Math.min(.06,.74/Math.max(8,c.tm.length)).toFixed(4);
+      ex+='<div class="f-team" style="--tcol:'+c.tc+';--tf:'+fs+'"><span>'+esc(c.tm)+'</span></div>';
+    }
+    if(/^N° 0?1\//.test(d.serial||'')){h=h.replace('class="in','class="in no1');ex+='<div class="f-no1"><span>★ N° 1</span></div>'}
+    if(!ex)return h;
     var i=h.indexOf('</div><div class="holo">');
-    return i<0?h:h.slice(0,i)+st+h.slice(i);
+    return i<0?h:h.slice(0,i)+ex+h.slice(i);
   };
 })();
 var NONBOM=['joueur-stanzzee','joueur-claw-2014','joueur-brainiak','joueur-brainiak-2014','joueur-yoshi-2014','joueur-benz-valencia','joueur-nutsinette-2014','joueur-benz-2014'];
@@ -2141,13 +2191,13 @@ function libRender(){
   shown.forEach(function(c){
     var q=INV[c.id]||0,m=document.createElement('div');
     m.className='mini r'+c.r+(c.v==='holo'?' vh':'')+(q?'':' unk');
-    if(q){m.innerHTML='<div class="face front">'+frontHTML(cardD(c),1)+'</div>'+(q>1?'<i class="qty">x'+q+'</i>':'')+(q>1&&c.maxPrint>0?snTag(c):'');m.style.cursor='pointer';m.onclick=function(){openView(c)}}
+    if(q){m.innerHTML='<div class="face front">'+frontHTML(cardD(c),1)+'</div>'+(q>1?'<i class="qty">x'+q+'</i>':'')+(c.maxPrint>0?snTag(c):'');if((COPIES[c.id]||[]).some(function(x){return x.s===1})&&c.maxPrint>0)m.className+=' has1';m.style.cursor='pointer';m.onclick=function(){openView(c)}}
     else if(c.r<=2){m.className+=' ghost';m.innerHTML='<div class="face front">'+frontHTML(cardD(c),1)+'</div>'}
     g.appendChild(m);
   });
 }
 var SELLDEF=[10,30,120,500,2000];
-var COPIES={},CASEQ={},RARE=[];
+var COPIES={},CASEQ={},RARE=[],WALERT=[],WNOTIF=0;
 function snTag(c){var a=(COPIES[c.id]||[]).filter(function(x){return x.s>0}).map(function(x){return String(x.s).padStart(2,'0')}).sort();return a.length?'<i class="sn">N° '+a.slice(0,4).join(' · ')+(a.length>4?' …':'')+'</i>':''}
 function rareTxt(){var out=[];[['mythique','MYTHIQUES À TROUVER'],['secret','SECRETS À TROUVER']].forEach(function(k){var p=[];CFG.unlocked.slice().sort().forEach(function(n){var r=RARE.filter(function(x){return x.series===n&&x.kind===k[0]})[0];if(r)p.push('S'+n+' <b>'+r.restants+'</b>/'+r.total)});if(p.length)out.push('<span>'+k[1]+' · '+p.join(' · ')+'</span>')});return out.join('')}
 function caseL(k){return (CFG.cases&&CFG.cases[k]&&CFG.cases[k].l)||k}
@@ -2156,16 +2206,17 @@ function openView(c){
   var q=INV[c.id]||0,P2=function(n){return String(n).padStart(2,'0')};
   var cps=(COPIES[c.id]||[]).slice().sort(function(a,b){return a.s-b.s}).filter(function(x){return x.s>0});
   function lab(x,i){return (c.maxPrint>0?'N° '+P2(x.s)+'/'+c.maxPrint:'Exemplaire '+(i+1))+(x.k?' · 🛡 '+caseL(x.k):'')}
-  function paintCard(k){
-    var big='<div class="bigc r'+c.r+(c.v==='holo'?' vh':'')+'"><div class="face front">'+frontHTML(cardD(c))+'</div></div>';
+  function paintCard(k,sn){
+    var dd=cardD(c);if(sn>0&&c.maxPrint>0)dd.serial=serTxt(sn,c.maxPrint);
+    var big='<div class="bigc r'+c.r+(c.v==='holo'?' vh':'')+'"><div class="face front">'+frontHTML(dd)+'</div></div>';
     $('#cvCard').innerHTML=k?'<div class="fr-'+k+' cv-enc">'+big+'</div>':big;
   }
   var free=cps.filter(function(x){return !x.k}),defCp=free.length?free[free.length-1]:cps[cps.length-1];
-  paintCard(defCp&&defCp.k);
+  paintCard(defCp&&defCp.k,defCp&&defCp.s);
   var shown=cps.map(function(x,i){return (c.maxPrint>0||x.k)?lab(x,i):''}).filter(Boolean);
   $('#cvInfo').textContent=RAR[c.r].n+' · '+q+' exemplaire'+(q>1?'s':'');
   var sl=$('#cvSerList');if(!sl){sl=document.createElement('div');sl.id='cvSerList';sl.className='cv-serlist';$('#cvInfo').parentNode.insertBefore(sl,$('#cvInfo').nextSibling)}
-  sl.innerHTML=cps.map(function(x,i){if(!(c.maxPrint>0||x.k||x.d))return '';return '<div><b>'+(c.maxPrint>0?serTxt(x.s,c.maxPrint):'Exemplaire '+(i+1))+'</b>'+(x.k?' · 🛡 '+esc(caseL(x.k)):'')+(x.d?' · drop : '+esc(x.d):'')+'</div>'}).join('');
+  sl.innerHTML=cps.map(function(x,i){if(!(c.maxPrint>0||x.k||x.d))return '';return '<div'+(x.s===1&&c.maxPrint>0?' class="n1"':'')+'><b>'+(c.maxPrint>0?serTxt(x.s,c.maxPrint):'Exemplaire '+(i+1))+'</b>'+(x.s===1&&c.maxPrint>0?' ★ PREMIER EXEMPLAIRE':'')+(x.k?' · 🛡 '+esc(caseL(x.k)):'')+(x.d?' · drop : '+esc(x.d):'')+'</div>'}).join('');
   var nfree=cps.length?free.length:q;
   var b=$('#cvRec');b.hidden=q<2||nfree<1;b.textContent='RECYCLER 1 DOUBLON · +'+CFG.recycle[c.r]+' PTS';
   b.onclick=async function(){
@@ -2183,7 +2234,7 @@ function openView(c){
     ser=document.createElement('select');ser.id='cvSer';
     ser.innerHTML=cps.map(function(x,i){return '<option value="'+x.s+'"'+(defCp&&x.s===defCp.s?' selected':'')+'>'+lab(x,i)+'</option>'}).join('');
     pi.parentNode.insertBefore(ser,pi);
-    ser.onchange=function(){var x=cps.filter(function(y){return y.s===+ser.value})[0];paintCard(x&&x.k);syncCase()};
+    ser.onchange=function(){var x=cps.filter(function(y){return y.s===+ser.value})[0];paintCard(x&&x.k,x&&x.s);syncCase()};
   }
   function curCp(){return ser?cps.filter(function(y){return y.s===+ser.value})[0]:(cps.length===1?cps[0]:null)}
   $('#cvSell').onclick=async function(){
@@ -2483,13 +2534,14 @@ var MKS={};var MK={tab:'buy',give:'',q:'',r:-1,arm:0,sort:'price',nw:false};
 function miniHTML(c,w){return '<div class="mini r'+c.r+(c.v==='holo'?' vh':'')+'" style="--mw:'+(w||64)+'px"><div class="face front">'+frontHTML(cardD(c),1)+'</div></div>'}
 async function mkRender(){
   var tabs=$('#mkTabs');tabs.innerHTML='';
-  [['buy','ACHETER'],['auc','ENCHÈRES'],['mine','MES ANNONCES'],['trade','ÉCHANGES']].forEach(function(t){
+  [['buy','ACHETER'],['auc','ENCHÈRES'],['want','RECHERCHES'],['mine','MES ANNONCES'],['trade','ÉCHANGES']].forEach(function(t){
     var b=document.createElement('button');b.type='button';b.className='serbtn'+(MK.tab===t[0]?' on':'');b.textContent=t[1];
     b.onclick=function(){MK.tab=t[0];mkRender()};tabs.appendChild(b);
   });
   var body=$('#mkBody');body.innerHTML='<p class="sum-best">Chargement…</p>';
   if(MK.tab==='trade')return tradeRender(body);
   if(MK.tab==='auc')return aucRender(body);
+  if(MK.tab==='want')return wantRender(body);
   var r=await SB.from('listings_v').select('*').order('price',{ascending:true}).limit(300);
   if(r.error){body.innerHTML='<p class="sum-best">Marché indisponible.</p>';return}
   try{var ms=await SB.rpc('market_stats');MKS=(ms&&ms.data)||{}}catch(e){MKS={}}
@@ -2499,7 +2551,7 @@ async function mkRender(){
   body.innerHTML='';
   if(MK.tab==='buy'){
     var f=document.createElement('div');f.className='lib-bar';
-    f.innerHTML='<input id="mkQ" type="search" placeholder="Rechercher une carte" value="'+esc(MK.q)+'"><select id="mkR"><option value="-1">Toutes raretés</option>'+RAR.map(function(x,i){return '<option value="'+i+'"'+(MK.r===i?' selected':'')+'>'+x.n+'</option>'}).join('')+'</select>'+'<select id="mkS" aria-label="Trier"><option value="price">Prix croissant</option><option value="new">Plus récentes</option><option value="priceD">Prix décroissant</option><option value="rar">Rareté</option></select><label class="chk" for="mkN"><input id="mkN" type="checkbox"'+(MK.nw?' checked':'')+'>Nouvelles seulement</label>';
+    f.innerHTML='<input id="mkQ" type="search" placeholder="Rechercher une carte" value="'+esc(MK.q)+'"><select id="mkR"><option value="-1">Toutes raretés</option>'+RAR.map(function(x,i){return '<option value="'+i+'"'+(MK.r===i?' selected':'')+'>'+x.n+'</option>'}).join('')+'</select>'+'<select id="mkS" aria-label="Trier"><option value="price">Prix croissant</option><option value="new">Plus récentes</option><option value="priceD">Prix décroissant</option><option value="rar">Rareté</option></select><label class="chk" for="mkN"><input id="mkN" type="checkbox"'+(MK.nw?' checked':'')+'>Manquantes seulement</label>';
     body.appendChild(f);
     $('#mkQ').oninput=function(){MK.q=this.value;mkList(list,body)};
     $('#mkR').onchange=function(){MK.r=+this.value;mkList(list,body)};
@@ -2534,7 +2586,7 @@ function mkList(list,body){
     if(ref&&l.case_kind)ref=Math.round(ref*(1+caseB(l.case_kind)));
     if(ref){var df=Math.round((l.price-ref)/ref*100);cote='<span class="mk-cote">Cote '+ref+' PTS'+(df<=-3?' · <em class="dn">'+df+' %</em>':df>=3?' · <em class="up">+'+df+' %</em>':'')+'</span>'}
     else cote='<span class="mk-cote">Cote : pas encore de vente</span>';
-    row.innerHTML=miniHTML(c)+'<div class="mk-info"><b>'+esc(c.n)+'</b><span>'+rarN(c.r)+(MK.tab==='buy'?' · '+esc(l.seller_pseudo)+(own?' · tu en as '+own:''):'')+'</span>'+(l.serial&&c.maxPrint?'<span class="mk-ex">Exemplaire '+serTxt(l.serial,c.maxPrint)+'</span>':'')+(l.dropper_pseudo?'<span class="mk-drop">Drop · '+esc(l.dropper_pseudo)+'</span>':'')+(l.case_kind?'<span class="mk-case">🛡 '+esc(caseL(l.case_kind))+' · +'+Math.round(100*caseB(l.case_kind))+' % de valeur</span>':'')+'<span>'+(no?'N° '+no+'/'+tot:'')+(c.maxPrint?(no?' · ':'')+'tirage '+c.maxPrint:'')+'</span>'+cote+'<span class="mk-more">▾ voir la courbe</span></div>';
+    row.innerHTML=miniHTML(c)+'<div class="mk-info"><b>'+esc(c.n)+'</b><span>'+rarN(c.r)+(MK.tab==='buy'?' · '+esc(l.seller_pseudo)+(own?' · tu en as '+own:''):'')+'</span>'+(l.serial&&c.maxPrint?'<span class="mk-ex'+(l.serial===1?' n1':'')+'">Exemplaire '+serTxt(l.serial,c.maxPrint)+(l.serial===1?' ★ PREMIER':'')+'</span>':'')+(l.dropper_pseudo?'<span class="mk-drop">Drop · '+esc(l.dropper_pseudo)+'</span>':'')+(l.case_kind?'<span class="mk-case">🛡 '+esc(caseL(l.case_kind))+' · +'+Math.round(100*caseB(l.case_kind))+' % de valeur</span>':'')+'<span>'+(no?'N° '+no+'/'+tot:'')+(c.maxPrint?(no?' · ':'')+'tirage '+c.maxPrint:'')+'</span>'+cote+'<span class="mk-more">▾ voir la courbe</span></div>';
     if(MK.tab==='buy'&&!own){row.classList.add('mk-new');row.insertAdjacentHTML('afterbegin','<i class="mk-newb">NOUVELLE</i>')}
     if(l.created_at){var ag=Math.max(0,Math.round((Date.now()-new Date(l.created_at).getTime())/60000)),agt=ag<2?'à l’instant':ag<60?'il y a '+ag+' min':ag<1440?'il y a '+Math.round(ag/60)+' h':'il y a '+Math.round(ag/1440)+' j';row.querySelector('.mk-info').insertAdjacentHTML('beforeend','<span class="mk-ago">'+agt+'</span>')}
     var det=document.createElement('div');det.className='ct-box mk-det';det.hidden=true;
@@ -2567,17 +2619,19 @@ async function aucRender(body){
   var r=await SB.from('auctions_v').select('*').order('end_at',{ascending:true}).limit(100);
   if(r.error){body.innerHTML='<p class="sum-best">Enchères indisponibles.</p>';return}
   try{await loadAll()}catch(e){}
-  var rows=r.data||[],open=rows.filter(function(a){return a.status==='open'}),done=rows.filter(function(a){return a.status==='sold'}).sort(function(a,b){return new Date(b.closed_at)-new Date(a.closed_at)}).slice(0,8);
+  var rows=r.data||[],open=rows.filter(function(a){return a.status==='open'&&!(MK.nw&&INV[a.card_id])}),done=rows.filter(function(a){return a.status==='sold'}).sort(function(a,b){return new Date(b.closed_at)-new Date(a.closed_at)}).slice(0,8);
   body.innerHTML='<p class="sum-best">Mise minimale : +5 % sur la mise précédente. Tes points sont bloqués tant que tu es en tête, et rendus si on te surenchérit. Une mise dans les 5 dernières minutes prolonge l’enchère de 5 min. Commission de '+Math.round(CFG.fee*100)+' % pour le vendeur. Pour lancer une enchère : ouvre une carte dans COLLECTION.</p>';
+  var fl=document.createElement('div');fl.className='lib-bar';fl.innerHTML='<label class="chk" for="auN"><input id="auN" type="checkbox"'+(MK.nw?' checked':'')+'>Manquantes seulement</label>';body.appendChild(fl);
+  fl.querySelector('input').onchange=function(){MK.nw=this.checked;mkRender()};
   var box=document.createElement('div');box.className='mk-list';body.appendChild(box);
-  if(!open.length)box.innerHTML='<p class="sum-best">Aucune enchère en cours.</p>';
+  if(!open.length)box.innerHTML='<p class="sum-best">'+(MK.nw?'Aucune enchère sur une carte qui te manque.':'Aucune enchère en cours.')+'</p>';
   open.forEach(function(a){
     var c=CBYID[a.card_id];if(!c)return;
     var own=a.seller===USER.id,lead=a.bidder===USER.id,row=document.createElement('div');
     row.className='mk-row au-row'+(lead?' au-lead':'')+(a.case_kind?' mk-enc':'');
     var mine=INV[c.id]||0;
-    row.innerHTML=miniHTML(c)+'<div class="mk-info"><b>'+esc(c.n)+'</b><span>'+rarN(c.r)+' · '+esc(a.seller_pseudo)+(!own&&!mine?' · <em class="au-new">NOUVELLE</em>':'')+'</span>'
-      +(a.serial&&c.maxPrint?'<span class="mk-ex">Exemplaire '+serTxt(a.serial,c.maxPrint)+'</span>':'')
+    row.innerHTML=miniHTML(c)+'<div class="mk-info"><b>'+esc(c.n)+'</b><span>'+rarN(c.r)+' · '+esc(a.seller_pseudo)+(!own&&!mine?' · <em class="au-new">MANQUANTE</em>':'')+'</span>'
+      +(a.serial&&c.maxPrint?'<span class="mk-ex'+(a.serial===1?' n1':'')+'">Exemplaire '+serTxt(a.serial,c.maxPrint)+(a.serial===1?' ★ PREMIER':'')+'</span>':'')
       +(a.dropper_pseudo?'<span class="mk-drop">Drop · '+esc(a.dropper_pseudo)+'</span>':'')
       +(a.case_kind?'<span class="mk-case">🛡 '+esc(caseL(a.case_kind))+' · +'+Math.round(100*caseB(a.case_kind))+' % de valeur</span>':'')
       +'<span class="au-bid">'+(a.bid!=null?'Mise actuelle : <b>'+a.bid+' PTS</b> · '+esc(a.bidder_pseudo||'?')+' ('+a.bids+' mise'+(a.bids>1?'s':'')+')':'Départ : <b>'+a.start_price+' PTS</b> · aucune mise')+'</span>'
@@ -2799,7 +2853,10 @@ function dceReqText(rq){
 function dceRender(l,cl,card,rewT,prog){
   var box=document.createElement('div');box.innerHTML=xpBar(XP);l.appendChild(box);
   var h=document.createElement('h3');h.className='shop-h';h.textContent='DÉFIS D’ÉQUIPE';l.appendChild(h);
-  var np=document.createElement('p');np.className='sum-best';np.textContent='Donne des cartes pour relever un défi : elles sont détruites et retournent dans le pool des boosters. Une seule fois par défi. Les cartes secrètes et signées sont interdites.';l.appendChild(np);
+  var how=document.createElement('div');how.innerHTML='<div class="dce-how"><div><i>1</i><b>CHOISIS</b><span>un défi</span></div><div><i>2</i><b>DONNE</b><span>des cartes</span></div><div><i>3</i><b>REÇOIS</b><span>ta récompense</span></div></div><p class="dce-warn">⚠ Les cartes que tu donnes sont <b>DÉTRUITES</b> : elles retournent dans le pool des boosters. Une seule fois par défi. Les cartes secrètes et signées sont interdites.</p><button class="btn" id="dceHelp" type="button">❓ VOIR LE TUTO</button>';
+  l.appendChild(how);how.querySelector('#dceHelp').onclick=function(){tuto('dce',TUTO_DCE,true)};
+  setTimeout(function(){tuto('dce',TUTO_DCE)},400);
+  var np=document.createElement('p');np.className='sum-best';np.hidden=true;np.textContent='Donne des cartes pour relever un défi : elles sont détruites et retournent dans le pool des boosters. Une seule fois par défi. Les cartes secrètes et signées sont interdites.';l.appendChild(np);
   var list=(CFG.dce||[]).filter(dceOpen);
   list.forEach(function(ch){
     var done=!!cl['d:'+ch.id],d=document.createElement('div');d.className='ach-card dce'+(done?' done':'');
@@ -2854,7 +2911,12 @@ function dceDraw(){
     var teamSel=rq.sameteam&&sel.length?dceTeam(CBYID[sel[0]]):null;
     var own=DBCARDS.filter(function(c){return INV[c.id]>0&&dceCardOK(c,rq)&&(!rq.sameteam||(dceTeam(c)&&dceTeam(c)!=='Agent libre'))&&(!DP.dup||INV[c.id]>1)}).sort(function(a,b){return ((INV[b.id]>1?1:0)-(INV[a.id]>1?1:0))||(b.r-a.r)||(a.n<b.n?-1:1)});
     if(!own.length)g.innerHTML='<p class="sum-best">Aucune carte éligible dans ta collection.</p>';
+    var hasTeams=own.some(function(c){return dceTeam(c)});
+    if(hasTeams)own.sort(function(x,y){var tx=dceTeam(x)||'~',ty=dceTeam(y)||'~';return tx<ty?-1:tx>ty?1:((y.r-x.r)||(x.n<y.n?-1:1))});
+    var tmCount={};own.forEach(function(c){var t=dceTeam(c)||'';tmCount[t]=(tmCount[t]||0)+INV[c.id]});
+    var lastT=null;
     own.forEach(function(c){
+      if(hasTeams){var tt=dceTeam(c)||'';if(tt!==lastT){lastT=tt;var hd=document.createElement('div');hd.className='dce-tm'+(rq.sameteam&&tt&&tmCount[tt]>=rq.n?' ok':'');hd.innerHTML='<b>'+esc(tt||'AUTRES CARTES')+'</b><small>'+tmCount[tt]+' carte'+(tmCount[tt]>1?'s':'')+(rq.sameteam&&tt&&tmCount[tt]>=rq.n?' · assez pour le défi ✓':'')+'</small>';g.appendChild(hd)}}
       var k=sel.indexOf(c.id),m=document.createElement('div');
       var dis=k<0&&((used[c.id]||0)>=INV[c.id]||(teamSel&&dceTeam(c)!==teamSel));
       m.className='mini r'+c.r+(c.v==='holo'?' vh':'')+(k>=0?' sel':'')+(dis?' dim':'');m.style.cursor='pointer';
@@ -3107,6 +3169,101 @@ document.addEventListener('keydown',function(e){
 });
 
 (function(){var N={intro:'OUVRIR',obj:'DÉFIS',profile:'MA COLLEC'};Object.keys(N).forEach(function(k){var b=document.querySelector('#nav [data-tab='+k+']');if(b)b.textContent=N[k]})})();
+
+/* ----- Tutoriels visuels (1re visite) ----- */
+var TUTO_DCE=[
+ {i:'🏅',t:'DÉFIS D’ÉQUIPE',p:'Choisis un défi dans la liste : par exemple « 5 cartes de la même équipe ».'},
+ {i:'🔥',t:'TES CARTES SONT DÉTRUITES',p:'Les cartes que tu donnes disparaissent pour de bon : elles retournent dans le pool des boosters. Une seule fois par défi.',w:1},
+ {i:'🏆',t:'RÉCOMPENSE TOUT DE SUITE',p:'Points, boosters et XP, plus des médailles pour les équipes complètes. Astuce : sacrifie tes doublons.'},
+ {i:'🗂️',t:'CARTES RANGÉES PAR ÉQUIPE',p:'Dans la fenêtre de sélection, tes cartes sont classées par équipe pour trouver plus vite. Le titre devient vert quand tu en as assez.'}
+];
+var TUTO_WANT=[
+ {i:'🔎',t:'ANNONCES DE RECHERCHE',p:'Tu cherches une carte ? Publie ce que tu paierais en PTS et/ou la carte que tu proposes en échange.'},
+ {i:'🔔',t:'ÇA N’ENGAGE À RIEN',p:'Si quelqu’un a la carte, il clique « intéressé » et tu es prévenu avec son pseudo. Vous vous mettez ensuite d’accord ensemble (vente, échange…).'}
+];
+function tuto(key,slides,force){
+  try{if(!force&&localStorage.getItem('tuto_'+key))return}catch(e){}
+  var old=$('#tuto');if(old)old.remove();
+  var o=document.createElement('div');o.id='tuto';document.body.appendChild(o);
+  var n=0;
+  function draw(){
+    var s=slides[n];
+    o.innerHTML='<div class="tt-card'+(s.w?' warn':'')+'"><div class="tt-ic">'+s.i+'</div><h3>'+esc(s.t)+'</h3><p>'+esc(s.p)+'</p><div class="tt-dots">'+slides.map(function(x,i){return '<i'+(i===n?' class="on"':'')+'></i>'}).join('')+'</div><div class="tt-act"><button class="btn" id="ttSkip" type="button">'+(n<slides.length-1?'PASSER':'FERMER')+'</button><button class="btn gold" id="ttNext" type="button">'+(n<slides.length-1?'SUIVANT ›':'COMPRIS !')+'</button></div></div>';
+    $('#ttSkip').onclick=close;
+    $('#ttNext').onclick=function(){if(n<slides.length-1){n++;draw()}else close()};
+  }
+  function close(){o.remove();try{localStorage.setItem('tuto_'+key,'1')}catch(e){}}
+  draw();
+}
+
+/* ----- Annonces de recherche ----- */
+function wantPicker(box,onPick){
+  box.innerHTML='<input id="wQ" type="search" placeholder="Nom de la carte recherchée" autocomplete="off"><div id="wRes" class="wt-res"></div>';
+  var q=box.querySelector('#wQ'),res=box.querySelector('#wRes');
+  q.oninput=function(){
+    var s=slug(q.value);res.innerHTML='';if(s.length<2)return;
+    DBCARDS.filter(function(c){return c.active&&!isSec(c)&&CFG.unlocked.indexOf(c.s)>=0&&slug(c.n).indexOf(s)>=0}).sort(function(x,y){return (y.r-x.r)||(x.n<y.n?-1:1)}).slice(0,8).forEach(function(c){
+      var b=document.createElement('button');b.type='button';b.className='wt-opt';b.innerHTML='<b>'+esc(c.n)+'</b><span>'+rarN(c.r)+' · '+esc(serName(c.s))+'</span>';
+      b.onclick=function(){res.innerHTML='';onPick(c)};res.appendChild(b);
+    });
+  };
+}
+async function wantRender(body){
+  var r=await SB.from('wants_v').select('*').order('created_at',{ascending:false}).limit(200);
+  if(r.error){body.innerHTML='<p class="sum-best">Recherches indisponibles : '+esc(r.error.message)+'</p>';return}
+  try{await loadAll()}catch(e){}
+  var rows=r.data||[];
+  body.innerHTML='<p class="sum-best">Tu cherches une carte ? Publie une annonce avec ce que tu paierais (PTS) et/ou une carte à échanger. Ça n’engage à rien : si quelqu’un l’a, il clique « intéressé » et tu es prévenu.</p>';
+  var tb=document.createElement('div');tb.className='lib-bar';
+  tb.innerHTML='<button class="btn gold" id="wNew" type="button">+ PUBLIER UNE RECHERCHE</button><button class="btn" id="wHelp" type="button">❓</button>';
+  body.appendChild(tb);
+  tb.querySelector('#wHelp').onclick=function(){tuto('want',TUTO_WANT,true)};
+  var form=document.createElement('div');form.className='wt-form';form.hidden=true;body.appendChild(form);
+  tb.querySelector('#wNew').onclick=function(){form.hidden=!form.hidden;if(!form.hidden)buildForm()};
+  function buildForm(){
+    var pick=null;
+    form.innerHTML='<div id="wPick"></div><div id="wSel" class="wt-sel">Choisis la carte que tu cherches.</div>'
+      +'<label>Je suis prêt à payer (PTS)<input id="wP" type="number" min="1" inputmode="numeric" placeholder="ex. 500"></label>'
+      +'<label>…ou j’échange contre<select id="wO"><option value="">(aucune carte)</option>'
+      +DBCARDS.filter(function(c){return INV[c.id]>0&&c.active}).sort(function(x,y){return (y.r-x.r)||(x.n<y.n?-1:1)}).map(function(c){return '<option value="'+esc(c.id)+'">'+esc(c.n)+' · '+rarN(c.r)+'</option>'}).join('')+'</select></label>'
+      +'<label>Message (facultatif)<input id="wN" type="text" maxlength="120" placeholder="ex. surtout le N° 1 !"></label>'
+      +'<button class="btn gold" id="wGo" type="button">PUBLIER</button>';
+    wantPicker(form.querySelector('#wPick'),function(c){pick=c;form.querySelector('#wSel').innerHTML='<b>'+esc(c.n)+'</b> · '+rarN(c.r)});
+    form.querySelector('#wGo').onclick=async function(){
+      if(!pick){toast('Choisis une carte.');return}
+      var pr=Math.floor(+form.querySelector('#wP').value)||null,of=form.querySelector('#wO').value||null;
+      if(!pr&&!of){toast('Indique un prix ou une carte à échanger.');return}
+      this.disabled=true;
+      var rr=await SB.rpc('post_want',{p_card:pick.id,p_price:pr,p_offer:of,p_note:form.querySelector('#wN').value});
+      if(rr.error){toast(rr.error.message);this.disabled=false;return}
+      pop('RECHERCHE PUBLIÉE','tu seras prévenu quand quelqu’un est intéressé',3000);wantRender(body);
+    };
+  }
+  var box=document.createElement('div');box.className='mk-list';body.appendChild(box);
+  if(!rows.length)box.innerHTML='<p class="sum-best">Aucune recherche pour le moment. Sois le premier !</p>';
+  rows.sort(function(x,y){var ax=INV[x.card_id]&&x.user_id!==USER.id?1:0,ay=INV[y.card_id]&&y.user_id!==USER.id?1:0;return (ay-ax)||(new Date(y.created_at)-new Date(x.created_at))});
+  rows.forEach(function(w){
+    var c=CBYID[w.card_id];if(!c)return;
+    var own=w.user_id===USER.id,have=INV[c.id]||0,oc=w.offer_card&&CBYID[w.offer_card],row=document.createElement('div');
+    row.className='mk-row wt-row'+(!own&&have?' wt-have':'');
+    var who=(WALERT||[]).filter(function(x){return x.want_id===w.id}).map(function(x){return esc(x.pseudo)});
+    row.innerHTML=miniHTML(c)+'<div class="mk-info"><b>'+esc(c.n)+'</b><span>'+rarN(c.r)+' · cherchée par '+(own?'<em class="au-you">TOI</em>':esc(w.pseudo))+'</span>'
+      +(w.price?'<span class="wt-p">Prêt à payer <b>'+w.price+' PTS</b></span>':'')+(oc?'<span class="wt-o">Échange contre : <b>'+esc(oc.n)+'</b></span>':'')
+      +(w.note?'<span class="mk-drop">« '+esc(w.note)+' »</span>':'')
+      +(!own&&have?'<span class="wt-hv">★ TU L’AS ('+have+')</span>':'')
+      +(own?'<span class="mk-drop">'+(who.length?'🔔 Intéressés : <b>'+who.join(', ')+'</b>':'Personne pour l’instant')+'</span>':(w.interets?'<span class="mk-drop">'+w.interets+' intéressé'+(w.interets>1?'s':'')+'</span>':''))+'</div>';
+    var act=document.createElement('div');act.className='au-act';
+    var bt=document.createElement('button');bt.type='button';
+    if(own){bt.className='btn';bt.textContent='ANNULER';bt.onclick=async function(){bt.disabled=true;var rr=await SB.rpc('cancel_want',{p_id:w.id});if(rr.error){toast(rr.error.message);bt.disabled=false;return}wantRender(body)}}
+    else{bt.className='btn'+(w.moi_interesse?'':' gold');bt.textContent=w.moi_interesse?'✓ INTÉRESSÉ':'INTÉRESSÉ';
+      bt.onclick=async function(){bt.disabled=true;var rr=await SB.rpc('toggle_interest',{p_id:w.id});if(rr.error){toast(rr.error.message);bt.disabled=false;return}
+        toast(rr.data?esc(w.pseudo)+' est prévenu(e) !':'Intérêt retiré.');wantRender(body)}}
+    act.appendChild(bt);row.appendChild(act);box.appendChild(row);
+  });
+  // alertes vues
+  if((WALERT||[]).some(function(x){return !x.seen})){try{await SB.rpc('ack_want_alerts');WALERT.forEach(function(x){x.seen=true});updPts()}catch(e){}}
+  setTimeout(function(){tuto('want',TUTO_WANT)},400);
+}
 
 $('#gateGo').addEventListener('click',function(){
   unlockAudio();$('#gate').hidden=true;SND.click();
