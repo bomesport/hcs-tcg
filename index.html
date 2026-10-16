@@ -617,6 +617,8 @@ button{font:inherit;color:inherit;cursor:pointer}
 .top-cote{font-family:var(--display);letter-spacing:.1em;font-size:13px;color:rgba(245,245,245,.7)}
 .top-cote b{color:var(--gold);font-size:20px;font-weight:400}
 .mk-fr{flex:none}
+.ct-cote b{color:var(--gold);font-size:18px}
+.ct-cote span{color:var(--gold);letter-spacing:.12em}
 .au-row{flex-wrap:wrap}.au-row .mk-info{flex:1 1 55%;min-width:0}.au-row .au-act{flex:1 1 100%;justify-content:flex-end}
 .au-bid b{font-size:inherit!important;display:inline!important;letter-spacing:0!important;font-family:inherit!important;text-transform:none!important;color:var(--gold,#f5c542)}
 .au-row .au-act{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
@@ -2345,10 +2347,10 @@ async function mktFill(el,c){
   if(el.dataset.cid!==c.id)return;
   if(!r||r.error||!r.data){el.innerHTML='';return}
   var d=r.data,base=(CFG.base_value&&CFG.base_value[c.r])||0,h=d.hist||[];
-  var rows='<div class="ct-row"><span>Dernière vente</span><b>'+(d.last!=null?d.last+' PTS':'—')+'</b></div>'+
+  var rows=(d.cote!=null?'<div class="ct-row ct-cote"><span>COTE</span><b>'+d.cote+' PTS</b></div>':'')+'<div class="ct-row"><span>Dernière vente</span><b>'+(d.last!=null?d.last+' PTS':'—')+'</b></div>'+
     '<div class="ct-row"><span>Moyenne (5 dernières)</span><b>'+(d.avg5!=null?d.avg5+' PTS':'—')+'</b></div>'+
     '<div class="ct-row"><span>Moins cher en vente</span><b>'+(d.min!=null?d.min+' PTS':'aucune annonce')+(d.open>1?' · '+d.open+' annonces':'')+'</b></div>'+
-    (base?'<div class="ct-row"><span>Valeur de base</span><b>'+base+' PTS</b></div>':'');
+    ((d.base||base)?'<div class="ct-row"><span>Estimation de base (probabilités)</span><b>'+(d.base||base)+' PTS</b></div>':'');
   var chart='';
   if(h.length>=2){
     var W=260,H=70,P=6,ps=h.map(function(x){return x.p}),mn=Math.min.apply(null,ps),mx=Math.max.apply(null,ps),rg=(mx-mn)||1;
