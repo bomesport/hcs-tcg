@@ -755,6 +755,7 @@ button{font:inherit;color:inherit;cursor:pointer}
       <div class="lib-head"><h2 class="sum-title">COLLECTION</h2><span class="ad-count" id="libCount"></span></div>
       <div class="lib-bar" id="libSer"></div>
       <div class="lib-bar"><select id="libRar" aria-label="Rareté"></select><label class="chk" for="libMiss"><input id="libMiss" type="checkbox">Manquantes seulement</label></div>
+      <div class="lib-bar"><select id="libOrd" aria-label="Trier"><option value="def">Tri : par défaut</option><option value="rar">Tri : rareté</option><option value="az">Tri : A → Z</option><option value="qty">Tri : plus d’exemplaires</option><option value="team">Tri : par équipe</option><option value="ser">Tri : numéro le plus bas</option></select><label class="chk" for="libN1"><input id="libN1" type="checkbox">★ N°1 seulement</label><label class="chk" for="libDup"><input id="libDup" type="checkbox">Doublons seulement</label></div>
       <div class="sum-grid" id="libGrid"></div>
     </section>
     <section id="market" class="screen" hidden>
@@ -2130,7 +2131,7 @@ function goTab(t){
 }
 
 /* ----- Collection ----- */
-var LIB={s:1,r:-1,m:false},recArm=0;
+var LIB={s:1,r:-1,m:false,n1:false,d:false,o:'def'},recArm=0;
 function cardD(c){
   return {id:c.id,n:c.n,t:c.t,r:c.r,f:c.f,img:c.img,v:c.v,ovr:c.ovr||midOvr(c.r),serial:'',s:c.s,no:c.no,tot:String(SERCNT[c.s]||0).padStart(3,'0')};
 }
@@ -2165,6 +2166,9 @@ function libRender(){
     rs2.innerHTML='<option value="-1">Toutes raretés</option>'+RAR.map(function(r,i){return '<option value="'+i+'">'+r.n+'</option>'}).join('');
     rs2.onchange=function(){LIB.r=+rs2.value;libRender()};
     $('#libMiss').onchange=function(){LIB.m=this.checked;libRender()};
+    $('#libN1').onchange=function(){LIB.n1=this.checked;libRender()};
+    $('#libDup').onchange=function(){LIB.d=this.checked;libRender()};
+    $('#libOrd').onchange=function(){LIB.o=this.value;libRender()};
   }
   var list=DBCARDS.filter(function(c){return c.active&&c.s===LIB.s&&(!isSec(c)||INV[c.id])});
   var own=list.filter(function(c){return INV[c.id]}).length;
@@ -2185,8 +2189,15 @@ function libRender(){
   var ra=$('#recAll');
   if(!ra){ra=document.createElement('button');ra.id='recAll';ra.type='button';ra.className='btn';$('#libMiss').parentNode.parentNode.appendChild(ra);ra.onclick=recPanel}
   ra.hidden=!dups;ra.textContent='CHOISIR LES DOUBLONS À RECYCLER ('+dups+')';
-  var shown=list.filter(function(c){return (LIB.r<0||c.r===LIB.r)&&(!LIB.m||!INV[c.id])});
-  shown.sort(function(a,b){return ((INV[b.id]?1:0)-(INV[a.id]?1:0))||(b.r-a.r)||((isBomId(b.id)?1:0)-(isBomId(a.id)?1:0))||(a.n<b.n?-1:1)});
+  var has1=function(c){return c.maxPrint>0&&(COPIES[c.id]||[]).some(function(x){return x.s===1})};
+  var shown=list.filter(function(c){return (LIB.r<0||c.r===LIB.r)&&(!LIB.m||!INV[c.id])&&(!LIB.n1||has1(c))&&(!LIB.d||(INV[c.id]||0)>1)});
+  var dflt=function(a,b){return ((INV[b.id]?1:0)-(INV[a.id]?1:0))||(b.r-a.r)||((isBomId(b.id)?1:0)-(isBomId(a.id)?1:0))||(a.n<b.n?-1:1)};
+  var ordf={def:dflt,az:function(a,b){return (a.n.toLowerCase()<b.n.toLowerCase()?-1:1)},
+    rar:function(a,b){return (b.r-a.r)||dflt(a,b)},
+    qty:function(a,b){return ((INV[b.id]||0)-(INV[a.id]||0))||dflt(a,b)},
+    team:function(a,b){var x=a.tm||'~',y=b.tm||'~';return x<y?-1:x>y?1:dflt(a,b)},
+    ser:function(a,b){var sa=Math.min.apply(null,(COPIES[a.id]||[]).map(function(x){return x.s}).concat([9999])),sb=Math.min.apply(null,(COPIES[b.id]||[]).map(function(x){return x.s}).concat([9999]));return (sa-sb)||dflt(a,b)}};
+  shown.sort(ordf[LIB.o]||dflt);
   var g=$('#libGrid');g.innerHTML='';
   shown.forEach(function(c){
     var q=INV[c.id]||0,m=document.createElement('div');
