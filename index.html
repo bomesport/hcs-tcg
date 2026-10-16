@@ -559,12 +559,14 @@ button{font:inherit;color:inherit;cursor:pointer}
 
 #intro{padding-bottom:38px}
 .f-foot .ser{font-size:1.5em;font-weight:700;color:#f5d56b;text-shadow:0 0 8px rgba(245,213,107,.5)}
-.in.fgt{box-shadow:inset 0 0 0 calc(var(--cw)*.022) #e8b923,inset 0 0 0 calc(var(--cw)*.034) #1a0d00,inset 0 0 calc(var(--cw)*.12) rgba(232,185,35,.55)}
+.front .in.fgt{box-shadow:inset 0 0 0 calc(var(--cw)*.016) #e8b923,inset 0 0 0 calc(var(--cw)*.024) rgba(26,13,0,.85);background:linear-gradient(180deg,rgba(6,6,6,.28) 0,rgba(6,6,6,0) 18%,rgba(6,6,6,0) 56%,rgba(6,6,6,.7) 82%,#060606 100%),var(--img) center/cover no-repeat}
+.in.fgt+.holo{opacity:.1}
+.in.fgt+.holo+.glare{opacity:.25}
 .in.fgt .f-type{visibility:hidden}
-.f-fight{position:absolute;top:calc(var(--cw)*.045);left:0;right:0;z-index:4;display:flex;flex-direction:column;align-items:center;pointer-events:none}
-.f-fight img{width:calc(var(--cw)*.46);height:auto;filter:drop-shadow(0 calc(var(--cw)*.01) calc(var(--cw)*.02) rgba(0,0,0,.9))}
-.f-fight b{margin-top:calc(var(--cw)*-.01);font-family:var(--display);font-weight:400;font-size:calc(var(--cw)*.05);letter-spacing:.1em;color:#1a0d00;background:linear-gradient(100deg,#f8e08a,#e8b923,#f8e08a);background-size:250% 100%;animation:hsweep2 4s linear infinite;padding:calc(var(--cw)*.012) calc(var(--cw)*.04);clip-path:polygon(4% 0,96% 0,100% 50%,96% 100%,4% 100%,0 50%);white-space:nowrap}
-.mini .f-fight b{font-size:calc(var(--cw)*.07)}
+.f-fight{position:absolute;inset:0;z-index:4;pointer-events:none}
+.f-fight img{position:absolute;top:calc(var(--cw)*.045);left:calc(var(--cw)*.05);width:calc(var(--cw)*.24);height:auto;filter:drop-shadow(0 calc(var(--cw)*.008) calc(var(--cw)*.015) rgba(0,0,0,.9))}
+.f-fight b{position:absolute;right:calc(var(--cw)*.05);top:calc(var(--cw)*.05);font-family:var(--display);font-weight:400;font-size:calc(var(--cw)*.042);letter-spacing:.1em;color:#1a0d00;background:linear-gradient(100deg,#f8e08a,#e8b923,#f8e08a);background-size:250% 100%;animation:hsweep2 4s linear infinite;padding:calc(var(--cw)*.01) calc(var(--cw)*.04);clip-path:polygon(4% 0,96% 0,100% 50%,96% 100%,4% 100%,0 50%);white-space:nowrap}
+.mini .f-fight b{font-size:calc(var(--cw)*.06)}
 .in.no1{box-shadow:inset 0 0 0 calc(var(--cw)*.014) #f5d56b,inset 0 0 calc(var(--cw)*.08) rgba(245,213,107,.5)}
 .f-no1{position:absolute;top:0;right:calc(var(--cw)*.06);background:linear-gradient(180deg,#f8e08a,#b8860b);color:#1a1405;font-family:var(--display);font-size:calc(var(--cw)*.05);letter-spacing:.08em;padding:calc(var(--cw)*.02) calc(var(--cw)*.04) calc(var(--cw)*.045);clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%);z-index:4;white-space:nowrap}
 .mini .f-no1{display:none}
