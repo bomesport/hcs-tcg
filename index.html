@@ -665,6 +665,15 @@ button{font:inherit;color:inherit;cursor:pointer}
 .pkx-tcg span{display:flex;align-items:center;gap:calc(var(--pw)*.03)}
 .pkx-tcg i{font-family:var(--serif);font-size:calc(var(--pw)*.07);color:rgba(255,255,255,.9)}
 .pkx-tcg img{height:calc(var(--pw)*.15);width:auto;filter:drop-shadow(0 0 calc(var(--pw)*.02) rgba(0,0,0,.8))}
+.pkx4{background:radial-gradient(ellipse 85% 55% at 50% 35%,#5a0f1b 0%,#240810 55%,#07020a 100%)}
+.pkx4 .pkx-fr{border-color:#ff4d5e;box-shadow:0 0 calc(var(--pw)*.05) rgba(255,77,94,.8),inset 0 0 calc(var(--pw)*.04) rgba(255,77,94,.4)}
+.pkx4 .pkx-fr2{border-color:rgba(217,178,90,.8)}
+.pkx4 .pkx-glow{background:radial-gradient(closest-side,rgba(255,77,94,.5),transparent 70%)}
+.pkx4 .pkx-lines{background:repeating-linear-gradient(118deg,transparent 0 calc(var(--pw)*.07),rgba(255,77,94,.14) calc(var(--pw)*.07) calc(var(--pw)*.075)),linear-gradient(180deg,transparent 55%,rgba(217,178,90,.12))}
+.pkx4 .pkx-plate b{white-space:nowrap;font-size:calc(var(--pw)*.082)}
+.rm{}#rmView{position:fixed;inset:0;z-index:99999;background:#05070c;overflow:auto;-webkit-overflow-scrolling:touch}#rmView img{display:block;width:100%;max-width:640px;margin:0 auto}#rmClose{position:fixed;top:10px;right:12px;z-index:2;width:38px;height:38px;border-radius:19px;border:1px solid rgba(212,175,55,.6);background:rgba(10,12,18,.9);color:var(--gold);font-size:18px}
+.lnks{display:flex;justify-content:center;gap:18px;margin:10px 0 0;font-size:12px;letter-spacing:.12em}
+.lnk,.lnks a{color:var(--gold);text-decoration:none;opacity:.8}.lnk:hover,.lnks a:hover{opacity:1;text-decoration:underline}
 .pkx3{background:radial-gradient(ellipse 85% 55% at 50% 35%,#4a3208 0%,#1a1204 55%,#050402 100%)}
 .pkx3 .pkx-fr{border-color:#f5c542;box-shadow:0 0 calc(var(--pw)*.06) rgba(245,197,66,.85),inset 0 0 calc(var(--pw)*.05) rgba(245,197,66,.45)}
 .pkx3 .pkx-fr2{border-color:rgba(255,255,255,.55)}
@@ -815,6 +824,7 @@ button{font:inherit;color:inherit;cursor:pointer}
         <button class="cta daily" id="buy1" type="button" hidden>ACHETER 1 BOOSTER</button>
         <p class="hint" id="hintA">Tourne-le, secoue-le, puis déchire le haut.</p>
         <p class="hint sub" id="hintB"></p>
+        <p class="lnks"><a href="https://discord.com/channels/751458464680902858/1561021252553023549" target="_blank" rel="noopener">💬 FORUM DISCORD</a><a href="#" id="rmOpen">🗺️ ROAD MAP</a></p>
         <button class="demo" id="demo" hidden type="button" role="switch" aria-checked="true"><span class="sw"></span>Mode démo : hit garanti</button>
         <p class="proto">Projet de fans, monnaie virtuelle uniquement. Non affilié à Microsoft ni à Halo Studios. Halo et Halo Championship Series sont leurs marques. Le sens d’ouverture change l’ordre des cartes, pas leurs chances.</p>
       </div>
@@ -920,6 +930,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 <canvas id="fx"></canvas>
 <div id="gate"><div class="gate-in"><img class="gate-hcs" src="img/hcs.png" alt="Halo Championship Series"><div class="gate-brand">HCS <b>TCG</b></div><div class="gate-by"><span>by</span><img src="img/bom-white.png" alt="BoM"></div><p>Allume le son pour vivre l’ouverture en entier.</p><button class="cta" id="gateGo" type="button">TOUCHER POUR COMMENCER</button><button class="gate-mute" id="gateMute" type="button">Continuer sans le son</button></div></div>
 <div id="flash"></div>
+<div id="rmView" hidden><button type="button" id="rmClose" aria-label="Fermer">✕</button><img src="img/roadmap.webp" alt="Road map HCS TCG"></div>
 <div id="insp" hidden><div class="cv-in"><div id="inspStage"><div id="inspCard"></div></div><p id="inspInfo"></p><div class="cv-act"><button class="btn gold" id="inspFlip" type="button">RETOURNER</button><button class="btn" id="inspClose" type="button">FERMER</button></div><p class="insp-h">Glisse pour faire tourner la carte.</p></div></div>
 <div id="mfx"></div>
 <div id="cardView" hidden><div class="cv-in"><div id="cvCard"></div><p id="cvInfo"></p><div class="cv-act" id="cvSellRow"><input id="cvPrice" type="number" min="1" inputmode="numeric" aria-label="Prix de vente"><button class="btn gold" id="cvSell" type="button">VENDRE</button><button class="btn" id="cvTrade" type="button">ÉCHANGER</button></div><div class="cv-act"><button class="btn gold" id="cvRec" type="button" hidden></button><button class="btn" id="cvClose" type="button">FERMER</button></div></div></div>
@@ -936,6 +947,7 @@ button{font:inherit;color:inherit;cursor:pointer}
   <button class="cta" id="auLogin" type="submit">SE CONNECTER</button>
   <button class="btn" id="auSign" type="button">CRÉER MON COMPTE</button>
   <p class="auth-note">500 points offerts à l’inscription · +200 chaque jour</p>
+  <p class="auth-note"><a class="lnk" href="https://discord.com/channels/751458464680902858/1561021252553023549" target="_blank" rel="noopener">💬 Forum Discord du jeu</a></p>
 </form></div>
 
 <script>
@@ -1253,7 +1265,7 @@ function tween(a,b,dur,fn,done){
 /* ---------- Booster ---------- */
 var FOILTXT0='<div class="pk-glow"></div><img class="pk-hcs" src="img/hcs.png" alt=""><div class="pk-rib"><b>TCG</b><i>by</i><img src="img/bom-white.png" alt=""></div><div class="pk-sub">5 CARTES · 100 PTS</div><div class="pk-ser">HALO CHAMPIONSHIP SERIES</div>';
 var FOILTXT2='<div class="pk-glow"></div><div class="pk-amp">&amp;</div><img class="pk-hcs" src="img/hcs.png" alt=""><div class="pk-rib"><b>ICONIC</b><i>·</i><b>DUOS</b></div><div class="pk-sub">SÉRIE 2 · 5 CARTES</div><div class="pk-ser">LES DUOS MYTHIQUES DE LA BoM</div>';
-var FOILTXT3='';function foilTxt(){return SSEL===3?FOILTXT3:SSEL===2?FOILTXT2:FOILTXT0}
+var FOILTXT3='',FOILTXT4='';function foilTxt(){return SSEL===4?FOILTXT4:SSEL===3?FOILTXT3:SSEL===2?FOILTXT2:FOILTXT0}
 function backTxt(){
   var rows=RAR.slice().reverse().map(function(r){return '<div class="bk-row"><i style="background:'+r.col+'"></i>'+r.n+'</div>'}).join('');
   return '<div class="bk-top">HCS TCG</div><div class="bk-list">'+rows+'</div><div class="bars"></div><div class="bk-small">BOOSTER 5 CARTES</div><img class="bk-bom" src="img/bom-black.png" alt="">';
@@ -2247,7 +2259,7 @@ function libRender(){
   [1,2,3,4].forEach(function(n){
     var open=CFG.unlocked.indexOf(n)>=0,b=document.createElement('button');
     b.type='button';b.className='serbtn'+(LIB.s===n?' on':'');b.disabled=!open;
-    b.textContent=open?(n===2?serName(2):'SÉRIE 0'+n):'S0'+n+' · BIENTÔT';
+    b.textContent=open?(n===2||n===4?serName(n):'SÉRIE 0'+n):'S0'+n+' · BIENTÔT';
     b.onclick=function(){LIB.s=n;libRender()};bar.appendChild(b);
   });
   var rs2=$('#libRar');
@@ -3441,6 +3453,9 @@ async function topRender(body){
 FOILTXT0='<div class="pkx pkx1"><div class="pkx-fr"></div><div class="pkx-fr2"></div><i class="pkx-st t">★ ★ ★</i><i class="pkx-st b">★ ★ ★</i><div class="pkx-glow"></div><img class="pkx-hcs" src="img/hcs.png" alt=""><div class="pkx-tcg"><b>TCG</b><span><i>by</i><img src="img/bom-white.png" alt=""></span></div><div class="pkx-plate"><b>SÉRIE 1</b><small>5 CARTES · 100 PTS</small></div></div>';
 FOILTXT2='<div class="pkx pkx2"><div class="pkx-fr"></div><div class="pkx-fr2"></div><i class="pkx-st t">◆ ◆ ◆</i><i class="pkx-st b">◆ ◆ ◆</i><div class="pkx-lines"></div><div class="pkx-glow"></div><img class="pkx-hcs" src="img/hcs.png" alt=""><div class="pkx-title"><b>ICONIC</b><b class="g">DUOS</b></div><div class="pkx-tcg"><b>TCG</b><span><i>by</i><img src="img/bom-white.png" alt=""></span></div><div class="pkx-plate"><b>SÉRIE 2</b><small>5 CARTES · 100 PTS</small></div></div>';
 FOILTXT3='<div class="pkx pkx3"><div class="pkx-fr"></div><div class="pkx-fr2"></div><i class="pkx-st t">♛ ♛ ♛</i><i class="pkx-st b">♛ ♛ ♛</i><div class="pkx-lines"></div><div class="pkx-glow"></div><img class="pkx-hcs" src="img/fight-logo.png" alt=""><div class="pkx-tcg"><b>TCG</b><span><i>by</i><img src="img/bom-white.png" alt=""></span></div><div class="pkx-plate"><b>BoM FIGHT</b><small>CHAMPION + 4 CARTES</small></div></div>';
+FOILTXT4='<div class="pkx pkx4"><div class="pkx-fr"></div><div class="pkx-fr2"></div><i class="pkx-st t">★ ★ ★</i><i class="pkx-st b">★ ★ ★</i><div class="pkx-lines"></div><div class="pkx-glow"></div><img class="pkx-hcs" src="img/hcs.png" alt=""><div class="pkx-tcg"><b>TCG</b><span><i>by</i><img src="img/bom-white.png" alt=""></span></div><div class="pkx-plate"><b>HCS TCG 02</b><small>5 CARTES · 100 PTS</small></div></div>';
+
+(function(){var o=document.getElementById('rmOpen'),v=document.getElementById('rmView'),c=document.getElementById('rmClose');if(!o||!v)return;o.onclick=function(e){e.preventDefault();v.hidden=false;v.scrollTop=0};c.onclick=function(){v.hidden=true};v.onclick=function(e){if(e.target===v)v.hidden=true}})();
 
 $('#gateGo').addEventListener('click',function(){
   unlockAudio();$('#gate').hidden=true;SND.click();
