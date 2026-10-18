@@ -861,6 +861,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 }
 @media (max-height:760px){.packzone{min-height:230px}}
 .serbtn .legsm{color:#f0c040;font-weight:700}
+.tprobe{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;left:0;top:0}
 </style>
 
 <script>
@@ -1621,10 +1622,10 @@ function teamCol(d){var m=/·\s*(.+)$/.exec(d.f||''),t=m?m[1].trim():'';if(TCOL[
 function isBoM(d){return ['joueur-stanzzee','joueur-claw-2014','joueur-brainiak','joueur-brainiak-2014','joueur-yoshi-2014','joueur-benz-valencia','joueur-nutsinette-2014','joueur-benz-2014','leg-hurrikane-prime','leg-killza-prime','moment-rfh-2014','moment-rfh-2015'].indexOf(d.id)<0&&(/^(joueur|leg|myth)-/.test(d.id||'')||d.t==='bom')}
 var THUMB_OK=false;
 function frontHTML(d,sm){
-  var src=imgSrc(d);if(sm&&THUMB_OK&&/^img\/[^\/]+\.webp$/.test(src))src=src.replace('img/','img/t/');
+  var src=imgSrc(d),full='';if(sm&&THUMB_OK&&/^img\/[^\/]+\.webp$/.test(src)){full=src;src=src.replace('img/','img/t/')}
   var vt=d.v==='holo'?' · HOLO':d.v==='neg'?' · NÉGATIF':d.v==='alt'?' · ALT ART':d.v==='sign'?' · SIGNÉE':'',sec=String(d.id).indexOf('sec-')===0;
   var bom=isBoM(d),gen=!src&&(d.t==='pro'||d.t==='joueur'||d.t==='bom');
-  return '<div class="in'+(src?' full':gen?' gen':'')+'"'+(src?' style="--img:url(\''+src+'\')"':gen?' style="--tc:'+(bom?'#c9a227':teamCol(d))+'"':'')+'><div class="f-top"><div class="f-type">'+esc(sec?'SECRET':(TYPE[d.t]||String(d.t).toUpperCase()))+'</div><div class="f-ovr">'+d.ovr+'<small>OVR</small></div></div>'+
+  return '<div class="in'+(src?' full':gen?' gen':'')+'"'+(src?' style="--img:url(\''+src+'\')"':gen?' style="--tc:'+(bom?'#c9a227':teamCol(d))+'"':'')+'>'+(full?'<img class="tprobe" alt="" src="'+src+'" onerror="this.parentNode.style.setProperty(\'--img\',\'url('+full+')\');this.remove()">':'')+'<div class="f-top"><div class="f-type">'+esc(sec?'SECRET':(TYPE[d.t]||String(d.t).toUpperCase()))+'</div><div class="f-ovr">'+d.ovr+'<small>OVR</small></div></div>'+
     '<div class="f-art">'+(gen&&bom?'<img class="f-wmlogo" src="img/bom-white.png" alt="">':gen?'<div class="f-wm" style="--wf:'+Math.min(.46,.95/Math.max(3,String(d.n).length)).toFixed(3)+'">'+esc(d.n)+'</div>':(ICON[d.t]||ICON.moment))+'</div><div class="f-name">'+esc(d.n)+'</div><div class="f-rar">◆ '+(sec?'SECRET':RAR[d.r].n)+vt+' ◆</div>'+
     '<div class="f-flav">'+esc(d.f)+'</div><div class="f-foot"><span>'+(bom?'<img class="f-bm" src="img/bom-white.png" alt="">':'')+'HCS · S0'+sd(d.s||1)+' · '+d.no+'/'+d.tot+'</span><span class="ser">'+d.serial+'</span></div></div>'+
     '<div class="holo"></div><div class="glare"></div>';
@@ -2362,7 +2363,7 @@ function cardD(c){
 (function(){
   var o=frontHTML;
   frontHTML=function(d,sm){
-    var h=o(d,sm),c=CBYID[d.id],ex='';
+    var h=o(d,sm),c=CBYID[d.id],ex='';if(d.n&&String(d.n).length>9)h=h.replace('class="f-name">','class="f-name" style="font-size:calc(var(--cw)*'+Math.min(.115,1.0/String(d.n).length).toFixed(4)+')">');
     if(c&&c.tm){
       h=h.replace(/--tc:#[0-9a-fA-F]{6}/,'--tc:'+c.tc);
       var fs=Math.min(.085,.92/Math.max(10,c.tm.length)).toFixed(4);
