@@ -2144,7 +2144,7 @@ async function loadAll(){
   var s=await SB.rpc('stock_by_series');
   if(!s.error&&s.data)STOCKS=s.data;
   else{var s1=await SB.rpc('stock_count');if(!s1.error)STOCKS={1:s1.data||0}}
-  if(!(STOCKS[SSEL]>=0)||(CFG.unlocked.indexOf(SSEL)<0&&!(SSEL===3&&STOCKS[3]>0)))SSEL=CFG.unlocked[0]||1;
+  if(CFG.unlocked.indexOf(SSEL)<0&&!(SSEL===3&&STOCKS[3]>0))SSEL=CFG.unlocked[0]||1;
   updPts();
 }
 async function startSession(user){
@@ -3533,7 +3533,7 @@ function boxSub(k,P){
   var bi=BOXI[SSEL+':'+k]||{left:0,limit:0,mine:0,supply:0},n=k==='case'?288:24,d=Math.round(100*(1-P[k]/(n*P.booster)));
   return (k==='display'?'120 cartes · au moins 1 Très rare garantie · -'+d+'%':'1440 cartes · '+legTxt(SSEL)+' · -'+d+'%')
     +'<br>Scellé : il reste dans ton coffre, tu l’ouvres quand tu veux ou tu le revends au prix que tu veux. Le contenu est tiré à l’ouverture.'
-    +'<br><em>Stock : '+bi.left+' / '+bi.supply+' · limite de '+bi.limit+' par joueur et par série (tu en as déjà pris '+bi.mine+')</em>';
+    +'<br><em>Stock : '+bi.left+' / '+bi.supply+(bi.limit<1000?' · limite de '+bi.limit+' par joueur et par série (tu en as déjà pris '+bi.mine+')':'')+'</em>';
 }
 function shopRender(){
   var P=priceFor(),el=$('#shopBody'),sold=CFG.unlocked.indexOf(SSEL)>=0;
