@@ -852,6 +852,14 @@ button{font:inherit;color:inherit;cursor:pointer}
 #intro{--pw:min(64vw,250px,calc((100svh - 630px) / 1.5385));--ph:calc(var(--pw) * 1.5385)}
 #intro.empty{--pw:min(44vw,165px,calc((100svh - 650px) / 1.5385));--ph:calc(var(--pw) * 1.5385)}
 @media (min-width:800px){#intro.empty{--pw:min(300px,calc((100svh - 550px) / 1.5385))}#intro:not(.empty){--pw:min(300px,calc((100svh - 550px) / 1.5385))}}
+/* le pack occupe toute la hauteur libre de sa zone (unités de conteneur) */
+@supports (height:1cqh){
+  .packzone{container-type:size}
+  #intro{--pw:min(64vw,250px,calc((100cqh - 14px) / 1.5385))}
+  #intro.empty{--pw:min(44vw,190px,calc((100cqh - 14px) / 1.5385))}
+  @media (min-width:800px){#intro.empty,#intro:not(.empty){--pw:min(300px,calc((100cqh - 14px) / 1.5385))}}
+}
+@media (max-height:760px){.packzone{min-height:230px}}
 </style>
 
 <script>
