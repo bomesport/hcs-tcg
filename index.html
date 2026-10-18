@@ -1617,7 +1617,7 @@ function frontHTML(d,sm){
   var bom=isBoM(d),gen=!src&&(d.t==='pro'||d.t==='joueur'||d.t==='bom');
   return '<div class="in'+(src?' full':gen?' gen':'')+'"'+(src?' style="--img:url(\''+src+'\')"':gen?' style="--tc:'+(bom?'#c9a227':teamCol(d))+'"':'')+'><div class="f-top"><div class="f-type">'+esc(sec?'SECRET':(TYPE[d.t]||String(d.t).toUpperCase()))+'</div><div class="f-ovr">'+d.ovr+'<small>OVR</small></div></div>'+
     '<div class="f-art">'+(gen&&bom?'<img class="f-wmlogo" src="img/bom-white.png" alt="">':gen?'<div class="f-wm" style="--wf:'+Math.min(.46,.95/Math.max(3,String(d.n).length)).toFixed(3)+'">'+esc(d.n)+'</div>':(ICON[d.t]||ICON.moment))+'</div><div class="f-name">'+esc(d.n)+'</div><div class="f-rar">◆ '+(sec?'SECRET':RAR[d.r].n)+vt+' ◆</div>'+
-    '<div class="f-flav">'+esc(d.f)+'</div><div class="f-foot"><span>'+(bom?'<img class="f-bm" src="img/bom-white.png" alt="">':'')+'HCS · S0'+(d.s||1)+' · '+d.no+'/'+d.tot+'</span><span class="ser">'+d.serial+'</span></div></div>'+
+    '<div class="f-flav">'+esc(d.f)+'</div><div class="f-foot"><span>'+(bom?'<img class="f-bm" src="img/bom-white.png" alt="">':'')+'HCS · S0'+sd(d.s||1)+' · '+d.no+'/'+d.tot+'</span><span class="ser">'+d.serial+'</span></div></div>'+
     '<div class="holo"></div><div class="glare"></div>';
 }
 function buildSlot(d,i){
@@ -2055,7 +2055,7 @@ function parisToday(){return new Date().toLocaleDateString('en-CA',{timeZone:'Eu
 function dailyReady(){return !LASTDAILY||String(LASTDAILY)<parisToday()}
 function wheelReady(){return !LASTWHEEL||String(LASTWHEEL)<parisToday()}
 function rarN(r){return RAR[r].n}
-function updMid(){$('#midlbl').textContent=CFG.unlocked.length>1?'SÉRIES 01-0'+Math.max.apply(null,CFG.unlocked):'SÉRIE 01'}
+function updMid(){$('#midlbl').textContent=CFG.unlocked.length>1?'SÉRIES 01-0'+sd(Math.max.apply(null,CFG.unlocked)):'SÉRIE 01'}
 function updPts(){
   STOCK=STOCKS[SSEL]||0;
   var p=$('#pts');p.hidden=!USER;p.textContent=PTS+' PTS';
@@ -2374,10 +2374,10 @@ function isBomId(id){return NONBOM.indexOf(id)<0&&/^(joueur|leg|myth)-/.test(id)
 function libRender(){
   profTabs($('#libProf'),'lib');
   var bar=$('#libSer');bar.innerHTML='';
-  [1,2,3,4].forEach(function(n){
+  [1,2,4,5].forEach(function(n){
     var open=CFG.unlocked.indexOf(n)>=0,b=document.createElement('button');
     b.type='button';b.className='serbtn'+(LIB.s===n?' on':'');b.disabled=!open;
-    b.textContent=open?(n===2||n===4?serName(n):'SÉRIE 0'+n):'S0'+n+' · BIENTÔT';
+    b.textContent=open?(n===2||n===4?serName(n):'SÉRIE 0'+sd(n)):'S0'+sd(n)+' · BIENTÔT';
     b.onclick=function(){LIB.s=n;libRender()};bar.appendChild(b);
   });
   var rs2=$('#libRar');
@@ -3026,7 +3026,7 @@ function dceCardOK(c,rq){
 function dceTeam(c){return c.t==='pro'?String(c.f).split('·').pop().trim():''}
 function dceReqText(rq){
   var rn=rq.rmin!=null?(rq.rmin===rq.rmax?RAR[rq.rmin].n:RAR[rq.rmin].n+' à '+RAR[rq.rmax].n):'';
-  return rq.n+' carte'+(rq.n>1?'s':'')+(rq.kind==='pro'?' de pro':rq.kind==='joueur'?' de joueur':'')+(rn?' · '+rn:'')+(rq.grp?' · '+rq.grp:'')+(rq.series?' · Série '+rq.series:'')+(rq.sameteam?' · même équipe':'');
+  return rq.n+' carte'+(rq.n>1?'s':'')+(rq.kind==='pro'?' de pro':rq.kind==='joueur'?' de joueur':'')+(rn?' · '+rn:'')+(rq.grp?' · '+rq.grp:'')+(rq.series?' · Série '+sd(rq.series):'')+(rq.sameteam?' · même équipe':'');
 }
 function dceRender(l,cl,card,rewT,prog){
   var box=document.createElement('div');box.innerHTML=xpBar(XP);l.appendChild(box);
@@ -3971,6 +3971,9 @@ function goldSync(){
     setTimeout(function(){try{recPanel();var m=document.querySelector('#recPanel [data-mode=gold3]');if(m)m.click()}catch(e){}},400);
   };
 }
+
+/* numéro de série affiché : HCS TCG 02 = S03, la suivante = S04 (les ids internes ne changent pas) */
+function sd(n){return n===4?3:n===5?4:n}
 
 $('#gateGo').addEventListener('click',function(){
   unlockAudio();$('#gate').hidden=true;SND.click();
