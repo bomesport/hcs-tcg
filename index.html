@@ -2993,7 +2993,7 @@ function feedStart(){
     var r=await SB.from('feed_v').select('*').order('id',{ascending:false}).limit(20);
     if(!r.error)FEED=r.data||[];feedShow();
   };
-  load();feedP=setInterval(load,60000);
+  load();feedP=setInterval(function(){if(!document.hidden)load()},150000);
   feedT=setInterval(function(){feedI++;feedShow()},4500);
 }
 /* ----- Objectifs ----- */
@@ -3801,7 +3801,7 @@ function tbPlay(d){
 async function tbCheck(first){
   if(!USER)return;
   var hr=(CFG.tombola&&CFG.tombola.hour)||20,ph=tbHM();
-  if(!first&&!(ph>=hr&&ph<hr+1))return;
+  if(!first&&(document.hidden||!(ph>=hr&&ph<hr+1)))return;
   var r=await SB.rpc('tombola_status');if(r.error||!r.data)return;
   TB=r.data;xtraBuild();
   var l=TB.last,wv=$('#wheelView');
@@ -3824,7 +3824,7 @@ function xtraBuild(){
   XTRA=x;
 }
 async function hotLoad(){
-  if(!USER||Date.now()-HOT_T<55000)return;
+  if(!USER||document.hidden||Date.now()-HOT_T<170000)return;
   HOT_T=Date.now();
   try{
     var out=[];
@@ -3976,7 +3976,7 @@ function hcsBoot(){
     var seen='';try{seen=localStorage.getItem('hcs_patch')||''}catch(e){}
     if(seen!==HCS_VER)seasonSplash(patchOpen);
     tbCheck(true);setInterval(function(){tbCheck(false)},25000);
-    hotLoad();setInterval(hotLoad,60000);
+    hotLoad();setInterval(hotLoad,60000);document.addEventListener('visibilitychange',function(){if(!document.hidden)hotLoad()});
   };
   var pn=$('#pnOpen');if(pn)pn.onclick=function(e){e.preventDefault();patchOpen()};
   var iv=setInterval(function(){var g=$('#gate');if(!g||g.hidden||getComputedStyle(g).display==='none'){clearInterval(iv);go()}},300);
