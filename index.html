@@ -3542,7 +3542,7 @@ FOILTXT4='<div class="pkx pkx4"><div class="pkx-fr"></div><div class="pkx-fr2"><
    MAJ 18 OCTOBRE : coffre (displays/cases scellés), GOLD, tombola,
    offres d'achat, scellés au marché, patchnote, bandeaux
    =================================================================== */
-var BOXI={},MYBOX=[],GOLD={},LEGLEFT={},TB=null,TBSEEN='',XTRA=[],HCS_VER='2026.10.18';
+var BOXI={},MYBOX=[],GOLD={},LEGLEFT={},TB=null,TBSEEN='',XTRA=[],HCS_VER='2026.10.20';
 try{TBSEEN=localStorage.getItem('hcs_tb')||''}catch(e){}
 var DISCORD_URL='https://discord.gg/yW7k9G96U';
 
@@ -3972,8 +3972,28 @@ var PATCH={
   ['💬','Discord','Promo codes, announcements and tournaments: join the Discord!']
  ],ok:'LET’S GO!',dc:'JOIN THE DISCORD'}
 };
+var PATCH2={
+ fr:{t:'MAJ DU 20 OCTOBRE',s:'GOLD · SACRIFICE · CORRECTIFS',l:[
+  ['✨','Booster GOLD : toutes séries','Fabrique-le avec 5 Légendaires ou 25 Très rares de n’importe quelle série, mélangées si tu veux. Les 10 cartes viennent de toutes les séries ouvertes, avec au moins une carte de chaque série.'],
+  ['🔥','Sacrifier sans doublon','Pour un GOLD, tu peux maintenant sacrifier n’importe quelle Légendaire ou Très rare, même si tu n’en as qu’un exemplaire (le jeu te prévient).'],
+  ['🕯','Sacrifice de Secret','Ouvre un Secret dans ta collection et sacrifie-le : +100 000 PTS, et la carte retourne dans les boosters. Définitif, étui compris.'],
+  ['♻️','Recyclage corrigé','Les cartes recyclées retournent bien dans les boosters. Les Légendaires et autres cartes limitées perdues par erreur ont été remises en stock.'],
+  ['📦','Displays & cases depuis l’accueil','Tes scellés s’ouvrent directement depuis la page d’accueil, plus besoin de les chercher dans la boutique.'],
+  ['📱','Mobile','Le booster est plus grand sur téléphone et le site consomme moins en arrière-plan.'],
+  ['🏆','Défi des Mythiques','La récompense passe à 50 000 PTS.']
+ ],ok:'COMPRIS !',dc:'REJOINDRE LE DISCORD'},
+ en:{t:'OCTOBER 20 UPDATE',s:'GOLD · SACRIFICE · FIXES',l:[
+  ['✨','GOLD booster: all series','Craft it with 5 Legendaries or 25 Very rares from any series, mixed if you like. The 10 cards come from every open series, with at least one card from each series.'],
+  ['🔥','Sacrifice without duplicates','For a GOLD you can now sacrifice any Legendary or Very rare, even if you own only one copy (the game warns you).'],
+  ['🕯','Secret sacrifice','Open a Secret in your collection and sacrifice it: +100,000 PTS, and the card goes back into the boosters. Final, case included.'],
+  ['♻️','Recycling fixed','Recycled cards now go back into the boosters. Legendaries and other limited cards lost by mistake were put back in stock.'],
+  ['📦','Displays & cases from the home page','Your sealed products open straight from the home page, no need to look for them in the shop.'],
+  ['📱','Mobile','The booster is bigger on phones and the site uses less data in the background.'],
+  ['🏆','Mythics challenge','The reward is now 50,000 PTS.']
+ ],ok:'GOT IT!',dc:'JOIN THE DISCORD'}
+};
 function patchOpen(){
-  var P=PATCH[window.HCS_LANG==='en'?'en':'fr'],ov=$('#patchNote');
+  var P=PATCH2[window.HCS_LANG==='en'?'en':'fr'],ov=$('#patchNote');
   if(!ov){ov=document.createElement('div');ov.id='patchNote';document.body.appendChild(ov)}
   ov.innerHTML='<div class="pn-in"><div class="pn-s">'+esc(P.s)+'</div><h2>'+esc(P.t)+'</h2><ul>'+P.l.map(function(x){return '<li><i>'+x[0]+'</i><div><b>'+esc(x[1])+'</b><span>'+esc(x[2])+'</span></div></li>'}).join('')+'</ul><div class="cv-act"><a class="btn" href="'+DISCORD_URL+'" target="_blank" rel="noopener">'+esc(P.dc)+'</a><button class="btn gold" id="pnOk" type="button">'+esc(P.ok)+'</button></div></div>';
   ov.hidden=false;
@@ -3990,7 +4010,7 @@ function seasonSplash(done){
 function hcsBoot(){
   var go=function(){
     var seen='';try{seen=localStorage.getItem('hcs_patch')||''}catch(e){}
-    if(seen!==HCS_VER)seasonSplash(patchOpen);
+    if(!seen)seasonSplash(patchOpen);else if(seen!==HCS_VER)patchOpen();
     tbCheck(true);setInterval(function(){tbCheck(false)},25000);
     hotLoad();setInterval(hotLoad,60000);document.addEventListener('visibilitychange',function(){if(!document.hidden)hotLoad()});
   };
