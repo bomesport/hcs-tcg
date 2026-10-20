@@ -2697,13 +2697,13 @@ async function recycleAll(){
 }
 
 /* ----- Classement ----- */
-var RKDATA=null,PSORT='xp',PQ='';
+var RKDATA=null,PSORT='rk',PQ='';
 async function rankRender(){
   var l=$('#rankList');l.innerHTML='';PQ='';
   $('#rankTitle').textContent=RK==='obj'?'DÉFIS':'JOUEURS';
   if(RK==='obj'){objRender(l);return}
   var bar=document.createElement('div');bar.className='lib-bar';
-  [['xp','NIVEAU'],['az','A → Z']].forEach(function(t){
+  [['rk','RANG'],['xp','NIVEAU'],['az','A → Z']].forEach(function(t){
     var b=document.createElement('button');b.type='button';b.className='serbtn'+(PSORT===t[0]?' on':'');b.textContent=t[1];
     b.onclick=function(){PSORT=t[0];plRender()};bar.appendChild(b);
   });
@@ -4247,7 +4247,7 @@ async function podiumsBuild(){
     mr=document.createElement('div');mr.id='myRank';
     mr.innerHTML=rkBadge(me.k)+'<span><b>'+fmtPts(me.s)+' pts</b>'+(nx?' · prochain rang : '+esc(nx[0])+' à '+fmtPts(nx[1]):' · rang maximum')+'</span><em>Valeur, boosters, points, chance, cartes, complétion · recalculé toutes les 10 min</em>';
     box.parentNode.insertBefore(mr,box.nextSibling)}
-  plBadges();
+  plRender();
   Array.prototype.forEach.call(box.querySelectorAll('.pd-c[data-uid]'),function(e){e.onclick=function(){showProfile(e.getAttribute('data-uid'),false)}});
 }
 (function(){
@@ -4304,8 +4304,6 @@ function plBadges(){
   });
 }
 (function(){
-  var _pl=plRender;
-  plRender=function(){_pl.apply(this,arguments);try{plBadges()}catch(e){}};
   var _pf=pfRender;
   pfRender=function(){
     _pf.apply(this,arguments);
@@ -4378,6 +4376,32 @@ function casePanel(kind){
     });
   }
   paint();
+}
+
+
+/* ===================== LISTE DES JOUEURS : tri par RANG, points d'elo ===================== */
+function plRender(){
+  var box=$('#plList');if(!box||!RKDATA)return;
+  box.innerHTML='';
+  Array.prototype.forEach.call(document.querySelectorAll('#rankList .lib-bar .serbtn'),function(b){var m={'RANG':'rk','RANK':'rk','NIVEAU':'xp','LEVEL':'xp','A → Z':'az'}[b.textContent];if(m)b.classList.toggle('on',PSORT===m)});
+  var sc=function(p){var k=RANKS.m[p.id];return k?k.s:-1};
+  var xp=function(p){return XPS[p.id]||0};
+  var nm=function(p){return String(p.pseudo).toLowerCase()};
+  var byXp=RKDATA.slice().sort(function(a,b){return (xp(b)-xp(a))||(nm(a)<nm(b)?-1:1)});
+  var byRk=RKDATA.slice().sort(function(a,b){return (sc(b)-sc(a))||(xp(b)-xp(a))||(nm(a)<nm(b)?-1:1)});
+  var base=PSORT==='rk'?byRk:byXp;
+  var rows=base.map(function(p,i){return {p:p,rank:i+1}});
+  var q=PQ.trim().toLowerCase();
+  if(q)rows=rows.filter(function(x){return nm(x.p).indexOf(q)>=0});
+  if(PSORT==='az')rows.sort(function(a,b){return nm(a.p)<nm(b.p)?-1:1});
+  rows.forEach(function(x){
+    var p=x.p,k=RANKS.m[p.id],d=document.createElement('div');
+    d.className='rank-row'+(USER&&p.id===USER.id?' me':'');d.setAttribute('data-uid',p.id);d.onclick=function(){showProfile(p.id,false)};
+    var right=PSORT==='rk'?(k?fmtPts(k.s)+' pts':'—'):xp(p)+' XP';
+    d.innerHTML='<b>'+x.rank+'</b><span>'+esc(p.pseudo)+' '+(k?rkBadge(k.k)+' ':'')+'<em class="lvtag">NIV. '+lvlOf(xp(p))+'</em></span><i>'+right+'</i>';
+    box.appendChild(d);
+  });
+  if(!rows.length)box.innerHTML='<p class="sum-best">Aucun joueur trouvé.</p>';
 }
 
 $('#gateGo').addEventListener('click',function(){
