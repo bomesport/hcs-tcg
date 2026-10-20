@@ -3614,7 +3614,7 @@ FOILTXT4='<div class="pkx pkx4"><div class="pkx-fr"></div><div class="pkx-fr2"><
    MAJ 18 OCTOBRE : coffre (displays/cases scellés), GOLD, tombola,
    offres d'achat, scellés au marché, patchnote, bandeaux
    =================================================================== */
-var BOXI={},MYBOX=[],GOLD={},LEGLEFT={},TB=null,TBSEEN='',XTRA=[],HCS_VER='2026.10.20b',GOLDDONE=0;
+var BOXI={},MYBOX=[],GOLD={},LEGLEFT={},TB=null,TBSEEN='',XTRA=[],HCS_VER='2026.10.20c',GOLDDONE=0;
 try{TBSEEN=localStorage.getItem('hcs_tb')||''}catch(e){}
 var DISCORD_URL='https://discord.gg/yW7k9G96U';
 
@@ -4048,6 +4048,7 @@ var PATCH={
 };
 var PATCH2={
  fr:{t:'MAJ DU 20 OCTOBRE',s:'RANGS · CHANCE · GOLD · ÉTUIS',l:[
+  ['🎁','Bonus de rang et de niveau','Chaque nouveau rang atteint te rapporte des PTS : Argent 500, Or 1 000, Platine 2 500, Diamant 5 000, Onyx 10 000. Chaque niveau gagné : +100 PTS. Une seule fois par rang (descendre puis remonter ne redonne rien). Les bonus ne sont pas rétroactifs : ils comptent à partir de maintenant.'],
   ['🏅','Rangs : de Bronze à Onyx','Chaque joueur a un rang calculé avec sa valeur de cartes, ses boosters ouverts, ses points, sa chance, son nombre de cartes et son % de complétion. Onyx à partir de 1500. Pour économiser de la bande passante, les rangs et classements sont recalculés toutes les 10 minutes, pas en direct.'],
   ['🥇','Podiums du classement','Top 3 des plus riches, des plus gros ouvreurs de boosters, de la valeur des cartes, du nombre de cartes et des plus chanceux. Liste des joueurs plus compacte.'],
   ['🍀','Les plus chanceux','Ton taux de Légendaires, Mythiques et Secrets sortis par rapport à ton nombre de boosters ouverts. Une Mythique compte plus qu’une Légendaire, un Secret encore plus. Il faut 20 boosters ouverts pour apparaître.'],
@@ -4061,6 +4062,7 @@ var PATCH2={
   ['🏆','Défi des Mythiques','La récompense passe à 50 000 PTS.']
  ],ok:'COMPRIS !',dc:'REJOINDRE LE DISCORD'},
  en:{t:'OCTOBER 20 UPDATE',s:'RANKS · LUCK · GOLD · CASES',l:[
+  ['🎁','Rank & level bonuses','Every new rank you reach earns PTS: Silver 500, Gold 1,000, Platinum 2,500, Diamond 5,000, Onyx 10,000. Each level gained: +100 PTS. Paid once per rank (dropping and climbing back gives nothing). Bonuses are not retroactive: they count from now on.'],
   ['🏅','Ranks: Bronze to Onyx','Every player gets a rank based on card value, boosters opened, points, luck, number of cards and completion %. Onyx starts at 1500. To save bandwidth, ranks and leaderboards are recalculated every 10 minutes, not live.'],
   ['🥇','Leaderboard podiums','Top 3 richest, biggest booster openers, card value, number of cards and luckiest players. More compact player list.'],
   ['🍀','Luckiest players','Your rate of Legendaries, Mythics and Secrets pulled compared to the boosters you opened. A Mythic counts more than a Legendary, a Secret even more. You need 20 boosters opened to appear.'],
@@ -4093,7 +4095,7 @@ function hcsBoot(){
   var go=function(){
     var seen='';try{seen=localStorage.getItem('hcs_patch')||''}catch(e){}
     if(!seen)seasonSplash(patchOpen);else if(seen!==HCS_VER)patchOpen();
-    tbCheck(true);setInterval(function(){tbCheck(false)},25000);
+    tbCheck(true);setInterval(function(){tbCheck(false)},25000);setTimeout(function(){hcsTick(false)},4000);
     hotLoad();setInterval(hotLoad,60000);document.addEventListener('visibilitychange',function(){if(!document.hidden)hotLoad()});
   };
   var pn=$('#pnOpen');if(pn)pn.onclick=function(e){e.preventDefault();patchOpen()};
@@ -4243,6 +4245,7 @@ async function podiumsBuild(){
   l.insertBefore(box,l.firstChild);
   var mr=$('#myRank');if(mr)mr.remove();
   var me=RANKS.m[USER&&USER.id];
+  if(!Object.keys(RANKS.m).length&&RANKS.err){mr=document.createElement('div');mr.id='myRank';mr.innerHTML='<em style="flex-basis:100%">Rangs indisponibles pour le moment ('+esc(RANKS.err)+').</em>';box.parentNode.insertBefore(mr,box.nextSibling)}
   if(me){var nx=null,ti=RANKS.tiers||[];for(var q=0;q<ti.length;q++)if(ti[q][1]>me.s){nx=ti[q];break}
     mr=document.createElement('div');mr.id='myRank';
     mr.innerHTML=rkBadge(me.k)+'<span><b>'+fmtPts(me.s)+' pts</b>'+(nx?' · prochain rang : '+esc(nx[0])+' à '+fmtPts(nx[1]):' · rang maximum')+'</span><em>Valeur, boosters, points, chance, cartes, complétion · recalculé toutes les 10 min</em>';
@@ -4285,16 +4288,46 @@ async function topSalesBuild(){
 
 
 /* ===================== RANGS ===================== */
-var RANKS={t:0,m:{},tiers:[],busy:null};
+var RANKS={t:0,m:{},tiers:[],busy:null,err:'',at:0};
 function rkBadge(k){k=String(k||'Bronze');return '<span class="rk rk-'+k.toLowerCase()+'">'+esc(k.toUpperCase())+'</span>'}
+function ranksApply(d){var m={};(d.rows||[]).forEach(function(x){m[x.id]=x});RANKS.m=m;RANKS.tiers=d.tiers||[];RANKS.at=d.t?Date.parse(d.t):0}
 async function ranksLoad(force){
   if(!force&&RANKS.t&&Date.now()-RANKS.t<600000)return;
   if(RANKS.busy)return RANKS.busy;
   RANKS.busy=(async function(){
-    try{var r=await SB.rpc('hcs_ranks');if(!r.error&&r.data){var m={};(r.data.rows||[]).forEach(function(x){m[x.id]=x});RANKS.m=m;RANKS.tiers=r.data.tiers||[];RANKS.t=Date.now()}}catch(e){}
+    try{
+      var r=await SB.rpc('hcs_ranks');
+      if(r.error){RANKS.err=r.error.message}
+      else if(r.data){RANKS.err='';ranksApply(r.data);RANKS.t=Date.now();
+        /* cache serveur trop vieux : on demande un recalcul EN ARRIÈRE-PLAN (sans bloquer l'affichage) */
+        if(!RANKS.at||Date.now()-RANKS.at>600000)hcsTick(true);
+      }
+    }catch(e){RANKS.err=String(e&&e.message||e)}
     RANKS.busy=null;
   })();
   return RANKS.busy;
+}
+var TICKT=0;
+async function hcsTick(reload){
+  if(Date.now()-TICKT<60000)return;TICKT=Date.now();
+  try{
+    var r=await SB.rpc('hcs_tick');
+    if(r.error||!r.data)return;
+    if(r.data.length)rankEvents(r.data);
+    if(reload){var r2=await SB.rpc('hcs_ranks');if(!r2.error&&r2.data){ranksApply(r2.data);RANKS.t=Date.now();try{if(stage==='rank'){plRender();podiumsBuild()}}catch(e){}}}
+  }catch(e){}
+}
+function rankEvents(ev){
+  var tot=0,i=0;
+  ev.forEach(function(e){
+    tot+=e.b||0;
+    setTimeout(function(){
+      if(e.k==='rank')pop('RANG '+String(e.l).toUpperCase()+' ATTEINT !','+'+fmtPts(e.b)+' PTS',3400);
+      else pop(String(e.l).toUpperCase()+' !','+'+fmtPts(e.b)+' PTS',3000);
+      try{SND.reveal(3)}catch(x){}
+    },i*3600);i++;
+  });
+  PTS+=tot;try{updPts()}catch(e){}
 }
 function plBadges(){
   var box=$('#plList');if(!box)return;
