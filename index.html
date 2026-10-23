@@ -2833,7 +2833,7 @@ async function mkRender(){
   if(MK.tab==='box')return boxMarketRender(body);
   if(MK.tab==='off')return offersRender(body);
   if(MK.tab==='hist')return histRender(body);
-  var r=await SB.from('listings_v').select('*').order('price',{ascending:true}).limit(300);
+  var r=await (MK.tab==='mine'?SB.from('listings_v').select('*').eq('seller',USER.id).order('created_at',{ascending:false}).limit(100):SB.from('listings_v').select('*').neq('seller',USER.id).order('price',{ascending:true}).limit(1000));
   if(r.error){body.innerHTML='<p class="sum-best">Marché indisponible.</p>';return}
   try{var ms=await SB.rpc('market_stats');MKS=(ms&&ms.data)||{}}catch(e){MKS={}}
   var all=r.data||[],list;
