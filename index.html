@@ -2591,10 +2591,10 @@ function isBomId(id){return NONBOM.indexOf(id)<0&&/^(joueur|leg|myth)-/.test(id)
 function libRender(){
   profTabs($('#libProf'),'lib');
   var bar=$('#libSer');bar.innerHTML='';
-  [1,2,4,5].forEach(function(n){
+  [1,2,4,6,5].forEach(function(n){
     var open=CFG.unlocked.indexOf(n)>=0,b=document.createElement('button');
     b.type='button';b.className='serbtn'+(LIB.s===n?' on':'');b.disabled=!open;
-    b.textContent=open?(n===2||n===4?serName(n):'SÉRIE 0'+sd(n)):'S0'+sd(n)+' · BIENTÔT';
+    b.textContent=open?serName(n):'BIENTÔT';
     b.onclick=function(){LIB.s=n;libRender()};bar.appendChild(b);
   });
   var rs2=$('#libRar');
@@ -4597,7 +4597,7 @@ function mkSetSel(){
   ss.sort(function(a,b){return a-b});
   var cur=(typeof MK.set==='number')?MK.set:-1;
   return '<select id="mkSet" aria-label="Set"><option value="-1">Tous les sets</option>'+ss.map(function(n){
-    var lbl=(n===2||n===4)?serName(n):'SÉRIE 0'+sd(n);
+    var lbl=serName(n);
     return '<option value="'+n+'"'+(cur===n?' selected':'')+'>'+esc(lbl)+'</option>';
   }).join('')+'</select>';
 }
