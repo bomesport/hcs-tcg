@@ -3242,7 +3242,7 @@ function dceCardOK(c,rq){
   if(!c.active||isSec(c)||c.v==='sign'||c.v==='fight'||String(c.id).indexOf('signed')>=0)return false;
   if(rq.rmin!=null&&c.r<rq.rmin)return false;if(rq.rmax!=null&&c.r>rq.rmax)return false;
   if(rq.series!=null&&c.s!==rq.series)return false;
-  if(rq.grp&&!(rq.grp==='BoM'&&/^joueur-/.test(c.id)&&NONBOM.indexOf(c.id)<0))return false;
+  if(rq.grp&&!(rq.grp==='BoM'&&((/^joueur-/.test(c.id)&&NONBOM.indexOf(c.id)<0)||(c.s===6&&c.t==='joueur'))))return false;
   if(rq.kind&&c.t!==rq.kind)return false;
   return true;
 }
