@@ -3246,7 +3246,7 @@ function dceCardOK(c,rq){
   if(rq.kind&&c.t!==rq.kind)return false;
   return true;
 }
-function dceTeam(c){return c.t==='pro'?String(c.f).split('·').pop().trim():''}
+function dceTeam(c){return c.t==='pro'?(c.s===6&&c.tm?c.tm:String(c.f).split('·').pop().trim()):''}
 function dceReqText(rq){
   var rn=rq.rmin!=null?(rq.rmin===rq.rmax?RAR[rq.rmin].n:RAR[rq.rmin].n+' à '+RAR[rq.rmax].n):'';
   return rq.n+' carte'+(rq.n>1?'s':'')+(rq.kind==='pro'?' de pro':rq.kind==='joueur'?' de joueur':'')+(rn?' · '+rn:'')+(rq.grp?' · '+rq.grp:'')+(rq.series?' · Série '+sd(rq.series):'')+(rq.sameteam?' · même équipe':'');
