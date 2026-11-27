@@ -810,6 +810,28 @@ button{font:inherit;color:inherit;cursor:pointer}
 .evbar:hover{background:rgba(231,76,60,.45)}
 .evwrap[hidden]{display:none}
 .evx{position:absolute;right:2px;top:2px;width:24px;height:24px;border:0;background:none;color:#fff;opacity:.7;font-size:16px;line-height:1;cursor:pointer}
+
+/* ===== GIRLZ (by Nutsinette) · série 7 ===== */
+.ser7 .foil{background:#e86fb0 url(img/pack-girlz.webp) 0 0/100% 100% no-repeat}
+.ser7 .foil::before{display:none}
+.ser7 .foil:has(.bk-top),.ser7 .pk-top .foil.bk7{background:linear-gradient(160deg,#ffd9ee,#ff9fcf 45%,#f06fb0)}
+.ser7 .slab{background:#d9609f!important}
+.ser7 .pk-aura{background:radial-gradient(closest-side,rgba(255,90,170,.75),rgba(255,210,235,.3) 58%,transparent 78%)}
+.pkx7{background:none}
+.serbtn[data-s="7"]{--sc:#ff4fa8}
+.serbtn[data-s="7"] b{letter-spacing:.06em;font-size:13px;line-height:1.05;text-align:center}
+#serSel .serbtn[data-s="7"] b{white-space:normal}
+@media (max-width:560px){#serSel .serbtn[data-s="7"] b{font-size:11px;letter-spacing:.03em}}
+#gzNote{position:fixed;inset:0;z-index:89;background:radial-gradient(ellipse 80% 50% at 50% 30%,rgba(255,90,170,.28),rgba(5,7,11,.95) 70%),rgba(5,7,11,.94);display:grid;place-items:center;overflow-y:auto}
+#gzNote[hidden]{display:none}
+.gz-in{width:min(460px,100vw);padding:16px 14px 22px;display:grid;gap:10px;justify-items:center}
+.gz-in img{width:min(54vw,230px);height:auto;filter:drop-shadow(0 12px 22px rgba(255,80,160,.45))}
+.gz-in h2{margin:0;font-family:var(--display);font-weight:400;letter-spacing:.12em;font-size:24px;text-align:center}
+.gz-in h2 b{color:#ff6fb8;font-weight:400}
+.gz-in .ev-s{color:#ffc2e2}
+.gz-in ul{list-style:none;margin:0;padding:0;display:grid;gap:6px;width:100%}
+.gz-in li{padding:7px 10px;background:rgba(255,120,190,.10);border:1px solid rgba(255,120,190,.35);border-radius:6px;font-size:14px}
+.gz-in .btn.gold{background:#ff4fa8;border-color:#ff4fa8;color:#fff}
 #evNote{position:fixed;inset:0;z-index:88;background:rgba(5,7,11,.94);display:grid;place-items:center;overflow-y:auto}
 #evNote[hidden]{display:none}
 .ev-in{width:min(560px,100vw);padding:14px 14px 22px;display:grid;gap:10px}
@@ -1620,7 +1642,8 @@ function tween(a,b,dur,fn,done){
 /* ---------- Booster ---------- */
 var FOILTXT0='<div class="pk-glow"></div><img class="pk-hcs" src="img/hcs.png" alt=""><div class="pk-rib"><b>TCG</b><i>by</i><img src="img/bom-white.png" alt=""></div><div class="pk-sub">5 CARTES · 100 PTS</div><div class="pk-ser">HALO CHAMPIONSHIP SERIES</div>';
 var FOILTXT2='<div class="pk-glow"></div><div class="pk-amp">&amp;</div><img class="pk-hcs" src="img/hcs.png" alt=""><div class="pk-rib"><b>ICONIC</b><i>·</i><b>DUOS</b></div><div class="pk-sub">SÉRIE 2 · 5 CARTES</div><div class="pk-ser">LES DUOS MYTHIQUES DE LA BoM</div>';
-var FOILTXT3='',FOILTXT4='';function foilTxt(){return SSEL===6?foil6():SSEL===4?FOILTXT4:SSEL===3?FOILTXT3:SSEL===2?FOILTXT2:FOILTXT0}
+var FOILTXT3='',FOILTXT4='';function foil7(){return '<div class="pkx pkx7"></div>'}
+function foilTxt(){return SSEL===7?foil7():SSEL===6?foil6():SSEL===4?FOILTXT4:SSEL===3?FOILTXT3:SSEL===2?FOILTXT2:FOILTXT0}
 function backTxt(){
   var rows=RAR.slice().reverse().map(function(r){return '<div class="bk-row"><i style="background:'+r.col+'"></i>'+r.n+'</div>'}).join('');
   return '<div class="bk-top">HCS TCG</div><div class="bk-list">'+rows+'</div><div class="bars"></div><div class="bk-small">BOOSTER 5 CARTES</div><img class="bk-bom" src="img/bom-black.png" alt="">';
@@ -1676,7 +1699,7 @@ function buildPack(){
     '<div class="face3 f3f clipme"><div class="foil">'+foilTxt()+'</div></div></div></div>'+
     '<div class="pack" id="pack" hidden></div>'+
     '<div class="pk-hint" id="pkhint"><span>GLISSE ›››</span></div></div></div>';
-  zone.classList.toggle('ser2',SSEL===2);zone.classList.toggle('ser3',SSEL===3);
+  zone.classList.toggle('ser2',SSEL===2);zone.classList.toggle('ser3',SSEL===3);zone.classList.toggle('ser7',SSEL===7);
   var sil=clipSil();
   zone.querySelectorAll('.clipme').forEach(function(el){el.style.clipPath=sil;el.style.webkitClipPath=sil});
   rs={ry:0,rx:0,vry:0,vrx:0,gy:0,gx:0,sw:0,settled:true,drag:null,tearing:false,charge:0,full:false,flat:'',fromBottom:false,
@@ -1690,6 +1713,7 @@ function showFlat(){
     pk.innerHTML='<div class="pk-body"><div class="foil">'+(s.front?foilTxt():backTxt())+'</div></div><div class="pk-leak"></div><div class="pk-top"><div class="foil"></div></div>';
     pk.querySelector('.pk-top').style.clipPath=clipTopPiece();
     pk.querySelector('.pk-body').style.clipPath=clipBodyPiece();
+    if(SSEL===7){var tf=pk.querySelector('.pk-top .foil');if(tf)tf.className='foil '+(s.front?'ft7':'bk7')}
     rs.flat=key;
   }
   pk.hidden=false;$('#pk3d').hidden=true;
@@ -1855,13 +1879,13 @@ function frontHTML(d,sm){
   var bom=isBoM(d),gen=!src&&(d.t==='pro'||d.t==='joueur'||d.t==='bom');
   return '<div class="in'+(src?' full':gen?' gen':'')+'"'+(src?' style="--img:url(\''+src+'\')"':gen?' style="--tc:'+(bom?'#c9a227':teamCol(d))+'"':'')+'>'+(full?'<img class="tprobe" alt="" src="'+src+'" onerror="this.parentNode.style.setProperty(\'--img\',\'url('+full+')\');this.remove()">':'')+'<div class="f-top"><div class="f-type">'+esc(sec?'SECRET':(TYPE[d.t]||String(d.t).toUpperCase()))+'</div><div class="f-ovr">'+d.ovr+'<small>OVR</small></div></div>'+
     '<div class="f-art">'+(gen&&bom?'<img class="f-wmlogo" src="img/bom-white.png" alt="">':gen?'<div class="f-wm" style="--wf:'+Math.min(.46,.95/Math.max(3,String(d.n).length)).toFixed(3)+'">'+esc(d.n)+'</div>':(ICON[d.t]||ICON.moment))+'</div><div class="f-name">'+esc(d.n)+'</div><div class="f-rar">◆ '+(sec?'SECRET':RAR[d.r].n)+vt+' ◆</div>'+
-    '<div class="f-flav">'+esc(d.f)+'</div><div class="f-foot"><span>'+(bom?'<img class="f-bm" src="img/bom-white.png" alt="">':'')+'HCS · S0'+sd(d.s||1)+' · '+d.no+'/'+d.tot+'</span><span class="ser">'+d.serial+'</span></div></div>'+
+    '<div class="f-flav">'+esc(d.f)+'</div><div class="f-foot"><span>'+(bom?'<img class="f-bm" src="img/bom-white.png" alt="">':'')+'HCS · '+(d.s===7?'GIRLZ':'S0'+sd(d.s||1))+' · '+d.no+'/'+d.tot+'</span><span class="ser">'+d.serial+'</span></div></div>'+
     '<div class="holo"></div><div class="glare"></div>';
 }
 function buildSlot(d,i){
   var s=document.createElement('div');
   s.className='slot'+(rs.fromBottom?' facedown':'')+' r'+d.r+(d.v==='holo'?' vh':'');s.style.zIndex=20-i;s.style.setProperty('--d',i);
-  s.innerHTML='<div class="card"><div class="aura"></div><div class="tilt"><div class="inner"><div class="face front">'+frontHTML(d)+'</div><div class="face back imgback" style="background-image:url(img/back'+(d.s===2?2:1)+'.webp)"></div></div></div></div>';
+  s.innerHTML='<div class="card"><div class="aura"></div><div class="tilt"><div class="inner"><div class="face front">'+frontHTML(d)+'</div><div class="face back imgback" style="background-image:url(img/back'+(d.s===2?2:d.s===7?7:1)+'.webp)"></div></div></div></div>';
   s.addEventListener('animationend',function(){s.style.animation='none'},{once:true});
   deck.appendChild(s);
   return {data:d,slot:s,card:s.querySelector('.card'),tilt:s.querySelector('.tilt'),front:s.querySelector('.front'),st:'wait',mx:.5,my:.5,lock:0};
@@ -2293,7 +2317,7 @@ function parisToday(){return new Date().toLocaleDateString('en-CA',{timeZone:'Eu
 function dailyReady(){return !LASTDAILY||String(LASTDAILY)<parisToday()}
 function wheelReady(){return !LASTWHEEL||String(LASTWHEEL)<parisToday()}
 function rarN(r){return RAR[r].n}
-function updMid(){$('#midlbl').textContent=CFG.unlocked.length>1?'SÉRIES 01-0'+sd(Math.max.apply(null,CFG.unlocked)):'SÉRIE 01'}
+function updMid(){$('#midlbl').textContent=CFG.unlocked.length>1?'SÉRIES 01-0'+sd(Math.max.apply(null,CFG.unlocked.filter(function(x){return x!==7}))):'SÉRIE 01'}
 function updPts(){
   STOCK=STOCKS[SSEL]||0;
   var p=$('#pts');p.hidden=!USER;p.textContent=PTS+' PTS';
@@ -2399,7 +2423,7 @@ async function startSession(user){
 }
 var XP=0,OBJT='obj',XPS={};
 function priceFor(){
-  var P=CFG.prices,mx=Math.max.apply(null,CFG.unlocked),f=(SSEL>1&&SSEL===mx&&P.newest)?P.newest/P.booster:1;
+  var P=CFG.prices,mx=Math.max.apply(null,CFG.unlocked),ps=P.per_series&&P.per_series[SSEL],f=ps?ps/P.booster:((SSEL>1&&SSEL===mx&&P.newest)?P.newest/P.booster:1);
   return {booster:Math.round(P.booster*f),display:Math.round(P.display*f),'case':Math.round(P.case*f)};
 }
 function xpNeed(L){var v=CFG.levels||{base:100,step:60};return v.base*(L-1)+v.step*(L-1)*(L-2)/2}
@@ -2444,7 +2468,7 @@ function serBar(box){
     var b=document.createElement('button');b.type='button';b.className='serbtn'+(SSEL===n?' on':'');
     b.setAttribute('data-s',n);
     var tt=DBCARDS.filter(function(c){return c.active&&c.s===n&&!isHid(c)}),oo=tt.filter(function(c){return INV[c.id]}).length;
-    b.innerHTML='<b>'+esc(serName(n))+'</b><small>'+((STOCKS[n]||0)>0?(STOCKS[n]+' booster'+(STOCKS[n]>1?'s':'')):'ÉPUISÉ')+'</small>'+(n===3?'<small>offert · code promo</small>':'<small>'+oo+'/'+tt.length+' cartes</small>')+legSm(n);
+    b.innerHTML='<b>'+esc(serName(n)).replace(' (','<br>(')+'</b><small>'+((STOCKS[n]||0)>0?(STOCKS[n]+' booster'+(STOCKS[n]>1?'s':'')):'ÉPUISÉ')+'</small>'+(n===3?'<small>offert · code promo</small>':'<small>'+oo+'/'+tt.length+' cartes</small>')+legSm(n);
     b.onclick=function(){
       if(SSEL===n)return;
       SSEL=n;updPts();
@@ -2612,7 +2636,7 @@ function isBomId(id){return NONBOM.indexOf(id)<0&&/^(joueur|leg|myth)-/.test(id)
 function libRender(){
   profTabs($('#libProf'),'lib');
   var bar=$('#libSer');bar.innerHTML='';
-  [1,2,4,6,5].forEach(function(n){
+  [1,2,4,6,5,7].forEach(function(n){
     var open=CFG.unlocked.indexOf(n)>=0,b=document.createElement('button');
     b.type='button';b.className='serbtn'+(LIB.s===n?' on':'');b.disabled=!open;
     b.textContent=open?serName(n):'BIENTÔT';
@@ -3494,7 +3518,7 @@ function openInspect(id,fr){
   var c=CBYID[id];if(!c)return;
   var d=cardD(c),el=$('#inspCard');
   el.className='r'+c.r+(c.v==='holo'?' vh':'');
-  el.innerHTML='<div class="face front">'+frontHTML(d)+'</div><div class="face back imgback" style="background-image:url(img/back'+(c.s===2?2:1)+'.webp)"></div>'+(fr?'<div class="ifr ifr-'+fr+'"></div><div class="ifr ifr-'+fr+' ifr-b"></div>':'');
+  el.innerHTML='<div class="face front">'+frontHTML(d)+'</div><div class="face back imgback" style="background-image:url(img/back'+(c.s===2?2:c.s===7?7:1)+'.webp)"></div>'+(fr?'<div class="ifr ifr-'+fr+'"></div><div class="ifr ifr-'+fr+' ifr-b"></div>':'');
   $('#inspInfo').textContent=c.n+' · '+RAR[c.r].n+(c.maxPrint?' · tirage '+c.maxPrint:'')+(c.cr?' · Photo : '+c.cr:'');
   IN.rx=-6;IN.ry=-40;IN.vx=0;IN.vy=7;IN.tgt=null;IN.open=true;
   $('#insp').hidden=false;inspApply();
@@ -4227,7 +4251,7 @@ function seasonSplash(done){
 function hcsBoot(){
   var go=function(){
     var seen='';try{seen=localStorage.getItem('hcs_patch')||''}catch(e){}
-    majBoot(seen);evBoot();
+    majBoot(seen);gzBoot();evBoot();
     tbCheck(true);setInterval(function(){tbCheck(false)},25000);setTimeout(function(){hcsTick(false)},4000);setTimeout(function(){bidWatch(true)},6000);setInterval(function(){if(BW.lead>0&&!document.hidden)bidWatch(false)},45000);
     hotLoad();setInterval(hotLoad,60000);document.addEventListener('visibilitychange',function(){if(!document.hidden)hotLoad()});
   };
@@ -4283,7 +4307,7 @@ function goldMake(){
 }
 
 /* numéro de série affiché : HCS TCG 02 = S03, la suivante = S04 (les ids internes ne changent pas) */
-function sd(n){return n===4?3:n===6?4:n===5?5:n}
+function sd(n){return n===7?'GIRLZ':n===4?3:n===6?4:n===5?5:n}
 
 /* Légendaires restantes par série (bouton de série) */
 function legSm(n){var r=(RARE||[]).filter(function(x){return x.series===n&&x.kind==='legendaire'})[0];if(!r)return '';return '<small class="legsm">★ '+r.restants+'/'+r.total+' Légendaires</small>'}
@@ -4764,7 +4788,7 @@ function foil6(){
    +'<div class="pk6-t notr"><span class="a">Retro</span><span class="b">SERIES</span><span class="c">HCS TCG BY BOM</span></div>'
    +'<div class="pk6-box"><b class="notr">SÉRIE RETRO</b><small>5 CARTES · '+priceFor6()+' PTS</small></div></div>';
 }
-function priceFor6(){try{var P=CFG.prices,mx=Math.max.apply(null,CFG.unlocked);return Math.round((6===mx&&P.newest)?P.newest:P.booster)}catch(e){return 100}}
+function priceFor6(){try{var P=CFG.prices,mx=Math.max.apply(null,CFG.unlocked);if(P.per_series&&P.per_series[6])return Math.round(P.per_series[6]);return Math.round((6===mx&&P.newest)?P.newest:P.booster)}catch(e){return 100}}
 (function(){
   if(Date.now()>=RETRO_UNTIL)return;
   document.body.classList.add('retro');
@@ -4907,6 +4931,32 @@ function evOpen(){
   document.getElementById('evNo').onclick=function(){ov.hidden=true};
   document.getElementById('evGo').onclick=function(){setTimeout(function(){ov.hidden=true},300)};
 }
+
+/* ===================== GIRLZ (by Nutsinette) : annonce 1 fois par joueur ===================== */
+var GZT={
+ fr:{t:'NOUVELLE MINI-SÉRIE · <b>GIRLZ</b>',s:'BY NUTSINETTE · DISPONIBLE MAINTENANT',l:['💖 61 cartes à collectionner + 5 Secrets','🏷️ Booster de 5 cartes à 300 PTS','🎁 Nouveaux défis : des boosters GIRLZ à gagner'],r:'Une collab BoM × Nutsinette.',go:'DÉCOUVRIR',no:'PLUS TARD'},
+ en:{t:'NEW MINI-SERIES · <b>GIRLZ</b>',s:'BY NUTSINETTE · AVAILABLE NOW',l:['💖 61 collectible cards + 5 Secrets','🏷️ 5-card booster for 300 PTS','🎁 New challenges: win GIRLZ boosters'],r:'A BoM × Nutsinette collab.',go:'DISCOVER',no:'LATER'}
+};
+function gzOpen(){
+  var P=GZT[window.HCS_LANG==='en'?'en':'fr'],ov=document.getElementById('gzNote');
+  if(!ov){ov=document.createElement('div');ov.id='gzNote';document.body.appendChild(ov)}
+  ov.innerHTML='<div class="gz-in"><img src="img/pack-girlz.webp" alt="GIRLZ"><h2>'+P.t+'</h2><div class="ev-s">'+esc(P.s)+'</div><ul>'+P.l.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul><div class="ev-r">'+esc(P.r)+'</div><div class="cv-act"><button class="btn" id="gzNo" type="button">'+esc(P.no)+'</button><button class="btn gold" id="gzGo" type="button">'+esc(P.go)+'</button></div></div>';
+  ov.hidden=false;
+  document.getElementById('gzNo').onclick=function(){ov.hidden=true};
+  document.getElementById('gzGo').onclick=function(){ov.hidden=true;try{SSEL=7;updPts();goTab('shop')}catch(e){}};
+}
+function gzBoot(){
+  var seen='';try{seen=localStorage.getItem('hcs_gz')||''}catch(e){}
+  if(seen==='1')return;
+  var tries=0,iv=setInterval(function(){
+    tries++;if(tries>400){clearInterval(iv);return}
+    try{if(!USER||!CFG||!CFG.unlocked||CFG.unlocked.indexOf(7)<0)return}catch(e){return}
+    var pn=document.getElementById('patchNote'),gate=document.getElementById('gate');
+    var busy=document.getElementById('seasonFx')||(pn&&!pn.hidden)||(gate&&!gate.hidden);
+    if(tries<4||busy)return;
+    clearInterval(iv);try{localStorage.setItem('hcs_gz','1')}catch(e){}gzOpen();
+  },1000);
+}
 function evBoot(){
   if(!evLive())return;
   var P=evLang(),bar=document.getElementById('evBar'),lk=document.getElementById('evLink');
@@ -4915,7 +4965,8 @@ function evBoot(){
   var tries=0,iv=setInterval(function(){
     tries++;if(tries>400||!evLive()){clearInterval(iv);return}
     var pn=document.getElementById('patchNote'),gate=document.getElementById('gate');
-    var busy=document.getElementById('seasonFx')||(pn&&!pn.hidden)||(gate&&!gate.hidden);
+    var gz=document.getElementById('gzNote');
+    var busy=document.getElementById('seasonFx')||(pn&&!pn.hidden)||(gate&&!gate.hidden)||(gz&&!gz.hidden);
     if(tries<5||busy)return;
     clearInterval(iv);evSet('hcs_evpop',evDay());evOpen();
   },1000);
