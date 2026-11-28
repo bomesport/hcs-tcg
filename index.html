@@ -1203,7 +1203,7 @@ window.__tr=tr;
 #intro .intro-foot>*{order:6}
 #intro #serSel{order:1;display:block}
 #intro #sealBar{order:2}
-#intro #openBtn,#intro #buy1{order:3;width:min(78%,300px);height:50px;min-height:0;font-size:18px;letter-spacing:.22em;padding:0 16px;border-radius:999px;line-height:1;white-space:nowrap}
+#intro #openBtn,#intro #buy1{order:3;width:auto;min-width:min(78%,240px);max-width:94%;box-sizing:border-box;height:50px;min-height:0;font-size:17px;letter-spacing:.14em;padding:0 30px;display:inline-flex;align-items:center;justify-content:center;justify-self:center;border-radius:999px;line-height:1;white-space:nowrap}
 #intro #openBtn{background:linear-gradient(180deg,#f1d36b,#c9a22f);color:#1a1405;border:0;box-shadow:0 6px 22px rgba(212,175,55,.35)}
 #intro #buy1{background:rgba(5,7,11,.55);color:var(--gold);border:1.5px solid var(--gold);box-shadow:none}
 #intro #qkRow{order:4}
@@ -5015,7 +5015,7 @@ var ICO={
  disc:['💬','DISCORD',function(){icoSheet('DISCORD','Codes promo, annonces et tournois. Le Discord s’ouvre dans un nouvel onglet.',[['OUVRIR LE DISCORD',function(){window.open(DISCORD_URL,'_blank','noopener')}]])}]
 };
 delete ICO.map;delete ICO.note;delete ICO.shop;
-ICO.disc[0]='<img class="dcico" src="img/discord.webp" alt="">';ICO.disc[2]=function(){window.open(DISCORD_URL,'_blank','noopener')};
+ICO.disc[0]='<img class="dcico" src="img/dc-logo.webp" alt="">';ICO.disc[2]=function(){window.open(DISCORD_URL,'_blank','noopener')};
 function icoSync(){
   var b=$('#buy1');if(!b||!b.parentNode)return;
   var r=document.getElementById('icoRow');
