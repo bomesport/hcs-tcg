@@ -1174,7 +1174,64 @@ function init(){walk(document.body);document.title=tr(document.title)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 window.__tr=tr;
 })();
-</script></head><body>
+</script><style id="uiNew">
+/* ===== ACCUEIL v2 ===== */
+.dcbar{display:none!important}
+#intro,#intro.empty{--pw:min(74vw,330px,calc((100cqh - 14px) / 1.5385))}
+@media (min-width:800px){#intro,#intro.empty,#intro:not(.empty){--pw:min(340px,calc((100cqh - 14px) / 1.5385))}}
+.packzone{position:relative}
+.packfloat{position:relative;z-index:2}
+.pkstage{animation:pkin .38s cubic-bezier(.2,.8,.2,1)}
+@keyframes pkin{from{opacity:0;transform:translateX(var(--dx,0px)) scale(.92)}to{opacity:1;transform:none}}
+#serDeck{position:absolute;inset:0;perspective:1000px;pointer-events:none;overflow:hidden;z-index:1}
+#serDeck .sp{position:absolute;left:50%;top:50%;width:var(--pw);height:var(--ph);margin:calc(var(--ph) / -2) 0 0 calc(var(--pw) / -2);pointer-events:auto;cursor:pointer;transition:transform .35s,opacity .35s;filter:brightness(.55) saturate(.85);-webkit-tap-highlight-color:transparent}
+#serDeck .sp[data-o="-1"]{transform:translateX(calc(var(--pw) * -.9)) translateZ(-140px) rotateY(34deg) scale(.84)}
+#serDeck .sp[data-o="1"]{transform:translateX(calc(var(--pw) * .9)) translateZ(-140px) rotateY(-34deg) scale(.84)}
+#serDeck .sp[data-o="-2"]{transform:translateX(calc(var(--pw) * -1.55)) translateZ(-300px) rotateY(42deg) scale(.7);opacity:.55;filter:brightness(.4)}
+#serDeck .sp[data-o="2"]{transform:translateX(calc(var(--pw) * 1.55)) translateZ(-300px) rotateY(-42deg) scale(.7);opacity:.55;filter:brightness(.4)}
+#serDeck .sarr{position:absolute;top:50%;width:40px;height:60px;margin-top:-30px;z-index:5;pointer-events:auto;background:rgba(5,7,11,.5);border:1px solid rgba(245,245,245,.28);border-radius:20px;color:#fff;font-size:28px;line-height:1;padding:0 0 4px}
+#serDeck .sarr.l{left:2px}#serDeck .sarr.r{right:2px}
+.sinfo{display:grid;justify-items:center;gap:3px;position:relative;width:100%}
+.sname{font-family:var(--display);font-size:22px;letter-spacing:.14em;text-align:center;line-height:1.05}
+.ssub{font-family:var(--display);font-size:15px;letter-spacing:.12em;color:var(--gold)}
+.ssub.out{color:#ff6b5a}
+.sdots{display:flex;gap:7px;margin-top:3px}
+.sdots i{width:7px;height:7px;border-radius:50%;background:rgba(245,245,245,.3);cursor:pointer}
+.sdots i.on{background:#fff;transform:scale(1.35)}
+.sinfo-i{position:absolute;left:calc(50% + 62px);right:auto;bottom:-8px;width:32px;height:32px;border-radius:50%;border:1px solid rgba(245,245,245,.3);background:rgba(5,7,11,.5);color:#fff;font-size:18px;line-height:1}
+#intro .intro-foot{gap:8px;padding-bottom:6px}
+#intro .intro-foot>*{order:6}
+#intro #serSel{order:1;display:block}
+#intro #sealBar{order:2}
+#intro #openBtn,#intro #buy1{order:3;width:min(92%,380px);font-size:26px;padding:14px 18px}
+#intro #qkRow{order:4}
+#intro #icoRow{order:5}
+#intro .proto{order:9}
+#intro #costLine,#intro #toShop,#intro #hintA,#intro #hintB,#intro .lnks{display:none!important}
+#openBtn[hidden]{display:none}
+#intro #qkRow button{font-size:12px;padding:5px 12px;min-height:0;letter-spacing:.08em}
+#icoRow{width:min(96%,360px);gap:10px}
+#icoRow button{max-width:96px;padding:6px 0 5px}
+#icoRow button i{font-size:24px}
+#icoRow .dcico{width:30px;height:30px;object-fit:contain;display:block}
+#navPlus::before{content:'☰'}
+@media (max-width:700px){
+  #nav{order:90;height:60px;margin:0 -16px;padding:4px 6px calc(4px + env(safe-area-inset-bottom));background:#05070b;border-top:1px solid rgba(245,245,245,.14);gap:2px!important;overflow:visible;position:relative!important;top:auto!important}
+  #nav button{height:52px;border:0!important;background:none!important;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:10.5px!important;letter-spacing:.1em!important;padding:0!important;color:rgba(245,245,245,.6)}
+  #nav button::before{font-size:21px;line-height:1.1;filter:grayscale(.6)}
+  #nav button.on{color:#fff;background:none!important}
+  #nav button.on::before{filter:none}
+  #nav button.on::after{content:'';position:absolute;top:0;left:30%;right:30%;height:3px;border-radius:2px;background:var(--hcs)}
+  #nav button{position:relative}
+  #nav [data-tab=intro]::before{content:'🎴'}#nav [data-tab=market]::before{content:'🏷️'}#nav [data-tab=shop]::before{content:'🛒'}#nav [data-tab=obj]::before{content:'🎯'}
+  #nav [data-tab=rank],#nav [data-tab=profile]{display:none}
+  #nav button.dot::after{position:absolute;top:4px;right:calc(50% - 22px);margin:0;left:auto;width:9px;height:9px;background:var(--ember)}
+  #feedBar{bottom:calc(60px + env(safe-area-inset-bottom))}
+  #stage{margin-bottom:26px}
+  #intro .proto{display:none}
+}
+</style>
+</head><body>
 <div id="app">
   <header class="bar">
     <div class="brand"><img src="img/bom-white.png" alt="BoM"><span>HCS <b>TCG</b></span></div>
@@ -1190,6 +1247,7 @@ window.__tr=tr;
     <button type="button" data-tab="obj">OBJECTIFS</button>
     <button type="button" data-tab="rank">JOUEURS</button>
     <button type="button" data-tab="profile">PROFIL</button>
+    <button type="button" data-tab="plus" id="navPlus">PLUS</button>
   </nav>
   <main id="stage">
     <section id="intro" class="screen">
@@ -1690,6 +1748,89 @@ function updateCaption(){
 function addCharge(n){rs.charge=clamp(rs.charge+n,0,1)}
 function land(){SND.thunk();vib(10);updateCaption()}
 
+
+/* ===================== ACCUEIL v2 : boosters en profondeur, un seul bouton ===================== */
+function serList(){var fp=(STOCKS[3]||0)>0;return CFG.unlocked.slice().sort(function(a,b){return a-b}).concat(fp?[3]:[])}
+function foilFor(n){var o=SSEL;SSEL=n;try{return foilTxt()}finally{SSEL=o}}
+function pickSeries(n,dir){
+  if(SSEL===n||serList().indexOf(n)<0)return;
+  dir=dir||(n>SSEL?1:-1);
+  SSEL=n;updPts();
+  if(stage==='intro'){zone.style.setProperty('--dx',(dir*70)+'px');buildPack()}
+  refreshViews();try{vib(8)}catch(e){}
+}
+function serStep(d){var L=serList(),i=L.indexOf(SSEL),j=i+d;if(i<0||j<0||j>=L.length)return;pickSeries(L[j],d)}
+function serDeckBuild(){
+  var L=serList(),i=L.indexOf(SSEL);
+  if(!USER||L.length<2||i<0)return;
+  var h='<div id="serDeck">',sil=clipSil();
+  for(var o=-2;o<=2;o++){
+    if(!o)continue;var n=L[i+o];if(n===undefined)continue;
+    h+='<div class="sp ser'+n+'" data-s="'+n+'" data-o="'+o+'" data-d="'+(o<0?-1:1)+'" style="clip-path:'+sil+';-webkit-clip-path:'+sil+'"><div class="foil">'+foilFor(n)+'</div></div>';
+  }
+  if(i>0)h+='<button class="sarr l" type="button" data-d="-1" aria-label="Série précédente">‹</button>';
+  if(i<L.length-1)h+='<button class="sarr r" type="button" data-d="1" aria-label="Série suivante">›</button>';
+  zone.insertAdjacentHTML('beforeend',h+'</div>');
+}
+var SW=null;
+zone.addEventListener('pointerdown',function(e){
+  var t=e.target.closest&&e.target.closest('.sp,.sarr');if(!t)return;
+  e.stopPropagation();SW={x:e.clientX,y:e.clientY,t:t};
+},true);
+zone.addEventListener('pointerup',function(e){
+  if(!SW)return;e.stopPropagation();
+  var dx=e.clientX-SW.x,dy=e.clientY-SW.y,t=SW.t;SW=null;
+  if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)){serStep(dx<0?1:-1);return}
+  if(Math.abs(dx)>10||Math.abs(dy)>10)return;
+  if(t.classList.contains('sarr'))serStep(+t.getAttribute('data-d'));
+  else pickSeries(+t.getAttribute('data-s'),+t.getAttribute('data-d'));
+},true);
+zone.addEventListener('pointercancel',function(){SW=null},true);
+function serInfoRender(box){
+  box.innerHTML='';
+  if(!USER){box.hidden=true;return}
+  box.hidden=false;
+  var en=window.HCS_LANG==='en',L=serList(),st=STOCKS[SSEL]||0,pr=priceFor().booster;
+  var sub=SSEL===3?(en?'FREE · PROMO CODE':'OFFERT · CODE PROMO'):pr+' PTS · '+(st>0?st+' booster'+(st>1?'s':''):(en?'SOLD OUT':'ÉPUISÉ'));
+  var d=document.createElement('div');d.className='sinfo';
+  d.innerHTML='<div class="sname">'+esc(serName(SSEL))+'</div><div class="ssub'+(st>0?'':' out')+'">'+sub+'</div>'
+    +(L.length>1?'<div class="sdots">'+L.map(function(n){return '<i'+(n===SSEL?' class="on"':'')+' data-s="'+n+'"></i>'}).join('')+'</div>':'')
+    +'<button class="sinfo-i" type="button" aria-label="Infos">ⓘ</button>';
+  box.appendChild(d);
+  Array.prototype.forEach.call(d.querySelectorAll('.sdots i'),function(i){i.onclick=function(){pickSeries(+i.getAttribute('data-s'))}});
+  d.querySelector('.sinfo-i').onclick=function(){
+    var tt=DBCARDS.filter(function(c){return c.active&&c.s===SSEL&&!isHid(c)}),oo=tt.filter(function(c){return INV[c.id]}).length;
+    var lg=legSm(SSEL).replace(/<[^>]+>/g,'');
+    icoSheet(serName(SSEL),(en?'Cards: ':'Cartes : ')+oo+'/'+tt.length+(lg?'<br>'+esc(lg):'')+'<br>'+(en?'Booster: ':'Booster : ')+pr+' PTS · '+(en?'in stock: ':'en stock : ')+st,
+      [[en?'SEE THE COLLECTION':'VOIR LA COLLECTION',function(){LIB.s=SSEL;goTab('lib')}],[en?'SHOP':'BOUTIQUE',function(){goTab('shop')}]]);
+  };
+}
+function openNow(){
+  if(stage!=='intro'||tearBusy||STOCK<1||!pool().length)return;
+  if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
+  ac();rs.fromBottom=pState().up;showFlat();rs.tearing=true;updateCaption();tearBusy=true;
+  try{SND.tear(1)}catch(_){}
+  tween(0,1,320,applyTear,function(){tearBusy=false;completeTear()});
+}
+function homeCtaSync(){
+  var b=$('#buy1');if(!b||!b.parentNode)return;
+  var ob=$('#openBtn');
+  if(!ob){ob=document.createElement('button');ob.id='openBtn';ob.type='button';ob.className='cta daily';ob.textContent='OUVRIR';b.parentNode.insertBefore(ob,b);ob.onclick=openNow}
+  ob.hidden=!(USER&&STOCK>=1);
+}
+function plusOpen(){
+  var en=window.HCS_LANG==='en',pr=document.querySelector('#intro .proto');
+  icoSheet(en?'MORE':'PLUS',pr?esc(pr.textContent):'',[
+    [en?'MY COLLECTION':'MA COLLECTION',function(){goTab('profile')}],
+    [en?'PLAYERS':'JOUEURS',function(){goTab('rank')}],
+    [en?'ROAD MAP':'ROAD MAP',function(){var b=document.getElementById('rmOpen');if(b)b.click()}],
+    [en?'PATCH NOTES':'PATCHNOTE',function(){patchOpen()}],
+    ['FORUM DISCORD',function(){window.open('https://discord.com/channels/751458464680902858/1561021252553023549','_blank','noopener')}]]);
+}
+document.getElementById('nav').addEventListener('click',function(e){
+  var b=e.target.closest&&e.target.closest('#navPlus');if(!b)return;
+  e.stopPropagation();e.preventDefault();plusOpen();
+},true);
 function buildPack(){
   var slabs='',zs=[-4,-2,0,2,4],cs=['#2a2f38','#8d96a3','#2a2f38','#8d96a3','#2a2f38'];
   zs.forEach(function(z,i){slabs+='<div class="slab clipme" style="transform:translateZ('+z+'px);background:'+cs[i]+'"></div>'});
@@ -1705,6 +1846,7 @@ function buildPack(){
   rs={ry:0,rx:0,vry:0,vrx:0,gy:0,gx:0,sw:0,settled:true,drag:null,tearing:false,charge:0,full:false,flat:'',fromBottom:false,
       lastTick:0,lastRustle:0,ti:0,tj:0,el:$('#pkrot'),stg:$('#pkstage'),hint:$('#pkhint')};
   updateCaption();startLoop();
+  try{serDeckBuild()}catch(e){}
 }
 function showFlat(){
   var s=pState(),key=(s.front?'F':'B')+(s.up?'U':'D'),pk=$('#pack');
@@ -2334,7 +2476,7 @@ function updPts(){
   b.textContent='ACHETER 1 BOOSTER'+(CFG.unlocked.length>1?' '+serName(SSEL):'')+' · '+priceFor().booster+' PTS';b.disabled=PTS<priceFor().booster;
   var mkb=document.querySelector('#nav [data-tab=market]');if(mkb)mkb.classList.toggle('dot',!!USER&&(WALERT||[]).some(function(x){return !x.seen}));
   var sh=document.querySelector('#nav [data-tab=obj]');if(sh)sh.classList.toggle('dot',!!USER&&(dailyReady()||wheelReady()||hourPending()>=CFG.hourly.rate));
-  qkSync();
+  qkSync();try{homeCtaSync()}catch(e){}
 }
 function giftList(){
   var t=[];
@@ -2419,9 +2561,11 @@ async function loadAll(){
 }
 async function startSession(user){
   USER=user;await loadConfig();await loadAll();
+  try{var L0=serList().filter(function(n){return n!==3}),b0=null;L0.slice().reverse().some(function(n){if((STOCKS[n]||0)>0){b0=n;return true}});if(b0===null)b0=L0[L0.length-1];if(b0)SSEL=b0;buildPack()}catch(e){}
   $('#auth').hidden=true;updPts();feedStart();checkAch();hcsBoot();
 }
 var XP=0,OBJT='obj',XPS={};
+
 function priceFor(){
   var P=CFG.prices,mx=Math.max.apply(null,CFG.unlocked),ps=P.per_series&&P.per_series[SSEL],f=ps?ps/P.booster:((SSEL>1&&SSEL===mx&&P.newest)?P.newest/P.booster:1);
   return {booster:Math.round(P.booster*f),display:Math.round(P.display*f),'case':Math.round(P.case*f)};
@@ -2460,6 +2604,7 @@ function decStock(n){STOCKS[SSEL]=Math.max(0,(STOCKS[SSEL]||0)-n);STOCK=STOCKS[S
 function serName(n){if(n===3)return 'BoM FIGHT';var x=(CFG.series||{})[n];return x?x.name:'SÉRIE '+n}
 function serBar(box){
   if(!box)return;
+  if(box.id==='serSel'){serInfoRender(box);return}
   box.innerHTML='';
   var fp=(STOCKS[3]||0)>0;
   if(!USER||(CFG.unlocked.length<2&&!fp)){box.hidden=true;return}
@@ -2592,6 +2737,7 @@ async function quickOpen(n){
 }
 function setNav(t){
   if(t==='lib')t='profile';
+  var pl=document.getElementById('navPlus');if(pl)pl.classList.toggle('on',t==='rank'||t==='profile');
   Array.prototype.forEach.call(document.querySelectorAll('#nav [data-tab]'),function(b){b.classList.toggle('on',b.getAttribute('data-tab')===t)});
 }
 function goTab(t){
@@ -4865,6 +5011,8 @@ var ICO={
  note:['📝','PATCH',function(){icoSheet('PATCHNOTE','Le détail de la dernière mise à jour.',[['LIRE LE PATCHNOTE',function(){patchOpen()}]])}],
  disc:['💬','DISCORD',function(){icoSheet('DISCORD','Codes promo, annonces et tournois. Le Discord s’ouvre dans un nouvel onglet.',[['OUVRIR LE DISCORD',function(){window.open(DISCORD_URL,'_blank','noopener')}]])}]
 };
+delete ICO.map;delete ICO.note;delete ICO.shop;
+ICO.disc[0]='<img class="dcico" src="img/discord.webp" alt="">';ICO.disc[2]=function(){window.open(DISCORD_URL,'_blank','noopener')};
 function icoSync(){
   var b=$('#buy1');if(!b||!b.parentNode)return;
   var r=document.getElementById('icoRow');
