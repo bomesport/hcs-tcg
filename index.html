@@ -1203,7 +1203,9 @@ window.__tr=tr;
 #intro .intro-foot>*{order:6}
 #intro #serSel{order:1;display:block}
 #intro #sealBar{order:2}
-#intro #openBtn,#intro #buy1{order:3;width:min(92%,380px);font-size:26px;padding:14px 18px}
+#intro #openBtn,#intro #buy1{order:3;width:min(78%,300px);height:50px;min-height:0;font-size:18px;letter-spacing:.22em;padding:0 16px;border-radius:999px;line-height:1;white-space:nowrap}
+#intro #openBtn{background:linear-gradient(180deg,#f1d36b,#c9a22f);color:#1a1405;border:0;box-shadow:0 6px 22px rgba(212,175,55,.35)}
+#intro #buy1{background:rgba(5,7,11,.55);color:var(--gold);border:1.5px solid var(--gold);box-shadow:none}
 #intro #qkRow{order:4}
 #intro #icoRow{order:5}
 #intro .proto{order:9}
@@ -1224,7 +1226,8 @@ window.__tr=tr;
   #nav button.on::after{content:'';position:absolute;top:0;left:30%;right:30%;height:3px;border-radius:2px;background:var(--hcs)}
   #nav button{position:relative}
   #nav [data-tab=intro]::before{content:'🎴'}#nav [data-tab=market]::before{content:'🏷️'}#nav [data-tab=shop]::before{content:'🛒'}#nav [data-tab=obj]::before{content:'🎯'}
-  #nav [data-tab=rank],#nav [data-tab=profile]{display:none}
+  #nav [data-tab=rank]{display:none}
+  #nav [data-tab=profile]::before{content:'📚'}
   #nav button.dot::after{position:absolute;top:4px;right:calc(50% - 22px);margin:0;left:auto;width:9px;height:9px;background:var(--ember)}
   #feedBar{bottom:calc(60px + env(safe-area-inset-bottom))}
   #stage{margin-bottom:26px}
@@ -1817,11 +1820,11 @@ function homeCtaSync(){
   var ob=$('#openBtn');
   if(!ob){ob=document.createElement('button');ob.id='openBtn';ob.type='button';ob.className='cta daily';ob.textContent='OUVRIR';b.parentNode.insertBefore(ob,b);ob.onclick=openNow}
   ob.hidden=!(USER&&STOCK>=1);
+  if(USER&&STOCK<1&&SSEL!==3)b.textContent='ACHETER · '+priceFor().booster+' PTS';
 }
 function plusOpen(){
   var en=window.HCS_LANG==='en',pr=document.querySelector('#intro .proto');
   icoSheet(en?'MORE':'PLUS',pr?esc(pr.textContent):'',[
-    [en?'MY COLLECTION':'MA COLLECTION',function(){goTab('profile')}],
     [en?'PLAYERS':'JOUEURS',function(){goTab('rank')}],
     [en?'ROAD MAP':'ROAD MAP',function(){var b=document.getElementById('rmOpen');if(b)b.click()}],
     [en?'PATCH NOTES':'PATCHNOTE',function(){patchOpen()}],
@@ -3761,7 +3764,7 @@ document.addEventListener('keydown',function(e){
   }
 });
 
-(function(){var N={intro:'OUVRIR',obj:'DÉFIS',profile:(window.innerWidth<480?'COLLEC':'MA COLLEC')};Object.keys(N).forEach(function(k){var b=document.querySelector('#nav [data-tab='+k+']');if(b)b.textContent=N[k]})})();
+(function(){var N={intro:'OUVRIR',obj:'DÉFIS',profile:'MON TCG'};Object.keys(N).forEach(function(k){var b=document.querySelector('#nav [data-tab='+k+']');if(b)b.textContent=N[k]})})();
 
 /* ----- Tutoriels visuels (1re visite) ----- */
 var TUTO_DCE=[
